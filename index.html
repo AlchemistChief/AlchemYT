@@ -13,9 +13,15 @@
             <input type="text" id="videoUrl" placeholder="Enter YouTube video URL" />
             <button onclick="fetchVideoInfo()">Download Video</button>
         </div>
+        
         <div class="result">
             <h2 id="videoTitle"></h2>
-            <a id="downloadLink" href="#" download>Click to Download</a>
+            
+            <!-- Links for downloading MP3 and MP4 -->
+            <div id="downloadLinks" style="display: none;">
+                <a id="mp3DownloadLink" href="#" download>Download MP3</a><br>
+                <a id="mp4DownloadLink" href="#" download>Download MP4</a>
+            </div>
         </div>
     </div>
 
