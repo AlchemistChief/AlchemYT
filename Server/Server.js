@@ -35,7 +35,6 @@ app.get('/info', async (req, res) => {
             noCheckCertificates: true,
             noWarnings: true,
             preferFreeFormats: true,
-            cookieFile: cookiesFilePath, // Use cookies here
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         });
 
@@ -60,7 +59,6 @@ app.get('/mp3', (req, res) => {
         noCheckCertificates: true,
         noWarnings: true,
         preferFreeFormats: true,
-        cookieFile: cookiesFilePath, // Use cookies here
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
     })
     .pipe(res)
@@ -85,7 +83,6 @@ app.get('/mp4', (req, res) => {
         noCheckCertificates: true,
         noWarnings: true,
         preferFreeFormats: true,
-        cookieFile: cookiesFilePath, // Use cookies here
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
     })
     .pipe(res)
