@@ -1,58 +1,56 @@
-// Load the API base URL from the JSON file
-async function loadApiUrl() {
-    try {
-        const response = await fetch('data.json');
-        const data = await response.json();
-        return data.apiBaseUrl;
-    } catch (error) {
-        console.error('Error loading JSON:', error);
-        alert('Failed to load API configuration');
-        return null;
-    }
-}
+// Fetch the base API URL from data.json
+fetch('data.json')
+    .then(response => response.json())
+    .then(data => {
+        const apiBaseUrl = data.apiBaseUrl;
 
-async function fetchVideoInfo() {
-    const url = document.getElementById('videoUrl').value;
+        const urlInput = document.getElementById('url');
+        const fetchInfoBtn = document.getElementById('fetchInfoBtn');
+        const downloadMp3Btn = document.getElementById('downloadMp3Btn');
+        const downloadMp4Btn = document.getElementById('downloadMp4Btn');
+        const videoInfoDiv = document.getElementById('videoInfo');
+        const titleElem = document.getElementById('title');
+        const thumbnailElem = document.getElementById('thumbnail');
+        const errorElem = document.getElementById('error');
 
-    if (!url) {
-        alert('Please enter a valid YouTube URL');
-        return;
-    }
+        fetchInfoBtn.addEventListener('click', () => {
+            const url = urlInput.value.trim();
+            if (url) {
+                fetch(`${apiBaseUrl}/info?url=${encodeURIComponent(url)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        titleElem.textContent = `Title: ${data.title}`;
+                        thumbnailElem.src = data.thumbnail;
+                        videoInfoDiv.style.display = 'block';
+                        errorElem.textContent = '';
+                    })
+                    .catch(() => {
+                        videoInfoDiv.style.display = 'none';
+                        errorElem.textContent = 'Failed to fetch video info. Please check the URL.';
+                    });
+            } else {
+                errorElem.textContent = 'Please enter a YouTube URL.';
+            }
+        });
 
-    // Show a loading message or indicator
-    document.getElementById('videoTitle').textContent = "Loading video info...";
-    document.getElementById('downloadLinks').style.display = 'none';  // Hide download links initially
+        downloadMp3Btn.addEventListener('click', () => {
+            const url = urlInput.value.trim();
+            if (url) {
+                window.location.href = `${apiBaseUrl}/mp3?url=${encodeURIComponent(url)}`;
+            } else {
+                errorElem.textContent = 'Please enter a YouTube URL.';
+            }
+        });
 
-    // Get the API base URL from the JSON file
-    const apiBaseUrl = await loadApiUrl();
-
-    if (!apiBaseUrl) {
-        alert('API URL could not be loaded');
-        return;
-    }
-
-    try {
-        // Make the API request to Replit backend using the URL from the JSON
-        const response = await fetch(`${apiBaseUrl}/info?url=${encodeURIComponent(url)}`);
-        const data = await response.json();
-
-        if (data.title) {
-            // Show video info
-            document.getElementById('videoTitle').textContent = `Video Title: ${data.title}`;
-            
-            // Show download links section
-            document.getElementById('downloadLinks').style.display = 'block';
-
-            // Enable MP3 and MP4 download links
-            document.getElementById('mp3DownloadLink').href = `${apiBaseUrl}/mp3?url=${encodeURIComponent(url)}`;
-            document.getElementById('mp3DownloadLink').style.display = 'inline';
-
-            document.getElementById('mp4DownloadLink').href = `${apiBaseUrl}/mp4?url=${encodeURIComponent(url)}`;
-            document.getElementById('mp4DownloadLink').style.display = 'inline';
-        } else {
-            alert('Failed to fetch video info');
-        }
-    } catch (error) {
-        alert('Error: ' + error.message);
-    }
-}
+        downloadMp4Btn.addEventListener('click', () => {
+            const url = urlInput.value.trim();
+            if (url) {
+                window.location.href = `${apiBaseUrl}/mp4?url=${encodeURIComponent(url)}`;
+            } else {
+                errorElem.textContent = 'Please enter a YouTube URL.';
+            }
+        });
+    })
+    .catch(() => {
+        alert('Failed to load API base URL.');
+    });
