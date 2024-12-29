@@ -8,6 +8,7 @@ const app = express();
 const corsOptions = {
     origin: "https://alchemistchief.github.io", // Replace with your allowed origin
     methods: ["GET"], // You can specify other methods if needed (e.g., POST)
+    allowedHeaders: ["Content-Type", "Authorization"] // Make sure headers are allowed
 };
 
 // Apply CORS middleware with the specific configuration
@@ -93,6 +94,7 @@ app.get("/mp4", async (req, res) => {
     }
 });
 
+// Ensure the server starts correctly and logs the port it's listening on
 app.listen(process.env.PORT || 3500, () => {
     console.log("Server on");
 });
