@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const youtubedl = require('youtube-dl-exec');
-const fs = require('fs');
 
 const app = express();
 const port = 3000;
@@ -17,9 +16,6 @@ const corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
-
-// Load cookies from the file
-const cookiesFilePath = './cookies.json'; // Path to cookies file
 
 // Routes
 app.get('/info', async (req, res) => {
