@@ -1,3 +1,16 @@
+// Load the API base URL from the JSON file
+async function loadApiUrl() {
+    try {
+        const response = await fetch('data.json');
+        const data = await response.json();
+        return data.apiBaseUrl;
+    } catch (error) {
+        console.error('Error loading JSON:', error);
+        alert('Failed to load API configuration');
+        return null;
+    }
+}
+
 async function fetchVideoInfo() {
     const url = document.getElementById('videoUrl').value;
 
@@ -10,9 +23,17 @@ async function fetchVideoInfo() {
     document.getElementById('videoTitle').textContent = "Loading video info...";
     document.getElementById('downloadLink').style.display = 'none';
 
+    // Get the API base URL from the JSON file
+    const apiBaseUrl = await loadApiUrl();
+
+    if (!apiBaseUrl) {
+        alert('API URL could not be loaded');
+        return;
+    }
+
     try {
-        // API request to Replit backend
-        const response = await fetch(`https://efab6203-87f8-4f41-b157-377e4e459507-00-1iw7j6gn8wxm9.kirk.replit.dev/fetch-video?url=${encodeURIComponent(url)}`);
+        // Make the API request to Replit backend using the URL from the JSON
+        const response = await fetch(`${apiBaseUrl}/fetch-video?url=${encodeURIComponent(url)}`);
         const data = await response.json();
 
         if (data.success) {
