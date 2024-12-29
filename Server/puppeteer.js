@@ -3,20 +3,31 @@ const fs = require('fs');
 
 // Function to log into YouTube and save cookies
 const loginToYouTube = async () => {
-    const browser = await puppeteer.launch({ headless: true }); // Set headless mode
+    const browser = await puppeteer.launch({ headless: false }); // Set headless mode to false for debugging
     const page = await browser.newPage();
+
+    // Open YouTube
     await page.goto('https://www.youtube.com');
 
-    // Replace these selectors with the correct ones if they change
+    // Click on 'Sign in' button to go to the Google login page
+    await page.waitForSelector('button[aria-label="Sign in"]');
     await page.click('button[aria-label="Sign in"]');
-    await page.type('input[type="email"]', 'your-email@example.com');
-    await page.click('button[jsname="LgbsSe"]');
-    await page.waitForTimeout(1000); // Wait for password page
-    await page.type('input[type="password"]', 'your-password');
-    await page.click('button[jsname="LgbsSe"]');
-    await page.waitForNavigation(); // Wait for successful login
 
-    // Wait for the cookies to be set after login
+    // Wait for email input field
+    await page.waitForSelector('input[type="email"]');
+    await page.type('input[type="email"]', 'thelegionserveraccess@gmail.com');
+    await page.click('button[jsname="LgbsSe"]');
+
+    // Wait for the password page
+    await page.waitForSelector('input[type="password"]');
+    await page.waitForTimeout(2000); // Give it more time to load the password input
+    await page.type('input[type="password"]', 'Adm!n!strat!v3S3rv3r');
+    await page.click('button[jsname="LgbsSe"]');
+
+    // Wait for any redirects after login, like 2FA or additional steps (optional)
+    await page.waitForNavigation({ waitUntil: 'networkidle0' });
+
+    // Wait for the cookies to be set
     await page.waitForTimeout(5000); 
 
     // Get the cookies and save them to a file
