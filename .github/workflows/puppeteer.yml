@@ -8,7 +8,7 @@ on:
 
 jobs:
   puppeteer:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # Use a stable Ubuntu version
 
     steps:
       - name: Checkout repository
@@ -19,7 +19,30 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install dependencies
+      - name: Install necessary dependencies for Puppeteer
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            wget \
+            ca-certificates \
+            fonts-liberation \
+            libappindicator3-1 \
+            libasound2 \
+            libatk-bridge2.0-0 \
+            libatk1.0-0 \
+            libcups2 \
+            libdbus-1-3 \
+            libgdk-pixbuf2.0-0 \
+            libnspr4 \
+            libnss3 \
+            libx11-xcb1 \
+            libxcomposite1 \
+            libxdamage1 \
+            libxrandr2 \
+            xdg-utils \
+            --no-install-recommends
+
+      - name: Install Node.js dependencies
         run: npm install
 
       - name: Run Puppeteer script
