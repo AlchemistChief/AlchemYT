@@ -14,6 +14,11 @@ const corsOptions = {
     optionsSuccessStatus: 200,
 };
 
+if (!fs.existsSync(cookiesPath)) {
+    console.error('Cookies file not found:', cookiesPath);
+    return;
+}
+
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
