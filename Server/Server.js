@@ -4,15 +4,18 @@ const cors = require("cors");
 
 const app = express();
 
-// CORS configuration allowing only requests from a specific origin (GitHub Pages)
+// CORS configuration allowing only requests from your frontend
 const corsOptions = {
-    origin: "https://alchemistchief.github.io", // Replace with your allowed origin
-    methods: ["GET"], // You can specify other methods if needed (e.g., POST)
-    allowedHeaders: ["Content-Type", "Authorization"] // Make sure headers are allowed
+    origin: "https://alchemistchief.github.io", // Replace with your frontend origin
+    methods: ["GET", "OPTIONS"], // Include OPTIONS for preflight requests
+    allowedHeaders: ["Content-Type", "Authorization"], // Allow headers you use
 };
 
-// Apply CORS middleware with the specific configuration
+// Apply CORS middleware globally
 app.use(cors(corsOptions));
+
+// Preflight request handler
+app.options("*", cors(corsOptions));
 
 app.get("/", (req, res) => {
     const ping = new Date();
