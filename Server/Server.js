@@ -33,7 +33,7 @@ app.get('/info', async (req, res) => {
             noWarnings: true,
             preferFreeFormats: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
-            cookies: path.resolve(__dirname, 'cookies.json')  // Path to cookies file
+            cookies: path.resolve(__dirname, 'cookies.txt')  // Use cookies.txt instead of cookies.json
         });
 
         res.json({
@@ -58,7 +58,7 @@ app.get('/mp3', (req, res) => {
         noWarnings: true,
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
-        cookies: path.resolve(__dirname, 'cookies.json')  // Path to cookies file
+        cookies: path.resolve(__dirname, 'cookies.txt')  // Use cookies.txt instead of cookies.json
     })
     .pipe(res)
     .on('finish', () => {
@@ -83,7 +83,7 @@ app.get('/mp4', (req, res) => {
         noWarnings: true,
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
-        cookies: path.resolve(__dirname, 'cookies.json')  // Path to cookies file
+        cookies: path.resolve(__dirname, 'cookies.txt')  // Use cookies.txt instead of cookies.json
     })
     .pipe(res)
     .on('finish', () => {
