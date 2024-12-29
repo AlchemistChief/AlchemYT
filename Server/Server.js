@@ -1,17 +1,22 @@
 const express = require('express');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
+// CORS options with additional headers
+const corsOptions = {
+	origin: 'https://alchemistchief.github.io',
+	methods: ['GET', 'POST', 'OPTIONS'], // Allow specific HTTP methods
+	allowedHeaders: ['Content-Type'], // Allow specific headers
+	optionsSuccessStatus: 200, // For older browsers
+};
+
 // Middleware
 app.use(express.json());
 
-// Routes
-app.get('/info', (req, res) => {
-	res.setHeader('Access-Control-Allow-Origin', 'https://alchemistchief.github.io');
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
+// Routes with CORS options applied
+app.get('/info', cors(corsOptions), (req, res) => {
 	const videoUrl = req.query.url;
 	if (!videoUrl) {
 		return res.status(400).json({ error: 'YouTube URL is required' });
@@ -24,11 +29,7 @@ app.get('/info', (req, res) => {
 	});
 });
 
-app.get('/mp3', (req, res) => {
-	res.setHeader('Access-Control-Allow-Origin', 'https://alchemistchief.github.io');
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
+app.get('/mp3', cors(corsOptions), (req, res) => {
 	const videoUrl = req.query.url;
 	if (!videoUrl) {
 		return res.status(400).json({ error: 'YouTube URL is required' });
@@ -38,11 +39,7 @@ app.get('/mp3', (req, res) => {
 	res.json({ message: 'MP3 download started.' });
 });
 
-app.get('/mp4', (req, res) => {
-	res.setHeader('Access-Control-Allow-Origin', 'https://alchemistchief.github.io');
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
+app.get('/mp4', cors(corsOptions), (req, res) => {
 	const videoUrl = req.query.url;
 	if (!videoUrl) {
 		return res.status(400).json({ error: 'YouTube URL is required' });
