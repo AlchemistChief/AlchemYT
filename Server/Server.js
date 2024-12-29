@@ -31,7 +31,7 @@ app.get('/info', async (req, res) => {
 			noCheckCertificates: true,
 			noWarnings: true,
 			preferFreeFormats: true,
-			addHeader: ['referer:youtube.com', 'user-agent:googlebot']
+			addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
 		});
 
 		res.json({
