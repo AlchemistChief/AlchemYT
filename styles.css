@@ -157,8 +157,12 @@ button:hover {
 /* Video info section styling */
 #videoInfo {
     margin-top: 20px;
-    display: none;
+    opacity: 0; /* Start fully transparent */
+    visibility: hidden; /* Hide the element visually */
+    color: white; /* Make text white */
+    transition: opacity 0.3s ease-in-out; /* Smooth fade-in transition */
 }
+
 
 /* Thumbnail image styling */
 #thumbnail {

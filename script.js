@@ -43,9 +43,9 @@ fetch('data.json')
 						thumbnailElem.src = data.thumbnail;
 						durationElem.textContent = `Duration: ${data.duration}`;
 						descriptionElem.textContent = `Description: ${data.description}`;
-						
+
 						videoInfoDiv.style.display = 'block';
-						videoContainer.style.height = 'auto';
+						videoContainer.style.height = videoInfoDiv.scrollHeight + 'px';
 						errorElem.textContent = '';
 					})
 					.catch(() => {
