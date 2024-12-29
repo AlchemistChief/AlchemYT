@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const ytdlp = require('yt-dlp'); // Import yt-dlp
+const youtubedl = require('youtube-dl-exec'); // Import youtube-dl-exec
 
 const app = express();
 const port = 3000;
@@ -14,55 +14,84 @@ const corsOptions = {
 };
 
 // Middleware
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
-app.get('/info', cors(corsOptions), (req, res) => {
+app.get('/info', async (req, res) => {
 	const videoUrl = req.query.url;
 	if (!videoUrl) {
 		return res.status(400).json({ error: 'YouTube URL is required' });
 	}
 	console.log(`Info endpoint hit. URL: ${videoUrl}`);
-	// Fetch video info using yt-dlp
-	ytdlp.getInfo(videoUrl).then(info => {
-		res.json({
-			title: info.title,
-			thumbnail: info.thumbnail,
+
+	try {
+		const output = await youtubedl(videoUrl, {
+			dumpSingleJson: true,
+			noCheckCertificates: true,
+			noWarnings: true,
+			preferFreeFormats: true,
+			addHeader: ['referer:youtube.com', 'user-agent:googlebot']
 		});
-	}).catch(err => {
-		res.status(500).json({ error: 'Failed to fetch video info', details: err.message });
-	});
+
+		res.json({
+			title: output.title,
+			thumbnail: output.thumbnail,
+		});
+	} catch (error) {
+		res.status(500).json({ error: 'Failed to fetch video info', details: error.message });
+	}
 });
 
-app.get('/mp3', cors(corsOptions), (req, res) => {
+app.get('/mp3', (req, res) => {
 	const videoUrl = req.query.url;
 	if (!videoUrl) {
 		return res.status(400).json({ error: 'YouTube URL is required' });
 	}
 	console.log(`MP3 download endpoint hit. URL: ${videoUrl}`);
-	// Fetch and stream the audio to the user
-	ytdlp(videoUrl, { filter: 'audioonly' }).pipe(res);
+
+	youtubedl(videoUrl, {
+		format: 'bestaudio',
+		noCheckCertificates: true,
+		noWarnings: true,
+		preferFreeFormats: true,
+		addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+	})
+		.pipe(res)
+		.on('finish', () => {
+			console.log('MP3 streaming completed');
+		})
+		.on('error', (err) => {
+			console.log('Error while streaming MP3:', err);
+			res.status(500).json({ error: 'Failed to stream MP3', details: err.message });
+		});
 });
 
-app.get('/mp4', cors(corsOptions), (req, res) => {
+app.get('/mp4', (req, res) => {
 	const videoUrl = req.query.url;
 	if (!videoUrl) {
 		return res.status(400).json({ error: 'YouTube URL is required' });
 	}
 	console.log(`MP4 download endpoint hit. URL: ${videoUrl}`);
-	// Fetch and stream the video to the user
-	ytdlp(videoUrl, { filter: 'videoandaudio' })
+
+	youtubedl(videoUrl, {
+		format: 'bestvideo+bestaudio',
+		noCheckCertificates: true,
+		noWarnings: true,
+		preferFreeFormats: true,
+		addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+	})
 		.pipe(res)
 		.on('finish', () => {
-			console.log('Video streaming completed');
+			console.log('MP4 streaming completed');
 		})
 		.on('error', (err) => {
-			console.log('Error while streaming video:', err);
-			res.status(500).json({ error: 'Failed to stream video', details: err.message });
+			console.log('Error while streaming MP4:', err);
+			res.status(500).json({ error: 'Failed to stream MP4', details: err.message });
 		});
 });
 
 // Start server
 app.listen(port, () => {
-	console.log(`Server running`);
+	console.log(`Server running at http://localhost:${port}`);
 });
