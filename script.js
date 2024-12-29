@@ -21,7 +21,7 @@ async function fetchVideoInfo() {
 
     // Show a loading message or indicator
     document.getElementById('videoTitle').textContent = "Loading video info...";
-    document.getElementById('downloadLink').style.display = 'none';
+    document.getElementById('downloadLinks').style.display = 'none';  // Hide download links initially
 
     // Get the API base URL from the JSON file
     const apiBaseUrl = await loadApiUrl();
@@ -40,6 +40,9 @@ async function fetchVideoInfo() {
             // Show video info
             document.getElementById('videoTitle').textContent = `Video Title: ${data.title}`;
             
+            // Show download links section
+            document.getElementById('downloadLinks').style.display = 'block';
+
             // Enable MP3 and MP4 download links
             document.getElementById('mp3DownloadLink').href = `${apiBaseUrl}/mp3?url=${encodeURIComponent(url)}`;
             document.getElementById('mp3DownloadLink').style.display = 'inline';
