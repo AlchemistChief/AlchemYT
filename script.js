@@ -33,14 +33,19 @@ async function fetchVideoInfo() {
 
     try {
         // Make the API request to Replit backend using the URL from the JSON
-        const response = await fetch(`${apiBaseUrl}/fetch-video?url=${encodeURIComponent(url)}`);
+        const response = await fetch(`${apiBaseUrl}/info?url=${encodeURIComponent(url)}`);
         const data = await response.json();
 
-        if (data.success) {
-            // Show video info and download link
+        if (data.title) {
+            // Show video info
             document.getElementById('videoTitle').textContent = `Video Title: ${data.title}`;
-            document.getElementById('downloadLink').href = data.downloadUrl;
-            document.getElementById('downloadLink').style.display = 'inline';
+            
+            // Enable MP3 and MP4 download links
+            document.getElementById('mp3DownloadLink').href = `${apiBaseUrl}/mp3?url=${encodeURIComponent(url)}`;
+            document.getElementById('mp3DownloadLink').style.display = 'inline';
+
+            document.getElementById('mp4DownloadLink').href = `${apiBaseUrl}/mp4?url=${encodeURIComponent(url)}`;
+            document.getElementById('mp4DownloadLink').style.display = 'inline';
         } else {
             alert('Failed to fetch video info');
         }
