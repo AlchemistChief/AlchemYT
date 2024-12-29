@@ -11,6 +11,7 @@ fetch('data.json')
         const titleElem = document.getElementById('title');
         const thumbnailElem = document.getElementById('thumbnail');
         const errorElem = document.getElementById('error');
+        const videoContainer = document.getElementById('videoContainer');
 
         fetchInfoBtn.addEventListener('click', () => {
             const url = urlInput.value.trim();
@@ -23,6 +24,15 @@ fetch('data.json')
                         thumbnailElem.src = data.thumbnail;
                         videoInfoDiv.style.display = 'block';
                         errorElem.textContent = '';
+
+                        // Create and append content to videoContainer
+                        videoContainer.innerHTML = `
+                            <h3>${data.title}</h3>
+                            <img src="${data.thumbnail}" alt="Video Thumbnail" style="width: 100%; max-width: 400px;">
+                            <p><strong>Duration:</strong> ${data.duration}</p>
+                            <p><strong>Description:</strong> ${data.description}</p>
+                        `;
+                        videoContainer.style.height = 'auto'; // Ensure the video container adjusts in height
                     })
                     .catch(() => {
                         console.error('Error fetching video info');
