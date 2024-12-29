@@ -7,62 +7,148 @@
 
 /* Topbar styling */
 .topbar {
-    background-color: #333;
+    background-color: rgb(25, 26, 29);
     color: white;
-    height: 50px;
+    height: 10vh; /* 10% height of the viewport */
+    width: 100%;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding-left: 20px;
+    padding-left: 20px; /* Padding for topbar */
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 20px; /* Font size for topbar */
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Websitename color */
+.websitename {
+    color: white;
+}
+
+/* "AlchemYT" part */
+.name {
+    color: rgb(108, 92, 231);
+}
+
+/* "github" and "io" part */
+.github, .io {
+    color: white;
+}
+
+/* Red dot */
+.dot {
+    color: rgb(255, 0, 0);
 }
 
 /* Body styling */
 body {
     font-family: Arial, sans-serif;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* Start the content at the top */
     align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #f4f4f4;
+    height: 100vh; /* Full screen height */
+    margin: 0; /* Remove default margin */
+    background-color: rgba(18, 19, 22, 1);
     flex-direction: column;
+    padding: 0; /* No extra padding */
+}
+
+/* Title styling for "YouTube Video Downloader" */
+h1 {
+    color: white;
+    font-weight: 900;
+    font-size: 300%; /* Extra bold font size */
+    margin-top: 10vh; /* 10vh space from top (below the topbar) */
+    margin-bottom: 10px; /* 10px space below the title */
+    text-align: center;
 }
 
 /* Container styling */
 .container {
-    margin-top: 25px;
     text-align: center;
     padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 400px;
+    background-color: rgba(17, 18, 21, 1);
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Shadow effect */
+    width: 90%; /* 90% of the container max width */
+    max-width: 600px; /* Maximum width of the container */
+    height: 40vh; /* 40% of the viewport height */
+    margin-top: 20px; /* 10px space below title + 10px from body spacing */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Media Queries for different screen sizes */
+
+/* For screens with a min-width of 576px */
+@media (min-width: 576px) {
+    .container {
+        max-width: 576px; /* Set max-width to 576px */
+    }
+}
+
+/* For screens with a min-width of 768px */
+@media (min-width: 768px) {
+    .container {
+        max-width: 768px; /* Set max-width to 768px */
+    }
+}
+
+/* For screens with a min-width of 992px */
+@media (min-width: 992px) {
+    .container {
+        max-width: 992px; /* Set max-width to 992px */
+    }
+}
+
+/* For screens with a min-width of 1200px */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1200px; /* Set max-width to 1200px */
+    }
+}
+
+/* For screens with a min-width of 1600px */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1600px; /* Set max-width to 1600px */
+    }
 }
 
 /* Input field styling */
 input {
-    width: 80%;
+    width: 100%; /* Full width inside the container */
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    background-color: rgba(25, 26, 29, 1);
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px; /* Rounded corners */
+    font-size: 16px; /* Normal font size */
+    color: white;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
 }
 
 /* Button styling */
 button {
     padding: 10px 20px;
     margin: 5px;
-    background-color: #007bff;
+    background-color: rgb(108, 92, 231);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px; /* Regular font size */
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #5e47a6;
 }
 
 /* Video info section styling */
@@ -71,9 +157,11 @@ button:hover {
     display: none;
 }
 
+/* Thumbnail image styling */
 #thumbnail {
-    width: 200px;
-    height: 120px;
+    width: 100%; /* Full width for thumbnail */
+    max-width: 400px; /* Max width for large screens */
+    height: auto;
     object-fit: cover;
-    margin-top: 10px;
+    margin-top: 15px;
 }
