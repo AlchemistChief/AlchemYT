@@ -9,14 +9,14 @@
 .topbar {
     background-color: rgb(25, 26, 29);
     color: white;
-    height: 10vh; /* 10% height of the viewport */
+    height: 10vh;
     width: 100%;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding-left: 20px; /* Padding for topbar */
+    padding-left: 20px;
     font-weight: bold;
-    font-size: 20px; /* Font size for topbar */
+    font-size: 20px;
     position: fixed;
     top: 0;
     left: 0;
@@ -48,22 +48,22 @@
 body {
     font-family: Arial, sans-serif;
     display: flex;
-    justify-content: flex-start; /* Start the content at the top */
+    justify-content: flex-start;
     align-items: center;
-    height: 100vh; /* Full screen height */
-    margin: 0; /* Remove default margin */
+    height: 100vh;
+    margin: 0;
     background-color: rgba(18, 19, 22, 1);
     flex-direction: column;
-    padding: 0; /* No extra padding */
+    padding: 0;
 }
 
 /* Title styling for "YouTube Video Downloader" */
 h1 {
     color: white;
     font-weight: 900;
-    font-size: 300%; /* Extra bold font size */
-    margin-top: 10vh; /* 10vh space from top (below the topbar) */
-    margin-bottom: 10px; /* 10px space below the title */
+    font-size: 300%;
+    margin-top: 10vh;
+    margin-bottom: 10px;
     text-align: center;
 }
 
@@ -72,64 +72,67 @@ h1 {
     text-align: center;
     padding: 20px;
     background-color: rgba(17, 18, 21, 1);
-    border-radius: 12px; /* Rounded corners */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Shadow effect */
-    width: 90%; /* 90% of the container max width */
-    max-width: 600px; /* Maximum width of the container */
-    height: 40vh; /* 40% of the viewport height */
-    margin-top: 20px; /* 10px space below title + 10px from body spacing */
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 600px;
+    height: 40vh;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-/* Media Queries for different screen sizes */
+/* Video Container styling (Initially hidden with 0px height) */
+#videoContainer {
+    width: 100%;
+    height: 0px;
+    margin-top: 25px; /* Space between buttons and video container */
+    overflow: hidden; /* Hide content by default */
+    transition: height 0.3s ease-in-out; /* Smooth transition for revealing */
+}
 
-/* For screens with a min-width of 576px */
+/* Media Queries for different screen sizes */
 @media (min-width: 576px) {
     .container {
-        max-width: 576px; /* Set max-width to 576px */
+        max-width: 576px;
     }
 }
 
-/* For screens with a min-width of 768px */
 @media (min-width: 768px) {
     .container {
-        max-width: 768px; /* Set max-width to 768px */
+        max-width: 768px;
     }
 }
 
-/* For screens with a min-width of 992px */
 @media (min-width: 992px) {
     .container {
-        max-width: 992px; /* Set max-width to 992px */
+        max-width: 992px;
     }
 }
 
-/* For screens with a min-width of 1200px */
 @media (min-width: 1200px) {
     .container {
-        max-width: 1200px; /* Set max-width to 1200px */
+        max-width: 1200px;
     }
 }
 
-/* For screens with a min-width of 1600px */
 @media (min-width: 1600px) {
     .container {
-        max-width: 1600px; /* Set max-width to 1600px */
+        max-width: 1600px;
     }
 }
 
 /* Input field styling */
 input {
-    width: 100%; /* Full width inside the container */
+    width: 100%;
     padding: 10px;
     margin-bottom: 15px;
     background-color: rgba(25, 26, 29, 1);
     border: 1px solid #ccc;
-    border-radius: 6px; /* Rounded corners */
-    font-size: 16px; /* Normal font size */
+    border-radius: 6px;
+    font-size: 16px;
     color: white;
     box-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
 }
@@ -144,7 +147,7 @@ button {
     border-radius: 6px;
     cursor: pointer;
     font-family: 'Roboto', sans-serif;
-    font-size: 16px; /* Regular font size */
+    font-size: 16px;
 }
 
 button:hover {
@@ -159,8 +162,8 @@ button:hover {
 
 /* Thumbnail image styling */
 #thumbnail {
-    width: 100%; /* Full width for thumbnail */
-    max-width: 400px; /* Max width for large screens */
+    width: 100%;
+    max-width: 400px;
     height: auto;
     object-fit: cover;
     margin-top: 15px;
