@@ -1,4 +1,3 @@
-// Fetch the base API URL from data.json
 fetch('data.json')
     .then(response => response.json())
     .then(data => {
@@ -19,12 +18,14 @@ fetch('data.json')
                 fetch(`${apiBaseUrl}/info?url=${encodeURIComponent(url)}`)
                     .then(response => response.json())
                     .then(data => {
+                        console.log('Fetched video info:', data);
                         titleElem.textContent = `Title: ${data.title}`;
                         thumbnailElem.src = data.thumbnail;
                         videoInfoDiv.style.display = 'block';
                         errorElem.textContent = '';
                     })
                     .catch(() => {
+                        console.error('Error fetching video info');
                         videoInfoDiv.style.display = 'none';
                         errorElem.textContent = 'Failed to fetch video info. Please check the URL.';
                     });
@@ -36,6 +37,7 @@ fetch('data.json')
         downloadMp3Btn.addEventListener('click', () => {
             const url = urlInput.value.trim();
             if (url) {
+                console.log('Requested MP3 download for URL:', url);
                 window.location.href = `${apiBaseUrl}/mp3?url=${encodeURIComponent(url)}`;
             } else {
                 errorElem.textContent = 'Please enter a YouTube URL.';
@@ -45,6 +47,7 @@ fetch('data.json')
         downloadMp4Btn.addEventListener('click', () => {
             const url = urlInput.value.trim();
             if (url) {
+                console.log('Requested MP4 download for URL:', url);
                 window.location.href = `${apiBaseUrl}/mp4?url=${encodeURIComponent(url)}`;
             } else {
                 errorElem.textContent = 'Please enter a YouTube URL.';
