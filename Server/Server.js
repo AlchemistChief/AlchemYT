@@ -4,6 +4,7 @@ const youtubedl = require('youtube-dl-exec');
 const path = require('path');
 
 const app = express();
+const port = 3000;
 
 // CORS options
 const corsOptions = {
@@ -96,5 +97,5 @@ app.get('/mp4', (req, res) => {
 
 // Start server
 app.listen(port, () => {
-    console.log(`Server running`);
+    console.log(`Server running at http://localhost:${port}`);
 });
