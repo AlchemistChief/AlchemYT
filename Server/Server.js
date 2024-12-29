@@ -4,18 +4,15 @@ const cors = require("cors");
 
 const app = express();
 
-// CORS configuration allowing only requests from your frontend
-const corsOptions = {
-    origin: "https://alchemistchief.github.io", // Replace with your frontend origin
-    methods: ["GET", "OPTIONS"], // Include OPTIONS for preflight requests
-    allowedHeaders: ["Content-Type", "Authorization"], // Allow headers you use
-};
-
-// Apply CORS middleware globally
-app.use(cors(corsOptions));
-
-// Preflight request handler
-app.options("*", cors(corsOptions));
+app.use((req, res, next) => {
+	res.header("Access-Control-Allow-Origin", "https://alchemistchief.github.io");
+	res.header(
+		"Access-Control-Allow-Headers",
+		"Origin, X-Requested-With, Content-Type, Accept, Authorization"
+	);
+	res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+	next();
+});
 
 app.get("/", (req, res) => {
     const ping = new Date();
