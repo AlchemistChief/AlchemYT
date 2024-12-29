@@ -1,5 +1,5 @@
 {
-  "name": "youtube-download-api",
+  "name": "AlchemYT",
   "version": "1.0.0",
   "description": "A simple server for YouTube video information and download endpoints.",
   "main": "server.js",
@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "ytdl-core": "^4.10.1"
   }
 }
