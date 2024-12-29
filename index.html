@@ -22,14 +22,16 @@
 
         <div id="error" style="color: red;"></div>
         
-        <!-- Video Container (Initially hidden with 0px height) -->
-        <div id="videoContainer">
-            <div id="videoInfo">
+        <div id="videoContainer" style="height: 0; overflow: hidden; transition: height 0.3s ease;">
+            <div id="videoInfo" style="display: none;">
                 <h2>Video Info</h2>
-                <p id="title"></p>
-                <img id="thumbnail" alt="Video Thumbnail" />
+                <h3 id="title"></h3>
+                <img id="thumbnail" alt="Video Thumbnail" style="width: 100%; max-width: 400px;">
+                <p id="duration"></p>
+                <p id="description"></p>
             </div>
         </div>
+        
     </div>
 
     <script src="script.js"></script>

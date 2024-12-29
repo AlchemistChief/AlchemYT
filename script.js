@@ -10,6 +10,8 @@ fetch('data.json')
 		const videoInfoDiv = document.getElementById('videoInfo');
 		const titleElem = document.getElementById('title');
 		const thumbnailElem = document.getElementById('thumbnail');
+		const durationElem = document.getElementById('duration');
+		const descriptionElem = document.getElementById('description');
 		const errorElem = document.getElementById('error');
 		const videoContainer = document.getElementById('videoContainer');
 
@@ -39,19 +41,16 @@ fetch('data.json')
 						console.log('Fetched video info:', data);
 						titleElem.textContent = `Title: ${data.title}`;
 						thumbnailElem.src = data.thumbnail;
+						durationElem.textContent = `Duration: ${data.duration}`;
+						descriptionElem.textContent = `Description: ${data.description}`;
+						
 						videoInfoDiv.style.display = 'block';
-						errorElem.textContent = '';
-
-						videoContainer.innerHTML = `
-							<h3>${data.title}</h3>
-							<img src="${data.thumbnail}" alt="Video Thumbnail" style="width: 100%; max-width: 400px;">
-							<p><strong>Duration:</strong> ${data.duration}</p>
-							<p><strong>Description:</strong> ${data.description}</p>
-						`;
 						videoContainer.style.height = 'auto';
+						errorElem.textContent = '';
 					})
 					.catch(() => {
 						console.error('Error fetching video info');
+						videoContainer.style.height = '0';
 						videoInfoDiv.style.display = 'none';
 						errorElem.textContent = 'Failed to fetch video info. Please check the URL.';
 					});
