@@ -3,7 +3,15 @@ const ytdl = require("ytdl-core");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+
+// CORS configuration allowing only requests from a specific origin (GitHub Pages)
+const corsOptions = {
+    origin: "https://alchemistchief.github.io", // Replace with your allowed origin
+    methods: ["GET"], // You can specify other methods if needed (e.g., POST)
+};
+
+// Apply CORS middleware with the specific configuration
+app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
     const ping = new Date();
