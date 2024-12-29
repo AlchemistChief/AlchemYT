@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const youtubedl = require('youtube-dl-exec');
+const path = require('path');
 
 const app = express();
-const port = 3000;
 
 // CORS options
 const corsOptions = {
@@ -32,6 +32,7 @@ app.get('/info', async (req, res) => {
             noWarnings: true,
             preferFreeFormats: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+            cookies: path.join(__dirname, 'cookies.json'),  // Path to the cookies.json file
         });
 
         res.json({
@@ -56,6 +57,7 @@ app.get('/mp3', (req, res) => {
         noWarnings: true,
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+        cookies: path.join(__dirname, 'cookies.json'),  // Path to the cookies.json file
     })
     .pipe(res)
     .on('finish', () => {
@@ -80,6 +82,7 @@ app.get('/mp4', (req, res) => {
         noWarnings: true,
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+        cookies: path.join(__dirname, 'cookies.json'),  // Path to the cookies.json file
     })
     .pipe(res)
     .on('finish', () => {
@@ -93,5 +96,5 @@ app.get('/mp4', (req, res) => {
 
 // Start server
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running`);
 });
