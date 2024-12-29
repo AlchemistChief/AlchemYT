@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Downloader</title>
+    <title>YouTube Download API</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <h1>YouTube Video Downloader</h1>
-        <div class="input-section">
-            <input type="text" id="videoUrl" placeholder="Enter YouTube video URL" />
-            <button onclick="fetchVideoInfo()">Download Video</button>
+        <input type="text" id="url" placeholder="Enter YouTube URL">
+        <button id="fetchInfoBtn">Get Info</button>
+        <button id="downloadMp3Btn">Download MP3</button>
+        <button id="downloadMp4Btn">Download MP4</button>
+
+        <div id="videoInfo">
+            <h2>Video Info</h2>
+            <p id="title"></p>
+            <img id="thumbnail" alt="Video Thumbnail" />
         </div>
-        
-        <div class="result">
-            <h2 id="videoTitle"></h2>
-            <div id="downloadLinks" style="display: none;">
-                <!-- MP3 and MP4 download links -->
-                <a id="mp3DownloadLink" href="#" download>Download MP3</a><br>
-                <a id="mp4DownloadLink" href="#" download>Download MP4</a>
-            </div>
-        </div>
+
+        <div id="error" style="color: red;"></div>
     </div>
 
     <script src="script.js"></script>
