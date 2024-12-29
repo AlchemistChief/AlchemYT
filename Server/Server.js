@@ -64,5 +64,5 @@ app.get('/mp4', cors(corsOptions), (req, res) => {
 
 // Start server
 app.listen(port, () => {
-	console.log(`Server running at http://localhost:${port}`);
+	console.log(`Server running`);
 });
