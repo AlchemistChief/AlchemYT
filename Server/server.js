@@ -191,7 +191,6 @@ app.get('/mp4', (req, res) => {
         console.error('Failed to download video:', error);
         res.status(500).json({ error: 'Failed to download MP4', details: error.message });
     });
-});
 
 // Start server
 app.listen(port, () => {
