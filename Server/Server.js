@@ -3,6 +3,8 @@ const cors = require('cors');
 const youtubedl = require('youtube-dl-exec');
 const path = require('path');
 const fs = require('fs'); // <-- Add this line to import the fs module
+const NodeCache = require('node-cache');
+const videoCache = new NodeCache({ stdTTL: 600 }); // Cache for 10 minutes
 
 const app = express();
 const port = 3000;
@@ -34,8 +36,15 @@ app.get('/info', async (req, res) => {
     if (!videoUrl) {
         return res.status(400).json({ error: 'YouTube URL is required' });
     }
-    console.log(`Info endpoint hit. URL: ${videoUrl}`);
 
+    // Check cache first
+    const cachedData = videoCache.get(videoUrl);
+    if (cachedData) {
+        console.log('Returning cached video info');
+        return res.json(cachedData);
+    }
+
+    console.log(`Fetching info for URL: ${videoUrl}`);
     try {
         const output = await youtubedl(videoUrl, {
             dumpSingleJson: true,
@@ -43,14 +52,20 @@ app.get('/info', async (req, res) => {
             noWarnings: true,
             preferFreeFormats: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
-            cookies: path.resolve(__dirname, 'cookies.txt')  // Use cookies.txt instead of cookies.json
+            cookies: path.resolve(__dirname, 'cookies.txt'),
         });
 
-        res.json({
+        const videoData = {
             title: output.title,
             thumbnail: output.thumbnail,
-        });
+        };
+
+        // Cache the response
+        videoCache.set(videoUrl, videoData);
+
+        res.json(videoData);
     } catch (error) {
+        console.error('Error fetching video info:', error);
         res.status(500).json({ error: 'Failed to fetch video info', details: error.message });
     }
 });
