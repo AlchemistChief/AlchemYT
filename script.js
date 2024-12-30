@@ -15,6 +15,8 @@ fetch('data.json')
 		const errorElem = document.getElementById('error');
 		const videoContainer = document.getElementById('videoContainer');
 
+		let savedUrl = null; // To store the URL once fetched
+
 		function normalizeYouTubeUrl(url) {
 			try {
 				const urlObj = new URL(url);
@@ -45,9 +47,15 @@ fetch('data.json')
 			const videoId = extractVideoId(rawUrl);
 
 			if (normalizedUrl && videoId) {
+				// Save the URL for future use
+				savedUrl = normalizedUrl;
+
 				// Set embed URL immediately and make embed visible
 				videoEmbedElem.src = `https://www.youtube.com/embed/${videoId}`;
 				videoEmbedElem.style.display = 'block'; // Make sure it's visible immediately
+				videoContainer.style.display = 'flex';
+				videoContainer.style.height = 'auto';
+				videoContainer.classList.add('visible');
 
 				fetch(`${apiBaseUrl}/info?url=${encodeURIComponent(normalizedUrl)}`)
 					.then(response => response.json())
@@ -75,26 +83,20 @@ fetch('data.json')
 		});
 
 		downloadMp3Btn.addEventListener('click', () => {
-			const rawUrl = urlInput.value.trim();
-			const normalizedUrl = normalizeYouTubeUrl(rawUrl);
-
-			if (normalizedUrl) {
-				console.log('Requested MP3 download for URL:', normalizedUrl);
-				window.location.href = `${apiBaseUrl}/mp3?url=${encodeURIComponent(normalizedUrl)}`;
+			if (savedUrl) {
+				console.log('Requested MP3 download for URL:', savedUrl);
+				window.location.href = `${apiBaseUrl}/mp3?url=${encodeURIComponent(savedUrl)}`;
 			} else {
-				errorElem.textContent = 'Please enter a valid YouTube URL.';
+				errorElem.textContent = 'Please fetch video info first.';
 			}
 		});
 
 		downloadMp4Btn.addEventListener('click', () => {
-			const rawUrl = urlInput.value.trim();
-			const normalizedUrl = normalizeYouTubeUrl(rawUrl);
-
-			if (normalizedUrl) {
-				console.log('Requested MP4 download for URL:', normalizedUrl);
-				window.location.href = `${apiBaseUrl}/mp4?url=${encodeURIComponent(normalizedUrl)}`;
+			if (savedUrl) {
+				console.log('Requested MP4 download for URL:', savedUrl);
+				window.location.href = `${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}`;
 			} else {
-				errorElem.textContent = 'Please enter a valid YouTube URL.';
+				errorElem.textContent = 'Please fetch video info first.';
 			}
 		});
 	})

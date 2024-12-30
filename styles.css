@@ -78,7 +78,7 @@ h1 {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     width: 90%;
     max-width: 600px;
-    height:20vh;
+    height: 20vh;
     margin-top: 20px;
     display: flex;
     flex-direction: column;
@@ -86,63 +86,37 @@ h1 {
     align-items: center;
 }
 
-/* First container styles remain the same */
-
 /* Video Container styling (Initially hidden with opacity 0) */
 #videoContainer {
-	text-align: center;
-	padding: 20px;
-	background-color: rgba(17, 18, 21, 1);
-	border-radius: 12px;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-	width: 90%;
-	max-width: 600px;
-	height: auto;
-	margin-top: 20px;
-	display: none; /* Initially hidden */
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	transition: all 0.3s ease-in-out;
-	opacity: 0;
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(17, 18, 21, 1);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 600px;
+    height: auto;
+    margin-top: 20px;
+    display: none; /* Initially hidden */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
 }
 
 /* Visible state for video container */
 #videoContainer.visible {
-	display: flex;
-	opacity: 1;
+    display: flex;
+    opacity: 1;
 }
 
-
-/* Media Queries for different screen sizes */
-@media (min-width: 576px) {
-    .container {
-        max-width: 576px;
-    }
-}
-
-@media (min-width: 768px) {
-    .container {
-        max-width: 768px;
-    }
-}
-
-@media (min-width: 992px) {
-    .container {
-        max-width: 992px;
-    }
-}
-
-@media (min-width: 1200px) {
-    .container {
-        max-width: 1200px;
-    }
-}
-
-@media (min-width: 1600px) {
-    .container {
-        max-width: 1600px;
-    }
+/* Error message styling */
+#error {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+    font-weight: bold;
 }
 
 /* Input field styling */
@@ -182,6 +156,10 @@ button:hover {
     transition: opacity 0.3s ease-in-out; /* Smooth fade-in transition */
 }
 
+/* Button styling within video info */
+button {
+    margin-top: 15px;
+}
 
 /* Thumbnail image styling */
 #thumbnail {
@@ -190,4 +168,35 @@ button:hover {
     height: auto;
     object-fit: cover;
     margin-top: 15px;
+}
+
+/* Media Queries for different screen sizes */
+@media (min-width: 576px) {
+    .container {
+        max-width: 576px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 768px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        max-width: 992px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1200px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1600px;
+    }
 }
