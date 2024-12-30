@@ -151,7 +151,7 @@ app.get('/mp4', (req, res) => {
             format: 'mp4',
             noCheckCertificates: true,
             noWarnings: true,
-            preferFreeFormats: true,
+            preferFreeFormats: false,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
