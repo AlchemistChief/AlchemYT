@@ -135,6 +135,10 @@ app.get('/mp4', (req, res) => {
     }
 
     youtubedl(videoUrl, {
+        noCheckCertificates: true,
+        noWarnings: true,
+        preferFreeFormats: true,
+        addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
         dumpSingleJson: true,
     })
@@ -144,7 +148,10 @@ app.get('/mp4', (req, res) => {
         const filePath = path.resolve(__dirname, 'downloads', fileName);
 
         youtubedl(videoUrl, {
-            format: 'mp4',
+            format: 'bv*[ext=mp4]+ba[ext=m4a]/best',
+            noCheckCertificates: true,
+            noWarnings: true,
+            addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
         })
