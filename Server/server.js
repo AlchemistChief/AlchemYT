@@ -72,7 +72,7 @@ app.get('/mp3', (req, res) => {
     youtubedl(videoUrl, {
         noCheckCertificates: true,
         noWarnings: true,
-        preferFreeFormats: true,
+        //preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
         dumpSingleJson: true,
@@ -83,10 +83,10 @@ app.get('/mp3', (req, res) => {
         const filePath = path.resolve(__dirname, 'downloads', fileName);
 
         youtubedl(videoUrl, {
-            format: 'bestaudio',
+            format: 'mp3',
             noCheckCertificates: true,
             noWarnings: true,
-            preferFreeFormats: true,
+            //preferFreeFormats: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
@@ -137,7 +137,7 @@ app.get('/mp4', (req, res) => {
     youtubedl(videoUrl, {
         noCheckCertificates: true,
         noWarnings: true,
-        preferFreeFormats: true,
+        //preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
         dumpSingleJson: true,
@@ -151,6 +151,7 @@ app.get('/mp4', (req, res) => {
             format: 'bv*[ext=mp4]+ba[ext=m4a]/best',
             noCheckCertificates: true,
             noWarnings: true,
+            //preferFreeFormats: false,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
