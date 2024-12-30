@@ -142,7 +142,7 @@ app.get('/mp4', (req, res) => {
         cookies: cookiesPath,
     })
     .then((info) => {
-        const videoTitle = sanitizeFileName(info.title || 'video');
+        const videoTitle = sanitizeFileName(info.title);
         const fileName = `${videoTitle}.mp4`;
         const filePath = path.resolve(__dirname, 'downloads', fileName);
 
