@@ -44,14 +44,16 @@ fetch('data.json')
 						durationElem.textContent = `Duration: ${data.duration}`;
 						descriptionElem.textContent = `Description: ${data.description}`;
 
-						videoInfoDiv.style.display = 'block';
-						videoContainer.style.height = videoInfoDiv.scrollHeight + 'px';
+						videoContainer.style.display = 'flex';
+						videoContainer.style.height = 'auto';
+						videoContainer.classList.add('visible');
 						errorElem.textContent = '';
 					})
 					.catch(() => {
 						console.error('Error fetching video info');
 						videoContainer.style.height = '0';
-						videoInfoDiv.style.display = 'none';
+						videoContainer.style.opacity = '0';
+						videoContainer.classList.remove('visible');
 						errorElem.textContent = 'Failed to fetch video info. Please check the URL.';
 					});
 			} else {
@@ -78,6 +80,19 @@ fetch('data.json')
 			if (normalizedUrl) {
 				console.log('Requested MP4 download for URL:', normalizedUrl);
 				window.location.href = `${apiBaseUrl}/mp4?url=${encodeURIComponent(normalizedUrl)}`;
+			} else {
+				errorElem.textContent = 'Please enter a valid YouTube URL.';
+			}
+		});
+
+		// Event listener for the Download button inside video container
+		document.getElementById('downloadBtn').addEventListener('click', () => {
+			const rawUrl = urlInput.value.trim();
+			const normalizedUrl = normalizeYouTubeUrl(rawUrl);
+
+			if (normalizedUrl) {
+				console.log('Started download for URL:', normalizedUrl);
+				window.location.href = `${apiBaseUrl}/download?url=${encodeURIComponent(normalizedUrl)}`;
 			} else {
 				errorElem.textContent = 'Please enter a valid YouTube URL.';
 			}

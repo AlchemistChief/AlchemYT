@@ -84,13 +84,29 @@ h1 {
     align-items: center;
 }
 
-/* Video Container styling (Initially hidden with 0px height) */
+/* Video Container styling (Initially hidden with opacity 0) */
 #videoContainer {
-    width: 100%;
-    height: 0px;
-    margin-top: 25px; /* Space between buttons and video container */
-    overflow: hidden; /* Hide content by default */
-    transition: height 0.3s ease-in-out; /* Smooth transition for revealing */
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(17, 18, 21, 1);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 600px;
+    height: auto;
+    margin-top: 20px;
+    display: none; /* Initially hidden */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+}
+
+/* Visible state for video container */
+#videoContainer.visible {
+    display: flex;
+    opacity: 1;
 }
 
 /* Media Queries for different screen sizes */
@@ -157,8 +173,6 @@ button:hover {
 /* Video info section styling */
 #videoInfo {
     margin-top: 20px;
-    opacity: 0; /* Start fully transparent */
-    visibility: hidden; /* Hide the element visually */
     color: white; /* Make text white */
     transition: opacity 0.3s ease-in-out; /* Smooth fade-in transition */
 }
