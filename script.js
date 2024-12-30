@@ -1,6 +1,7 @@
 fetch('data.json')
 	.then(response => response.json())
 	.then(data => {
+		const apiKey = data.YOUTUBE_API_KEY; // The API key is now stored in data.json
 		const apiBaseUrl = data.apiBaseUrl;
 
 		const urlInput = document.getElementById('url');
@@ -11,11 +12,10 @@ fetch('data.json')
 		const titleElem = document.getElementById('title');
 		const videoEmbedElem = document.getElementById('videoEmbed');
 		const durationElem = document.getElementById('duration');
-		const descriptionElem = document.getElementById('description');
 		const errorElem = document.getElementById('error');
 		const videoContainer = document.getElementById('videoContainer');
 
-		let savedUrl = null; // To store the URL once fetched
+		let savedUrl = null;
 
 		function normalizeYouTubeUrl(url) {
 			try {
@@ -57,18 +57,25 @@ fetch('data.json')
 				videoContainer.style.height = 'auto';
 				videoContainer.classList.add('visible');
 
-				fetch(`${apiBaseUrl}/info?url=${encodeURIComponent(normalizedUrl)}`)
+				// Call YouTube API to get video info
+				const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails&key=${apiKey}`;
+
+				fetch(apiUrl)
 					.then(response => response.json())
 					.then(data => {
 						console.log('Fetched video info:', data);
-						titleElem.textContent = `Title: ${data.title}`;
-						durationElem.textContent = `Duration: ${data.duration}`;
-						descriptionElem.textContent = `Description: ${data.description}`;
+						if (data.items && data.items.length > 0) {
+							const videoData = data.items[0];
+							titleElem.textContent = `Title: ${videoData.snippet.title}`;
+							durationElem.textContent = `Duration: ${videoData.contentDetails.duration}`;
 
-						videoContainer.style.display = 'flex';
-						videoContainer.style.height = 'auto';
-						videoContainer.classList.add('visible');
-						errorElem.textContent = '';
+							videoContainer.style.display = 'flex';
+							videoContainer.style.height = 'auto';
+							videoContainer.classList.add('visible');
+							errorElem.textContent = '';
+						} else {
+							errorElem.textContent = 'Failed to fetch video info. Video not found.';
+						}
 					})
 					.catch(() => {
 						console.error('Error fetching video info');
