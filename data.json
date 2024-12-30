@@ -1,3 +1,5 @@
 {
-    "apiBaseUrl": "https://alchemyt.onrender.com"
-}
+    "localBaseUrl": "http://localhost:3000",
+    "productionBaseUrl": "https://alchemyt.onrender.com"
+  }
+  

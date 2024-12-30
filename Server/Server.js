@@ -11,11 +11,12 @@ const port = 3000;
 
 // CORS options
 const corsOptions = {
-    origin: 'https://alchemistchief.github.io',
+    origin: ['https://alchemistchief.github.io', 'http://localhost:3000', 'http://127.0.0.1:3000'],
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
     optionsSuccessStatus: 200,
 };
+
 
 // Cookies path (set your path correctly)
 const cookiesPath = path.resolve(__dirname, 'cookies.txt');

@@ -1,7 +1,12 @@
 fetch('data.json')
 	.then(response => response.json())
 	.then(data => {
-		const apiBaseUrl = data.apiBaseUrl;
+		let apiBaseUrl = data.productionBaseUrl;  // Default to production base URL
+
+		// Check if we're on localhost (for development in VSCode)
+		if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+			apiBaseUrl = data.localBaseUrl;
+		}
 
 		const urlInput = document.getElementById('url');
 		const fetchInfoBtn = document.getElementById('fetchInfoBtn');
