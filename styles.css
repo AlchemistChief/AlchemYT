@@ -25,17 +25,19 @@
 }
 
 /* Websitename color */
-.websitename {
-    color: white;
-}
-
-/* "AlchemYT" part */
-.name {
+.username {
     color: rgb(108, 92, 231);
 }
 
+/* "AlchemYT" part */
+.websitename {
+    color: red;
+    text-underline-offset: 2px;
+    text-decoration: underline;
+}
+
 /* "github" and "io" part */
-.github, .io {
+.whitetext {
     color: white;
 }
 
