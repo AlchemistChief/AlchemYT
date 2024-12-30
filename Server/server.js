@@ -1,4 +1,4 @@
-// Server.js - https://alchemyt.onrender.com
+// Updated Server.js - Debugging and Fixes for Filename Extraction
 const express = require('express');
 const cors = require('cors');
 const youtubedl = require('youtube-dl-exec');
@@ -39,6 +39,11 @@ process.on('SIGTERM', () => {
     process.exit(0);
 });
 
+// Helper function to sanitize filenames
+function sanitizeFileName(filename) {
+    return filename.replace(/[\\/:*?"<>|]/g, '_'); // Replace illegal characters
+}
+
 // Routes for downloading MP3 and MP4
 app.get('/mp3', (req, res) => {
     const startTime = Date.now();
@@ -48,7 +53,6 @@ app.get('/mp3', (req, res) => {
     }
     console.log(`MP3 download endpoint hit. URL: ${videoUrl}`);
 
-    const downloadStart = Date.now();
     youtubedl(videoUrl, {
         format: 'bestaudio',
         noCheckCertificates: true,
@@ -56,37 +60,42 @@ app.get('/mp3', (req, res) => {
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
-        getFilename: true,
+        dumpSingleJson: true,
     })
-    .then((output) => {
-        console.log('YouTube-DL Output:', output); // Debug output
-        const match = output.match(/Destination: (.+)$/m);
-        if (!match) {
-            throw new Error('Failed to extract filename from YouTube-DL output.');
-        }
-        const fileName = match[1];
+    .then((info) => {
+        const videoTitle = sanitizeFileName(info.title || 'audio');
+        const fileName = `${videoTitle}.mp3`;
         const filePath = path.resolve(__dirname, 'downloads', fileName);
-    
 
-        const downloadEnd = Date.now();
-        console.log(`Download completed in ${downloadEnd - downloadStart} ms`);
+        youtubedl(videoUrl, {
+            format: 'bestaudio',
+            noCheckCertificates: true,
+            noWarnings: true,
+            preferFreeFormats: true,
+            addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+            cookies: cookiesPath,
+            output: filePath,
+        })
+        .then(() => {
+            console.log(`Download completed: ${fileName}`);
 
-        res.download(filePath, fileName, (err) => {
-            if (err) {
-                console.error('Error sending file:', err);
-                res.status(500).json({ error: 'Failed to send MP3 file' });
-            } else {
-                console.log(`MP3 file sent successfully in ${Date.now() - startTime} ms`);
-            }
-        });
-
-        res.on('finish', () => {
-            fs.unlink(filePath, (err) => {
+            res.download(filePath, fileName, (err) => {
                 if (err) {
-                    console.error('Error deleting file:', err);
+                    console.error('Error sending file:', err);
+                    res.status(500).json({ error: 'Failed to send MP3 file' });
                 } else {
-                    console.log('Temporary MP3 file deleted successfully.');
+                    console.log(`MP3 file sent successfully: ${fileName}`);
                 }
+            });
+
+            res.on('finish', () => {
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        console.error('Error deleting file:', err);
+                    } else {
+                        console.log(`Temporary MP3 file deleted: ${fileName}`);
+                    }
+                });
             });
         });
     })
@@ -104,7 +113,6 @@ app.get('/mp4', (req, res) => {
     }
     console.log(`MP4 download endpoint hit. URL: ${videoUrl}`);
 
-    const downloadStart = Date.now();
     youtubedl(videoUrl, {
         format: 'bestvideo+bestaudio',
         noCheckCertificates: true,
@@ -112,37 +120,42 @@ app.get('/mp4', (req, res) => {
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
-        getFilename: true,
+        dumpSingleJson: true,
     })
-    .then((output) => {
-        console.log('YouTube-DL Output:', output); // Debug output
-        const match = output.match(/Destination: (.+)$/m);
-        if (!match) {
-            throw new Error('Failed to extract filename from YouTube-DL output.');
-        }
-        const fileName = match[1];
+    .then((info) => {
+        const videoTitle = sanitizeFileName(info.title || 'video');
+        const fileName = `${videoTitle}.mp4`;
         const filePath = path.resolve(__dirname, 'downloads', fileName);
-    
 
-        const downloadEnd = Date.now();
-        console.log(`Download completed in ${downloadEnd - downloadStart} ms`);
+        youtubedl(videoUrl, {
+            format: 'bestvideo+bestaudio',
+            noCheckCertificates: true,
+            noWarnings: true,
+            preferFreeFormats: true,
+            addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+            cookies: cookiesPath,
+            output: filePath,
+        })
+        .then(() => {
+            console.log(`Download completed: ${fileName}`);
 
-        res.download(filePath, fileName, (err) => {
-            if (err) {
-                console.error('Error sending file:', err);
-                res.status(500).json({ error: 'Failed to send MP4 file' });
-            } else {
-                console.log(`MP4 file sent successfully in ${Date.now() - startTime} ms`);
-            }
-        });
-
-        res.on('finish', () => {
-            fs.unlink(filePath, (err) => {
+            res.download(filePath, fileName, (err) => {
                 if (err) {
-                    console.error('Error deleting file:', err);
+                    console.error('Error sending file:', err);
+                    res.status(500).json({ error: 'Failed to send MP4 file' });
                 } else {
-                    console.log('Temporary MP4 file deleted successfully.');
+                    console.log(`MP4 file sent successfully: ${fileName}`);
                 }
+            });
+
+            res.on('finish', () => {
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        console.error('Error deleting file:', err);
+                    } else {
+                        console.log(`Temporary MP4 file deleted: ${fileName}`);
+                    }
+                });
             });
         });
     })
