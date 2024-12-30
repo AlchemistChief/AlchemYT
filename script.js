@@ -18,23 +18,9 @@ fetch('data.json')
 
         let savedUrl = null;
 
-        // Cache to store downloaded files by URL
-        const fileCache = {
-            mp3: {},
-            mp4: {}
-        };
-
-        // Function to check for Blob in cache and download if available
-        function downloadBlob(blob, filename) {
-            const objectURL = URL.createObjectURL(blob);
-            const anchor = document.createElement('a');
-            anchor.href = objectURL;
-            anchor.download = filename;
-            document.body.appendChild(anchor);
-            anchor.click();
-            document.body.removeChild(anchor);
-            URL.revokeObjectURL(objectURL); // Release the object URL after download
-        }
+        // Track downloaded videos
+        const downloadedMp3 = new Set();
+        const downloadedMp4 = new Set();
 
         function normalizeYouTubeUrl(url) {
             try {
@@ -51,56 +37,108 @@ fetch('data.json')
             return null;
         }
 
-        fetchInfoBtn.addEventListener('click', () => {
-            const rawUrl = urlInput.value.trim();
-            const normalizedUrl = normalizeYouTubeUrl(rawUrl);
-
-            if (normalizedUrl) {
-                savedUrl = normalizedUrl;
-                // Fetch video info from YouTube API and handle response...
+        function extractVideoId(url) {
+            try {
+                const urlObj = new URL(url);
+                return urlObj.searchParams.get('v') || urlObj.pathname.split('/')[1];
+            } catch {
+                return null;
             }
-        });
+        }
 
-        // Helper function to add file to the respective table
-        function addToTable(type, videoUrl, fileBlob) {
+        function parseDuration(duration) {
+            const regex = /^PT(\d+H)?(\d+M)?(\d+S)?$/;
+            const match = duration.match(regex);
+
+            const hours = match[1] ? parseInt(match[1].replace('H', ''), 10) : 0;
+            const minutes = match[2] ? parseInt(match[2].replace('M', ''), 10) : 0;
+            const seconds = match[3] ? parseInt(match[3].replace('S', ''), 10) : 0;
+
+            let timeString = '';
+            if (hours > 0) timeString += `${hours} hour${hours > 1 ? 's' : ''} `;
+            if (minutes > 0) timeString += `${minutes} minute${minutes > 1 ? 's' : ''} `;
+            if (seconds > 0) timeString += `${seconds} second${seconds > 1 ? 's' : ''}`;
+
+            return timeString.trim();
+        }
+
+        function addToTable(type, videoUrl, videoTitle) {
             const table = type === 'mp3' ? mp3Table : mp4Table;
             const row = table.insertRow();
             const videoCell = row.insertCell(0);
             const downloadCell = row.insertCell(1);
 
-            videoCell.textContent = videoUrl;  // Display URL (or use a more descriptive name if preferred)
+            videoCell.textContent = videoTitle;
             const downloadButton = document.createElement('button');
             downloadButton.textContent = `Download ${type.toUpperCase()}`;
             downloadButton.onclick = () => {
-                downloadBlob(fileBlob, `${videoUrl.split('?')[1]}.${type}`);
+                window.location.href = `${apiBaseUrl}/${type}?url=${encodeURIComponent(videoUrl)}`;
             };
             downloadCell.appendChild(downloadButton);
         }
 
+        fetchInfoBtn.addEventListener('click', () => {
+            const rawUrl = urlInput.value.trim();
+            const normalizedUrl = normalizeYouTubeUrl(rawUrl);
+            const videoId = extractVideoId(rawUrl);
+
+            if (normalizedUrl && videoId) {
+                // Save the URL for future use
+                savedUrl = normalizedUrl;
+
+                // Set embed URL immediately and make embed visible
+                videoEmbedElem.src = `https://www.youtube.com/embed/${videoId}`;
+                videoEmbedElem.style.display = 'block'; // Make sure it's visible immediately
+                videoContainer.style.display = 'flex';
+                videoContainer.style.height = 'auto';
+                videoContainer.classList.add('visible');
+
+                // Call YouTube API to get video info
+                const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails&key=${apiKey}`;
+
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Fetched video info:', data);  // Log the whole API response
+
+                        if (data.items && data.items.length > 0) {
+                            const videoData = data.items[0];
+
+                            titleElem.textContent = `${videoData.snippet.title}`;
+                            durationElem.textContent = `${parseDuration(videoData.contentDetails.duration)}`;
+
+                            videoContainer.style.display = 'flex';
+                            videoContainer.style.height = 'auto';
+                            videoContainer.classList.add('visible');
+                            errorElem.textContent = '';
+                        } else {
+                            errorElem.textContent = 'Failed to fetch video info. Video not found.';
+                        }
+                    })
+                    .catch(() => {
+                        console.error('Error fetching video info');
+                        videoContainer.style.height = '0';
+                        videoContainer.style.opacity = '0';
+                        videoContainer.classList.remove('visible');
+                        errorElem.textContent = 'Failed to fetch video info. Please check the URL.';
+                    });
+            } else {
+                errorElem.textContent = 'Please enter a valid YouTube URL.';
+            }
+        });
+
         downloadMp3Btn.addEventListener('click', () => {
             if (savedUrl) {
-                if (fileCache.mp3[savedUrl]) {
+                if (downloadedMp3.has(savedUrl)) {
                     console.log('MP3 already downloaded, serving from cache...');
-                    const cachedBlob = fileCache.mp3[savedUrl].file;
-                    downloadBlob(cachedBlob, `${savedUrl.split('?')[1]}.mp3`);
                     return;
                 }
 
                 console.log('Requested MP3 download for URL:', savedUrl);
-                fetch(`${apiBaseUrl}/mp3?url=${encodeURIComponent(savedUrl)}`)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        // Cache the Blob with savedUrl as the key and mp3 extension
-                        fileCache.mp3[savedUrl] = {
-                            file: blob,
-                            extension: 'mp3'
-                        };
-                        addToTable('mp3', savedUrl, blob);  // Add to table with button to download
-                        downloadBlob(blob, `${savedUrl.split('?')[1]}.mp3`);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching MP3:', error);
-                    });
+                window.location.href = `${apiBaseUrl}/mp3?url=${encodeURIComponent(savedUrl)}`;
+                
+                downloadedMp3.add(savedUrl);  // Add to cache
+                addToTable('mp3', savedUrl, titleElem.textContent);  // Add to table
             } else {
                 errorElem.textContent = 'Please fetch video info first.';
             }
@@ -108,28 +146,16 @@ fetch('data.json')
 
         downloadMp4Btn.addEventListener('click', () => {
             if (savedUrl) {
-                if (fileCache.mp4[savedUrl]) {
+                if (downloadedMp4.has(savedUrl)) {
                     console.log('MP4 already downloaded, serving from cache...');
-                    const cachedBlob = fileCache.mp4[savedUrl].file;
-                    downloadBlob(cachedBlob, `${savedUrl.split('?')[1]}.mp4`);
                     return;
                 }
 
                 console.log('Requested MP4 download for URL:', savedUrl);
-                fetch(`${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}`)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        // Cache the Blob with savedUrl as the key and mp4 extension
-                        fileCache.mp4[savedUrl] = {
-                            file: blob,
-                            extension: 'mp4'
-                        };
-                        addToTable('mp4', savedUrl, blob);  // Add to table with button to download
-                        downloadBlob(blob, `${savedUrl.split('?')[1]}.mp4`);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching MP4:', error);
-                    });
+                window.location.href = `${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}`;
+                
+                downloadedMp4.add(savedUrl);  // Add to cache
+                addToTable('mp4', savedUrl, titleElem.textContent);  // Add to table
             } else {
                 errorElem.textContent = 'Please fetch video info first.';
             }
@@ -137,11 +163,8 @@ fetch('data.json')
 
         // Clear cached data when the tab is closed
         window.addEventListener('beforeunload', () => {
-            for (let type in fileCache) {
-                for (let key in fileCache[type]) {
-                    delete fileCache[type][key];  // Clear the cache
-                }
-            }
+            downloadedMp3.clear();
+            downloadedMp4.clear();
         });
     })
     .catch(error => {
