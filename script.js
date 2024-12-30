@@ -84,19 +84,6 @@ fetch('data.json')
 				errorElem.textContent = 'Please enter a valid YouTube URL.';
 			}
 		});
-
-		// Event listener for the Download button inside video container
-		document.getElementById('downloadBtn').addEventListener('click', () => {
-			const rawUrl = urlInput.value.trim();
-			const normalizedUrl = normalizeYouTubeUrl(rawUrl);
-
-			if (normalizedUrl) {
-				console.log('Started download for URL:', normalizedUrl);
-				window.location.href = `${apiBaseUrl}/download?url=${encodeURIComponent(normalizedUrl)}`;
-			} else {
-				errorElem.textContent = 'Please enter a valid YouTube URL.';
-			}
-		});
 	})
 	.catch(() => {
 		alert('Failed to load API base URL.');
