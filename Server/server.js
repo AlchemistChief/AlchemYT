@@ -35,18 +35,22 @@ function sanitizeFileName(filename) {
     return filename.replace(/[\\/:*?"<>|]/g, '_'); // Replace illegal characters
 }
 
-// Function to delete files after 30 seconds
-function scheduleFileDeletion(filePath, fileName) {
+function scheduleFileDeletion(filePath, fileName, videoUrl) {
     setTimeout(() => {
         fs.unlink(filePath, (err) => {
             if (err) {
                 console.error('Error deleting file:', err);
             } else {
                 console.log(`Temporary file deleted: ${fileName}`);
+                
+                // Remove the file from the cache after deletion
+                delete fileCache[videoUrl];
+                console.log(`Cache entry removed for: ${videoUrl}`);
             }
         });
-    }, 60000); // Delete after 30 seconds
+    }, 60000); // Delete after 60 seconds
 }
+
 
 // Routes for downloading MP3 and MP4
 app.get('/mp3', (req, res) => {
