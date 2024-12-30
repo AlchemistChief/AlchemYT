@@ -1,4 +1,0 @@
-.env
-/Server/cookies.txt
-*.log
-*.DS_Store

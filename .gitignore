@@ -1,2 +1,4 @@
 .env
-.txt
+Server/cookies.txt
+*.log
+*.DS_Store
