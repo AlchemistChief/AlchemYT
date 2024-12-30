@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-const { create: createYoutubeDl } = require('youtube-dl-exec')
-const youtubedl = createYoutubeDl(path.resolve(__dirname, '.bin', 'yt-dlp.exe'));
 const path = require('path');
 const fs = require('fs');
+const { create: createYoutubeDl } = require('youtube-dl-exec')
+const youtubedl = createYoutubeDl(path.resolve(__dirname, '.bin', 'yt-dlp.exe'));
 
 const app = express();
 const port = process.env.PORT || 3000;
