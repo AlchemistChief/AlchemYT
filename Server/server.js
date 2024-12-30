@@ -65,14 +65,22 @@ app.get('/mp3', (req, res) => {
         console.log(`Download completed in ${downloadEnd - downloadStart} ms`);
 
         res.download(filePath, 'audio.mp3', (err) => {
-            const responseEnd = Date.now();
             if (err) {
                 console.error('Error sending file:', err);
                 res.status(500).json({ error: 'Failed to send MP3 file' });
             } else {
-                console.log(`MP3 file sent successfully in ${responseEnd - startTime} ms`);
+                console.log(`MP3 file sent successfully in ${Date.now() - startTime} ms`);
             }
-            fs.unlinkSync(filePath);
+        });
+
+        res.on('finish', () => {
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error('Error deleting file:', err);
+                } else {
+                    console.log('Temporary MP3 file deleted successfully.');
+                }
+            });
         });
     })
     .catch((error) => {
@@ -106,14 +114,22 @@ app.get('/mp4', (req, res) => {
         console.log(`Download completed in ${downloadEnd - downloadStart} ms`);
 
         res.download(filePath, 'video.mp4', (err) => {
-            const responseEnd = Date.now();
             if (err) {
                 console.error('Error sending file:', err);
                 res.status(500).json({ error: 'Failed to send MP4 file' });
             } else {
-                console.log(`MP4 file sent successfully in ${responseEnd - startTime} ms`);
+                console.log(`MP4 file sent successfully in ${Date.now() - startTime} ms`);
             }
-            fs.unlinkSync(filePath);
+        });
+
+        res.on('finish', () => {
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error('Error deleting file:', err);
+                } else {
+                    console.log('Temporary MP4 file deleted successfully.');
+                }
+            });
         });
     })
     .catch((error) => {
