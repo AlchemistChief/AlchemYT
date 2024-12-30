@@ -48,8 +48,6 @@ app.get('/mp3', (req, res) => {
     }
     console.log(`MP3 download endpoint hit. URL: ${videoUrl}`);
 
-    const filePath = path.resolve(__dirname, 'downloads', 'audio.mp3');
-
     const downloadStart = Date.now();
     youtubedl(videoUrl, {
         format: 'bestaudio',
@@ -58,13 +56,16 @@ app.get('/mp3', (req, res) => {
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
-        output: filePath,
+        getFilename: true,
     })
-    .then(() => {
+    .then((output) => {
+        const fileName = output.match(/Destination: (.+)$/m)[1];
+        const filePath = path.resolve(__dirname, 'downloads', fileName);
+
         const downloadEnd = Date.now();
         console.log(`Download completed in ${downloadEnd - downloadStart} ms`);
 
-        res.download(filePath, 'audio.mp3', (err) => {
+        res.download(filePath, fileName, (err) => {
             if (err) {
                 console.error('Error sending file:', err);
                 res.status(500).json({ error: 'Failed to send MP3 file' });
@@ -97,8 +98,6 @@ app.get('/mp4', (req, res) => {
     }
     console.log(`MP4 download endpoint hit. URL: ${videoUrl}`);
 
-    const filePath = path.resolve(__dirname, 'downloads', 'video.mp4');
-
     const downloadStart = Date.now();
     youtubedl(videoUrl, {
         format: 'bestvideo+bestaudio',
@@ -107,13 +106,16 @@ app.get('/mp4', (req, res) => {
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
-        output: filePath,
+        getFilename: true,
     })
-    .then(() => {
+    .then((output) => {
+        const fileName = output.match(/Destination: (.+)$/m)[1];
+        const filePath = path.resolve(__dirname, 'downloads', fileName);
+
         const downloadEnd = Date.now();
         console.log(`Download completed in ${downloadEnd - downloadStart} ms`);
 
-        res.download(filePath, 'video.mp4', (err) => {
+        res.download(filePath, fileName, (err) => {
             if (err) {
                 console.error('Error sending file:', err);
                 res.status(500).json({ error: 'Failed to send MP4 file' });
