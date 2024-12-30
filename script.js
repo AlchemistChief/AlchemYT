@@ -13,8 +13,18 @@ fetch('data.json')
 		const durationElem = document.getElementById('duration');
 		const errorElem = document.getElementById('error');
 		const videoContainer = document.getElementById('videoContainer');
+		const progressBar = document.getElementById('progressBar');  // The progress bar element
 
 		let savedUrl = null;
+
+		// Set up WebSocket for progress updates
+		const ws = new WebSocket('ws://localhost:4000');  // Update the URL if needed
+		ws.onmessage = function (event) {
+			const data = JSON.parse(event.data);
+			if (data.progress) {
+				updateProgressBar(data.progress);  // Update the progress bar with received data
+			}
+		};
 
 		function normalizeYouTubeUrl(url) {
 			try {
@@ -38,6 +48,11 @@ fetch('data.json')
 			} catch {
 				return null;
 			}
+		}
+
+		function updateProgressBar(progress) {
+			progressBar.style.width = `${progress}%`;  // Update the width of the progress bar
+			progressBar.innerText = `${Math.round(progress)}%`;  // Display percentage inside the progress bar
 		}
 
 		fetchInfoBtn.addEventListener('click', () => {
@@ -91,6 +106,10 @@ fetch('data.json')
 		downloadMp3Btn.addEventListener('click', () => {
 			if (savedUrl) {
 				console.log('Requested MP3 download for URL:', savedUrl);
+				// Display progress bar
+				progressBar.style.width = '0%';
+				progressBar.innerText = '0%';
+				// Trigger the download request
 				window.location.href = `${apiBaseUrl}/mp3?url=${encodeURIComponent(savedUrl)}`;
 			} else {
 				errorElem.textContent = 'Please fetch video info first.';
@@ -100,6 +119,10 @@ fetch('data.json')
 		downloadMp4Btn.addEventListener('click', () => {
 			if (savedUrl) {
 				console.log('Requested MP4 download for URL:', savedUrl);
+				// Display progress bar
+				progressBar.style.width = '0%';
+				progressBar.innerText = '0%';
+				// Trigger the download request
 				window.location.href = `${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}`;
 			} else {
 				errorElem.textContent = 'Please fetch video info first.';
