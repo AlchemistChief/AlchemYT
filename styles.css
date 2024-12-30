@@ -161,28 +161,6 @@ button {
     margin-top: 15px;
 }
 
-/* Progress Bar Styling */
-#progressContainer {
-    width: 100%;
-    background-color: #f3f3f3;
-    margin-top: 15px;
-    border-radius: 12px;
-    height: 25px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-#progressBar {
-    width: 0%;
-    height: 100%;
-    background-color: #4caf50;
-    color: white;
-    text-align: center;
-    line-height: 25px;
-    font-weight: bold;
-    border-radius: 12px;
-    transition: width 0.3s ease-in-out;
-}
-
 /* Media Queries for different screen sizes */
 @media (min-width: 576px) {
     .container {

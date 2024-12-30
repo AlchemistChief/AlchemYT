@@ -2,23 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const youtubedl = require('youtube-dl-exec');
 const path = require('path');
-const fs = require('fs');
-const WebSocket = require('ws');  // WebSocket for progress updates
-const https = require('https');  // For HTTPS server
+const fs = require('fs'); // <-- Add this line to import the fs module
 
 const app = express();
-const port = process.env.PORT || 3000; // Ensure the correct port is used
-
-const server = https.createServer(app); // Correct usage for Render
-const wss = new WebSocket.Server({ server }); // Make sure WebSocket is tied to the HTTPS server
-
-
-wss.on('connection', (ws) => {
-    console.log('Client connected for progress updates');
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
-});
+const port = process.env.PORT || 3000;
 
 // CORS options
 const corsOptions = {
@@ -28,13 +15,20 @@ const corsOptions = {
     optionsSuccessStatus: 200,
 };
 
-// Cookies path
+// Cookies path (set your path correctly)
 const cookiesPath = path.resolve(__dirname, 'cookies.txt');
 
+// Check if cookies file exists
+if (!fs.existsSync(cookiesPath)) {
+    console.error('Cookies file not found:', cookiesPath);
+    return;
+}
+
+// Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// MP3 download route
+// Routes for downloading MP3 and MP4
 app.get('/mp3', (req, res) => {
     const videoUrl = req.query.url;
     if (!videoUrl) {
@@ -42,35 +36,18 @@ app.get('/mp3', (req, res) => {
     }
     console.log(`MP3 download endpoint hit. URL: ${videoUrl}`);
 
-    const filePath = path.resolve(__dirname, 'downloads', 'audio.mp3');
+    const filePath = path.resolve(__dirname, 'downloads', 'audio.mp3'); // Path to save the file
 
-    const options = {
+    youtubedl(videoUrl, {
         format: 'bestaudio',
         noCheckCertificates: true,
         noWarnings: true,
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
-        cookies: cookiesPath,
-        output: filePath,
-    };
-
-    const ytdlProcess = youtubedl(videoUrl, options);
-
-    // Listen for download progress
-    ytdlProcess.stdout.on('data', (data) => {
-        const progressData = data.toString();
-        const match = progressData.match(/([0-9.]+)%/);  // Regex to extract percentage
-        if (match && match[1]) {
-            const progress = parseFloat(match[1]);
-            wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({ progress }));
-                }
-            });
-        }
-    });
-
-    ytdlProcess.on('close', () => {
+        cookies: path.resolve(__dirname, 'cookies.txt'),
+        output: filePath, // Save the file to the server
+    })
+    .then(() => {
         res.download(filePath, 'audio.mp3', (err) => {
             if (err) {
                 console.error('Error sending file:', err);
@@ -78,17 +55,15 @@ app.get('/mp3', (req, res) => {
             } else {
                 console.log('MP3 file sent successfully');
             }
-            fs.unlinkSync(filePath);  // Clean up the downloaded file
+            fs.unlinkSync(filePath);  // Remove the file after sending it
         });
-    });
-
-    ytdlProcess.on('error', (error) => {
+    })
+    .catch((error) => {
         console.error('Failed to download video:', error);
         res.status(500).json({ error: 'Failed to download MP3', details: error.message });
     });
 });
 
-// MP4 download route (similar logic)
 app.get('/mp4', (req, res) => {
     const videoUrl = req.query.url;
     if (!videoUrl) {
@@ -96,34 +71,18 @@ app.get('/mp4', (req, res) => {
     }
     console.log(`MP4 download endpoint hit. URL: ${videoUrl}`);
 
-    const filePath = path.resolve(__dirname, 'downloads', 'video.mp4');
+    const filePath = path.resolve(__dirname, 'downloads', 'video.mp4'); // Path to save the file
 
-    const options = {
+    youtubedl(videoUrl, {
         format: 'bestvideo+bestaudio',
         noCheckCertificates: true,
         noWarnings: true,
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
-        cookies: cookiesPath,
-        output: filePath,
-    };
-
-    const ytdlProcess = youtubedl(videoUrl, options);
-
-    ytdlProcess.stdout.on('data', (data) => {
-        const progressData = data.toString();
-        const match = progressData.match(/([0-9.]+)%/);
-        if (match && match[1]) {
-            const progress = parseFloat(match[1]);
-            wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({ progress }));
-                }
-            });
-        }
-    });
-
-    ytdlProcess.on('close', () => {
+        cookies: path.resolve(__dirname, 'cookies.txt'),
+        output: filePath, // Save the file to the server
+    })
+    .then(() => {
         res.download(filePath, 'video.mp4', (err) => {
             if (err) {
                 console.error('Error sending file:', err);
@@ -131,17 +90,16 @@ app.get('/mp4', (req, res) => {
             } else {
                 console.log('MP4 file sent successfully');
             }
-            fs.unlinkSync(filePath);  // Clean up the downloaded file
+            fs.unlinkSync(filePath);  // Remove the file after sending it
         });
-    });
-
-    ytdlProcess.on('error', (error) => {
+    })
+    .catch((error) => {
         console.error('Failed to download video:', error);
         res.status(500).json({ error: 'Failed to download MP4', details: error.message });
     });
 });
 
 // Start server
-server.listen(port, () => {
-    console.log(`Server running at https://localhost:${port}`);
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
