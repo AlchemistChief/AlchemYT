@@ -18,9 +18,11 @@ fetch('data.json')
 
         let savedUrl = null;
 
-        // Track downloaded videos
-        const downloadedMp3 = new Set();
-        const downloadedMp4 = new Set();
+        // Cache for downloaded videos (MP3 and MP4)
+        const fileCache = {
+            mp3: {},
+            mp4: {}
+        };
 
         function normalizeYouTubeUrl(url) {
             try {
@@ -62,19 +64,31 @@ fetch('data.json')
             return timeString.trim();
         }
 
-        function addToTable(type, videoUrl, videoTitle) {
+        function addToTable(type, videoUrl, videoTitle, fileBlob, extension) {
             const table = type === 'mp3' ? mp3Table : mp4Table;
             const row = table.insertRow();
             const videoCell = row.insertCell(0);
             const downloadCell = row.insertCell(1);
 
             videoCell.textContent = videoTitle;
+
             const downloadButton = document.createElement('button');
             downloadButton.textContent = `Download ${type.toUpperCase()}`;
             downloadButton.onclick = () => {
-                window.location.href = `${apiBaseUrl}/${type}?url=${encodeURIComponent(videoUrl)}`;
+                downloadBlob(fileBlob, `${videoUrl.split('?')[1]}.${extension}`);
             };
             downloadCell.appendChild(downloadButton);
+        }
+
+        function downloadBlob(blob, filename) {
+            const objectURL = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = objectURL;
+            anchor.download = filename;
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+            URL.revokeObjectURL(objectURL); // Release the object URL after download
         }
 
         fetchInfoBtn.addEventListener('click', () => {
@@ -99,7 +113,7 @@ fetch('data.json')
                 fetch(apiUrl)
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Fetched video info:', data);  // Log the whole API response
+                        console.log('Fetched video info:', data);
 
                         if (data.items && data.items.length > 0) {
                             const videoData = data.items[0];
@@ -129,16 +143,27 @@ fetch('data.json')
 
         downloadMp3Btn.addEventListener('click', () => {
             if (savedUrl) {
-                if (downloadedMp3.has(savedUrl)) {
+                if (fileCache.mp3[savedUrl]) {
                     console.log('MP3 already downloaded, serving from cache...');
+                    const cachedBlob = fileCache.mp3[savedUrl].file;
+                    downloadBlob(cachedBlob, `${savedUrl.split('?')[1]}.mp3`);
                     return;
                 }
 
                 console.log('Requested MP3 download for URL:', savedUrl);
-                window.location.href = `${apiBaseUrl}/mp3?url=${encodeURIComponent(savedUrl)}`;
-                
-                downloadedMp3.add(savedUrl);  // Add to cache
-                addToTable('mp3', savedUrl, titleElem.textContent);  // Add to table
+                fetch(`${apiBaseUrl}/mp3?url=${encodeURIComponent(savedUrl)}`)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        fileCache.mp3[savedUrl] = {
+                            file: blob,
+                            extension: 'mp3'
+                        };
+                        addToTable('mp3', savedUrl, titleElem.textContent, blob, 'mp3');
+                        downloadBlob(blob, `${savedUrl.split('?')[1]}.mp3`);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching MP3:', error);
+                    });
             } else {
                 errorElem.textContent = 'Please fetch video info first.';
             }
@@ -146,16 +171,27 @@ fetch('data.json')
 
         downloadMp4Btn.addEventListener('click', () => {
             if (savedUrl) {
-                if (downloadedMp4.has(savedUrl)) {
+                if (fileCache.mp4[savedUrl]) {
                     console.log('MP4 already downloaded, serving from cache...');
+                    const cachedBlob = fileCache.mp4[savedUrl].file;
+                    downloadBlob(cachedBlob, `${savedUrl.split('?')[1]}.mp4`);
                     return;
                 }
 
                 console.log('Requested MP4 download for URL:', savedUrl);
-                window.location.href = `${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}`;
-                
-                downloadedMp4.add(savedUrl);  // Add to cache
-                addToTable('mp4', savedUrl, titleElem.textContent);  // Add to table
+                fetch(`${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}`)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        fileCache.mp4[savedUrl] = {
+                            file: blob,
+                            extension: 'mp4'
+                        };
+                        addToTable('mp4', savedUrl, titleElem.textContent, blob, 'mp4');
+                        downloadBlob(blob, `${savedUrl.split('?')[1]}.mp4`);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching MP4:', error);
+                    });
             } else {
                 errorElem.textContent = 'Please fetch video info first.';
             }
@@ -163,8 +199,11 @@ fetch('data.json')
 
         // Clear cached data when the tab is closed
         window.addEventListener('beforeunload', () => {
-            downloadedMp3.clear();
-            downloadedMp4.clear();
+            for (let type in fileCache) {
+                for (let key in fileCache[type]) {
+                    delete fileCache[type][key];  // Clear the cache
+                }
+            }
         });
     })
     .catch(error => {
