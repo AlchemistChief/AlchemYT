@@ -93,7 +93,7 @@ h1 {
     background-color: rgba(17, 18, 21, 1);
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    width: 90%;
+    width: 80%;
     max-width: 600px;
     height: auto;
     margin-top: 20px;
@@ -171,8 +171,12 @@ button {
 }
 
 /* Media Queries for different screen sizes */
+/* Media Queries for different screen sizes for .container */
 @media (min-width: 576px) {
     .container {
+        max-width: 576px;
+    }
+    #videoContainer {
         max-width: 576px;
     }
 }
@@ -181,10 +185,16 @@ button {
     .container {
         max-width: 768px;
     }
+    #videoContainer {
+        max-width: 768px;
+    }
 }
 
 @media (min-width: 992px) {
     .container {
+        max-width: 992px;
+    }
+    #videoContainer {
         max-width: 992px;
     }
 }
@@ -193,10 +203,17 @@ button {
     .container {
         max-width: 1200px;
     }
+    #videoContainer {
+        max-width: 1200px;
+    }
 }
 
 @media (min-width: 1600px) {
     .container {
         max-width: 1600px;
     }
+    #videoContainer {
+        max-width: 1600px;
+    }
 }
+
