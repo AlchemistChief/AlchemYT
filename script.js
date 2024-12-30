@@ -69,20 +69,22 @@ fetch('data.json')
         function addToTable(type, videoUrl, videoTitle, fileBlob, extension) {
             const table = type === 'mp3' ? mp3Table : mp4Table;
             const tableContainer = type === 'mp3' ? mp3TableContainer : mp4TableContainer;
-
+        
             const row = table.insertRow();
             const videoCell = row.insertCell(0);
             const downloadCell = row.insertCell(1);
-
+        
             videoCell.textContent = videoTitle;
-
+        
             const downloadButton = document.createElement('button');
             downloadButton.textContent = `Download ${type.toUpperCase()}`;
             downloadButton.onclick = () => {
-                downloadBlob(fileBlob, `${videoUrl.split('?')[1]}.${extension}`);
+                // Use videoTitle for the filename instead of the URL
+                const sanitizedTitle = videoTitle.replace(/[\/\\?%*:|"<>]/g, '-'); // Remove invalid characters for filename
+                downloadBlob(fileBlob, `${sanitizedTitle}.${extension}`);
             };
             downloadCell.appendChild(downloadButton);
-
+        
             // Make the container visible if it's not already
             if (!tableContainer.classList.contains('visible')) {
                 tableContainer.classList.add('visible');
@@ -155,10 +157,11 @@ fetch('data.json')
                 if (fileCache.mp3[savedUrl]) {
                     console.log('MP3 already downloaded, serving from cache...');
                     const cachedBlob = fileCache.mp3[savedUrl].file;
-                    downloadBlob(cachedBlob, `${savedUrl.split('?')[1]}.mp3`);
+                    // Use title instead of URL
+                    downloadBlob(cachedBlob, `${titleElem.textContent}.mp3`);
                     return;
                 }
-
+        
                 console.log('Requested MP3 download for URL:', savedUrl);
                 fetch(`${apiBaseUrl}/mp3?url=${encodeURIComponent(savedUrl)}`)
                     .then(response => response.blob())
@@ -168,7 +171,8 @@ fetch('data.json')
                             extension: 'mp3'
                         };
                         addToTable('mp3', savedUrl, titleElem.textContent, blob, 'mp3');
-                        downloadBlob(blob, `${savedUrl.split('?')[1]}.mp3`);
+                        // Use title instead of URL
+                        downloadBlob(blob, `${titleElem.textContent}.mp3`);
                     })
                     .catch(error => {
                         console.error('Error fetching MP3:', error);
@@ -177,16 +181,17 @@ fetch('data.json')
                 errorElem.textContent = 'Please fetch video info first.';
             }
         });
-
+        
         downloadMp4Btn.addEventListener('click', () => {
             if (savedUrl) {
                 if (fileCache.mp4[savedUrl]) {
                     console.log('MP4 already downloaded, serving from cache...');
                     const cachedBlob = fileCache.mp4[savedUrl].file;
-                    downloadBlob(cachedBlob, `${savedUrl.split('?')[1]}.mp4`);
+                    // Use title instead of URL
+                    downloadBlob(cachedBlob, `${titleElem.textContent}.mp4`);
                     return;
                 }
-
+        
                 console.log('Requested MP4 download for URL:', savedUrl);
                 fetch(`${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}`)
                     .then(response => response.blob())
@@ -196,7 +201,8 @@ fetch('data.json')
                             extension: 'mp4'
                         };
                         addToTable('mp4', savedUrl, titleElem.textContent, blob, 'mp4');
-                        downloadBlob(blob, `${savedUrl.split('?')[1]}.mp4`);
+                        // Use title instead of URL
+                        downloadBlob(blob, `${titleElem.textContent}.mp4`);
                     })
                     .catch(error => {
                         console.error('Error fetching MP4:', error);
