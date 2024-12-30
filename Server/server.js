@@ -1,4 +1,3 @@
-// Updated Server.js - Debugging and Fixes for Filename Extraction
 const express = require('express');
 const cors = require('cors');
 const youtubedl = require('youtube-dl-exec');
@@ -28,30 +27,41 @@ if (!fs.existsSync(cookiesPath)) {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Signal handling
-process.on('SIGINT', () => {
-    console.log('[SIGINT] Received Signal Interrupt signal');
-    process.exit(0);
-});
-
-process.on('SIGTERM', () => {
-    console.log('[SIGTERM] Received Signal Terminate signal');
-    process.exit(0);
-});
+// Cache object to store the paths of downloaded files
+const fileCache = {};
 
 // Helper function to sanitize filenames
 function sanitizeFileName(filename) {
     return filename.replace(/[\\/:*?"<>|]/g, '_'); // Replace illegal characters
 }
 
+// Function to delete files after 30 seconds
+function scheduleFileDeletion(filePath, fileName) {
+    setTimeout(() => {
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error('Error deleting file:', err);
+            } else {
+                console.log(`Temporary file deleted: ${fileName}`);
+            }
+        });
+    }, 30000); // Delete after 30 seconds
+}
+
 // Routes for downloading MP3 and MP4
 app.get('/mp3', (req, res) => {
-    const startTime = Date.now();
     const videoUrl = req.query.url;
     if (!videoUrl) {
         return res.status(400).json({ error: 'YouTube URL is required' });
     }
     console.log(`MP3 download endpoint hit. URL: ${videoUrl}`);
+
+    // Check if file is cached
+    const cachedFile = fileCache[videoUrl];
+    if (cachedFile && cachedFile.extension === 'mp3') {
+        console.log(`Serving cached MP3 file: ${cachedFile.fileName}`);
+        return res.download(cachedFile.filePath, cachedFile.fileName);
+    }
 
     youtubedl(videoUrl, {
         format: 'bestaudio',
@@ -79,6 +89,13 @@ app.get('/mp3', (req, res) => {
         .then(() => {
             console.log(`Download completed: ${fileName}`);
 
+            // Cache the file
+            fileCache[videoUrl] = {
+                filePath,
+                fileName,
+                extension: 'mp3'
+            };
+
             res.download(filePath, fileName, (err) => {
                 if (err) {
                     console.error('Error sending file:', err);
@@ -88,15 +105,7 @@ app.get('/mp3', (req, res) => {
                 }
             });
 
-            res.on('finish', () => {
-                fs.unlink(filePath, (err) => {
-                    if (err) {
-                        console.error('Error deleting file:', err);
-                    } else {
-                        console.log(`Temporary MP3 file deleted: ${fileName}`);
-                    }
-                });
-            });
+            scheduleFileDeletion(filePath, fileName);
         });
     })
     .catch((error) => {
@@ -106,12 +115,18 @@ app.get('/mp3', (req, res) => {
 });
 
 app.get('/mp4', (req, res) => {
-    const startTime = Date.now();
     const videoUrl = req.query.url;
     if (!videoUrl) {
         return res.status(400).json({ error: 'YouTube URL is required' });
     }
     console.log(`MP4 download endpoint hit. URL: ${videoUrl}`);
+
+    // Check if file is cached
+    const cachedFile = fileCache[videoUrl];
+    if (cachedFile && cachedFile.extension === 'mp4') {
+        console.log(`Serving cached MP4 file: ${cachedFile.fileName}`);
+        return res.download(cachedFile.filePath, cachedFile.fileName);
+    }
 
     youtubedl(videoUrl, {
         format: 'bestvideo+bestaudio',
@@ -139,6 +154,13 @@ app.get('/mp4', (req, res) => {
         .then(() => {
             console.log(`Download completed: ${fileName}`);
 
+            // Cache the file
+            fileCache[videoUrl] = {
+                filePath,
+                fileName,
+                extension: 'mp4'
+            };
+
             res.download(filePath, fileName, (err) => {
                 if (err) {
                     console.error('Error sending file:', err);
@@ -148,15 +170,7 @@ app.get('/mp4', (req, res) => {
                 }
             });
 
-            res.on('finish', () => {
-                fs.unlink(filePath, (err) => {
-                    if (err) {
-                        console.error('Error deleting file:', err);
-                    } else {
-                        console.log(`Temporary MP4 file deleted: ${fileName}`);
-                    }
-                });
-            });
+            scheduleFileDeletion(filePath, fileName);
         });
     })
     .catch((error) => {
