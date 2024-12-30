@@ -11,7 +11,7 @@ const port = 3000;
 
 // CORS options
 const corsOptions = {
-    origin: ['https://alchemistchief.github.io', 'http://localhost:3000', 'http://127.0.0.1:3000'],
+    origin: ['https://alchemistchief.github.io'],
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
     optionsSuccessStatus: 200,
