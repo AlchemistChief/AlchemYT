@@ -145,7 +145,7 @@ app.get('/mp4', (req, res) => {
         const videoTitle = sanitizeFileName(info.title || 'video');
         const fileName = `${videoTitle}.mp4`;
         const filePath = path.resolve(__dirname, 'downloads', fileName);
-
+    
         youtubedl(videoUrl, {
             format: 'bestvideo+bestaudio/best',
             noCheckCertificates: true,
@@ -157,25 +157,34 @@ app.get('/mp4', (req, res) => {
         })
         .then(() => {
             console.log(`Download completed: ${fileName}`);
-
-            // Cache the file
-            fileCache[videoUrl] = {
-                filePath,
-                fileName,
-                extension: 'mp4'
-            };
-
-            res.download(filePath, fileName, (err) => {
-                if (err) {
-                    console.error('Error sending file:', err);
-                    res.status(500).json({ error: 'Failed to send MP4 file' });
-                } else {
-                    console.log(`MP4 file sent successfully: ${fileName}`);
-                }
-            });
-
-            scheduleFileDeletion(filePath, fileName);
+    
+            // Ensure the file exists before sending
+            fs.promises.stat(filePath)
+                .then(() => {
+                    // Cache the file
+                    fileCache[videoUrl] = {
+                        filePath,
+                        fileName,
+                        extension: 'mp4'
+                    };
+    
+                    res.download(filePath, fileName, (err) => {
+                        if (err) {
+                            console.error('Error sending file:', err);
+                            res.status(500).json({ error: 'Failed to send MP4 file' });
+                        } else {
+                            console.log(`MP4 file sent successfully: ${fileName}`);
+                        }
+                    });
+    
+                    scheduleFileDeletion(filePath, fileName);
+                })
+                .catch((err) => {
+                    console.error('File not found:', err);
+                    res.status(500).json({ error: 'Failed to locate MP4 file' });
+                });
         });
+    });
     })
     .catch((error) => {
         console.error('Failed to download video:', error);
