@@ -45,8 +45,9 @@ fetch('data.json')
 			const videoId = extractVideoId(rawUrl);
 
 			if (normalizedUrl && videoId) {
-				// Set embed URL immediately
+				// Set embed URL immediately and make embed visible
 				videoEmbedElem.src = `https://www.youtube.com/embed/${videoId}`;
+				videoEmbedElem.style.display = 'block'; // Make sure it's visible immediately
 
 				fetch(`${apiBaseUrl}/info?url=${encodeURIComponent(normalizedUrl)}`)
 					.then(response => response.json())
