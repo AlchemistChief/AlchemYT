@@ -18,7 +18,7 @@ fetch('data.json')
 
         let savedUrl = null;
 
-        // Table to store files as BLOBs with savedUrl as the key
+        // Cache to store downloaded files by URL
         const fileCache = {
             mp3: {},
             mp4: {}
