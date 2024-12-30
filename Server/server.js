@@ -119,17 +119,17 @@ app.get('/mp3', (req, res) => {
 });
 
 // Routes for downloading MP3 and MP4
-app.get('/mp3', (req, res) => {
+app.get('/mp4', (req, res) => {
     const videoUrl = req.query.url;
     if (!videoUrl) {
         return res.status(400).json({ error: 'YouTube URL is required' });
     }
-    console.log(`MP3 download endpoint hit. URL: ${videoUrl}`);
+    console.log(`MP4 download endpoint hit. URL: ${videoUrl}`);
 
     // Check if file is cached
     const cachedFile = fileCache[videoUrl];
-    if (cachedFile && cachedFile.extension === 'mp3') {
-        console.log(`Serving cached MP3 file: ${cachedFile.fileName}`);
+    if (cachedFile && cachedFile.extension === 'mp4') {
+        console.log(`Serving cached MP4 file: ${cachedFile.fileName}`);
         return res.download(cachedFile.filePath, cachedFile.fileName);
     }
 
