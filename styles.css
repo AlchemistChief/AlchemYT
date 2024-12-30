@@ -12,9 +12,10 @@
     height: 10vh;
     width: 100%;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between; /* Updated to space items */
     align-items: center;
     padding-left: 20px;
+    padding-right: 20px; /* Ensure space for the button */
     font-weight: bold;
     font-size: 20px;
     position: fixed;
@@ -40,6 +41,22 @@
 
 .dot {
     color: rgb(255, 0, 0);
+}
+
+/* Terms button styling */
+.terms-button {
+    background-color: rgb(108, 92, 231);
+    color: white;
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+}
+
+.terms-button:hover {
+    background-color: #5e47a6;
 }
 
 /* Body styling */
@@ -224,7 +241,6 @@ button:hover {
     opacity: 1;
 }
 
-
 /* Media Queries for responsiveness */
 @media (min-width: 576px) {
     .container {
@@ -249,24 +265,4 @@ button:hover {
         max-width: 992px;
     }
     #videoContainer {
-        max-width: 992px;
-    }
-}
-
-@media (min-width: 1200px) {
-    .container {
-        max-width: 1200px;
-    }
-    #videoContainer {
-        max-width: 1200px;
-    }
-}
-
-@media (min-width: 1600px) {
-    .container {
-        max-width: 1600px;
-    }
-    #videoContainer {
-        max-width: 1600px;
-    }
-}
+        max-wi
