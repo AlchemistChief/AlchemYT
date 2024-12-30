@@ -15,6 +15,8 @@ fetch('data.json')
         const videoContainer = document.getElementById('videoContainer');
         const mp3Table = document.getElementById('mp3Table');
         const mp4Table = document.getElementById('mp4Table');
+        const mp3TableContainer = document.getElementById('mp3TableContainer');
+        const mp4TableContainer = document.getElementById('mp4TableContainer');
 
         let savedUrl = null;
 
@@ -66,6 +68,8 @@ fetch('data.json')
 
         function addToTable(type, videoUrl, videoTitle, fileBlob, extension) {
             const table = type === 'mp3' ? mp3Table : mp4Table;
+            const tableContainer = type === 'mp3' ? mp3TableContainer : mp4TableContainer;
+
             const row = table.insertRow();
             const videoCell = row.insertCell(0);
             const downloadCell = row.insertCell(1);
@@ -78,6 +82,11 @@ fetch('data.json')
                 downloadBlob(fileBlob, `${videoUrl.split('?')[1]}.${extension}`);
             };
             downloadCell.appendChild(downloadButton);
+
+            // Make the container visible if it's not already
+            if (!tableContainer.classList.contains('visible')) {
+                tableContainer.classList.add('visible');
+            }
         }
 
         function downloadBlob(blob, filename) {
