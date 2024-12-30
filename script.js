@@ -9,7 +9,7 @@ fetch('data.json')
 		const downloadMp4Btn = document.getElementById('downloadMp4Btn');
 		const videoInfoDiv = document.getElementById('videoInfo');
 		const titleElem = document.getElementById('title');
-		const thumbnailElem = document.getElementById('thumbnail');
+		const videoEmbedElem = document.getElementById('videoEmbed');
 		const durationElem = document.getElementById('duration');
 		const descriptionElem = document.getElementById('description');
 		const errorElem = document.getElementById('error');
@@ -30,17 +30,27 @@ fetch('data.json')
 			return null;
 		}
 
+		function extractVideoId(url) {
+			try {
+				const urlObj = new URL(url);
+				return urlObj.searchParams.get('v') || urlObj.pathname.split('/')[1];
+			} catch {
+				return null;
+			}
+		}
+
 		fetchInfoBtn.addEventListener('click', () => {
 			const rawUrl = urlInput.value.trim();
 			const normalizedUrl = normalizeYouTubeUrl(rawUrl);
+			const videoId = extractVideoId(rawUrl);
 
-			if (normalizedUrl) {
+			if (normalizedUrl && videoId) {
 				fetch(`${apiBaseUrl}/info?url=${encodeURIComponent(normalizedUrl)}`)
 					.then(response => response.json())
 					.then(data => {
 						console.log('Fetched video info:', data);
 						titleElem.textContent = `Title: ${data.title}`;
-						thumbnailElem.src = data.thumbnail;
+						videoEmbedElem.src = `https://www.youtube.com/embed/${videoId}`;
 						durationElem.textContent = `Duration: ${data.duration}`;
 						descriptionElem.textContent = `Description: ${data.description}`;
 
@@ -89,4 +99,3 @@ fetch('data.json')
 		console.error('Error fetching data.json:', error);
 		alert('Failed to load API base URL.');
 	});
-	
