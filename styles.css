@@ -80,6 +80,14 @@ h1 {
     margin-bottom: 10px;
     text-align: center;
 }
+h2 {
+    color: white;
+    font-weight: 900;
+    font-size: 200%;
+    margin-top: 10vh;
+    margin-bottom: 10px;
+    text-align: center;
+}
 
 /* Container styling */
 .container {
