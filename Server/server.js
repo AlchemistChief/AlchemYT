@@ -43,7 +43,7 @@ function scheduleFileDeletion(filePath, fileName, videoUrl) {
                 console.error('Error deleting file:', err);
             } else {
                 console.log(`Temporary file deleted: ${fileName}`);
-                
+
                 // Remove the file from the cache after deletion
                 delete fileCache[videoUrl];
                 console.log(`Cache entry removed for: ${videoUrl}`);
@@ -109,7 +109,7 @@ app.get('/mp3', (req, res) => {
                 }
             });
 
-            scheduleFileDeletion(filePath, fileName);
+            scheduleFileDeletion(filePath, fileName, videoUrl);
         });
     })
     .catch((error) => {
@@ -118,35 +118,36 @@ app.get('/mp3', (req, res) => {
     });
 });
 
-app.get('/mp4', (req, res) => {
+// Routes for downloading MP3 and MP4
+app.get('/mp3', (req, res) => {
     const videoUrl = req.query.url;
     if (!videoUrl) {
         return res.status(400).json({ error: 'YouTube URL is required' });
     }
-    console.log(`MP4 download endpoint hit. URL: ${videoUrl}`);
+    console.log(`MP3 download endpoint hit. URL: ${videoUrl}`);
 
     // Check if file is cached
     const cachedFile = fileCache[videoUrl];
-    if (cachedFile && cachedFile.extension === 'mp4') {
-        console.log(`Serving cached MP4 file: ${cachedFile.fileName}`);
+    if (cachedFile && cachedFile.extension === 'mp3') {
+        console.log(`Serving cached MP3 file: ${cachedFile.fileName}`);
         return res.download(cachedFile.filePath, cachedFile.fileName);
     }
 
-    // Get video info first
     youtubedl(videoUrl, {
         noCheckCertificates: true,
         noWarnings: true,
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
+        dumpSingleJson: true,
     })
     .then((info) => {
-        const videoTitle = sanitizeFileName(info.title);
+        const videoTitle = sanitizeFileName(info.title || 'video');
         const fileName = `${videoTitle}.mp4`;
         const filePath = path.resolve(__dirname, 'downloads', fileName);
 
         youtubedl(videoUrl, {
-            format: 'bestvideo+bestaudio/best',
+            format: 'bestvideo',
             noCheckCertificates: true,
             noWarnings: true,
             preferFreeFormats: true,
@@ -174,15 +175,11 @@ app.get('/mp4', (req, res) => {
             });
 
             scheduleFileDeletion(filePath, fileName, videoUrl);
-        })
-        .catch((error) => {
-            console.error('Failed to download video:', error);
-            res.status(500).json({ error: 'Failed to download MP4', details: error.message });
         });
     })
     .catch((error) => {
-        console.error('Failed to fetch video info:', error);
-        res.status(500).json({ error: 'Failed to fetch video info', details: error.message });
+        console.error('Failed to download video:', error);
+        res.status(500).json({ error: 'Failed to download MP4', details: error.message });
     });
 });
 
