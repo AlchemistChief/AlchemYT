@@ -1,14 +1,13 @@
 fetch('data.json')
 	.then(response => response.json())
 	.then(data => {
-		const apiKey = data.YOUTUBE_API_KEY; // The API key is now stored in data.json
 		const apiBaseUrl = data.apiBaseUrl;
+		const apiKey = data.YOUTUBE_API_KEY;
 
 		const urlInput = document.getElementById('url');
 		const fetchInfoBtn = document.getElementById('fetchInfoBtn');
 		const downloadMp3Btn = document.getElementById('downloadMp3Btn');
 		const downloadMp4Btn = document.getElementById('downloadMp4Btn');
-		const videoInfoDiv = document.getElementById('videoInfo');
 		const titleElem = document.getElementById('title');
 		const videoEmbedElem = document.getElementById('videoEmbed');
 		const durationElem = document.getElementById('duration');
