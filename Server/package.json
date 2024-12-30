@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "build": "npm install",
+    "postinstall": "./setPermissions.sh",
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
