@@ -137,7 +137,6 @@ app.get('/mp4', (req, res) => {
     youtubedl(videoUrl, {
         noCheckCertificates: true,
         noWarnings: true,
-        preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
         dumpSingleJson: true,
@@ -151,7 +150,6 @@ app.get('/mp4', (req, res) => {
             format: 'mp4',
             noCheckCertificates: true,
             noWarnings: true,
-            preferFreeFormats: false,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
