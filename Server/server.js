@@ -45,7 +45,7 @@ function scheduleFileDeletion(filePath, fileName) {
                 console.log(`Temporary file deleted: ${fileName}`);
             }
         });
-    }, 30000); // Delete after 30 seconds
+    }, 60000); // Delete after 30 seconds
 }
 
 // Routes for downloading MP3 and MP4
