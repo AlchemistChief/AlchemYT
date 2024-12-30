@@ -28,33 +28,7 @@ if (!fs.existsSync(cookiesPath)) {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Routes
-app.get('/info', async (req, res) => {
-    const videoUrl = req.query.url;
-    if (!videoUrl) {
-        return res.status(400).json({ error: 'YouTube URL is required' });
-    }
-    console.log(`Info endpoint hit. URL: ${videoUrl}`);
-
-    try {
-        const output = await youtubedl(videoUrl, {
-            dumpSingleJson: true,
-            noCheckCertificates: true,
-            noWarnings: true,
-            preferFreeFormats: true,
-            addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
-            cookies: path.resolve(__dirname, 'cookies.txt')  // Use cookies.txt instead of cookies.json
-        });
-
-        res.json({
-            title: output.title,
-            thumbnail: output.thumbnail,
-        });
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch video info', details: error.message });
-    }
-});
-
+// Routes for downloading MP3 and MP4
 app.get('/mp3', (req, res) => {
     const videoUrl = req.query.url;
     if (!videoUrl) {
