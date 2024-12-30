@@ -135,7 +135,6 @@ app.get('/mp4', (req, res) => {
     }
 
     youtubedl(videoUrl, {
-        addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
         dumpSingleJson: true,
     })
@@ -146,7 +145,6 @@ app.get('/mp4', (req, res) => {
 
         youtubedl(videoUrl, {
             format: 'mp4',
-            addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
         })
