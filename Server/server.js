@@ -133,20 +133,19 @@ app.get('/mp4', (req, res) => {
         return res.download(cachedFile.filePath, cachedFile.fileName);
     }
 
+    // Get video info first
     youtubedl(videoUrl, {
-        format: 'bestvideo+bestaudio/best',
         noCheckCertificates: true,
         noWarnings: true,
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
-        dumpSingleJson: true,
     })
     .then((info) => {
         const videoTitle = sanitizeFileName(info.title || 'video');
         const fileName = `${videoTitle}.mp4`;
         const filePath = path.resolve(__dirname, 'downloads', fileName);
-    
+
         youtubedl(videoUrl, {
             format: 'bestvideo+bestaudio/best',
             noCheckCertificates: true,
@@ -158,41 +157,37 @@ app.get('/mp4', (req, res) => {
         })
         .then(() => {
             console.log(`Download completed: ${fileName}`);
-    
-            // Ensure the file exists before sending
-            fs.promises.stat(filePath)
-                .then(() => {
-                    // Cache the file
-                    fileCache[videoUrl] = {
-                        filePath,
-                        fileName,
-                        extension: 'mp4'
-                    };
-    
-                    res.download(filePath, fileName, (err) => {
-                        if (err) {
-                            console.error('Error sending file:', err);
-                            res.status(500).json({ error: 'Failed to send MP4 file' });
-                        } else {
-                            console.log(`MP4 file sent successfully: ${fileName}`);
-                        }
-                    });
-    
-                    scheduleFileDeletion(filePath, fileName);
-                })
-                .catch((err) => {
-                    console.error('File not found:', err);
-                    res.status(500).json({ error: 'Failed to locate MP4 file' });
-                });
+
+            // Cache the file
+            fileCache[videoUrl] = {
+                filePath,
+                fileName,
+                extension: 'mp4'
+            };
+
+            res.download(filePath, fileName, (err) => {
+                if (err) {
+                    console.error('Error sending file:', err);
+                    res.status(500).json({ error: 'Failed to send MP4 file' });
+                } else {
+                    console.log(`MP4 file sent successfully: ${fileName}`);
+                }
+            });
+
+            scheduleFileDeletion(filePath, fileName, videoUrl);
+        })
+        .catch((error) => {
+            console.error('Failed to download video:', error);
+            res.status(500).json({ error: 'Failed to download MP4', details: error.message });
         });
-    });
     })
     .catch((error) => {
-        console.error('Failed to download video:', error);
-        res.status(500).json({ error: 'Failed to download MP4', details: error.message });
+        console.error('Failed to fetch video info:', error);
+        res.status(500).json({ error: 'Failed to fetch video info', details: error.message });
     });
+});
+
 
 // Start server
 app.listen(port, () => {
     console.log(`Server running at ${host}`);
-});
