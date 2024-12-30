@@ -69,7 +69,6 @@ app.get('/mp3', (req, res) => {
     }
 
     youtubedl(videoUrl, {
-        format: 'bestaudio',
         noCheckCertificates: true,
         noWarnings: true,
         preferFreeFormats: true,
