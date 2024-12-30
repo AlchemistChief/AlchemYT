@@ -7,11 +7,11 @@ const WebSocket = require('ws');  // WebSocket for progress updates
 const https = require('https');  // For HTTPS server
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000; // Ensure the correct port is used
 
-const server = https.createServer(app); // Use https.createServer instead of http.createServer
+const server = https.createServer(app); // Correct usage for Render
+const wss = new WebSocket.Server({ server }); // Make sure WebSocket is tied to the HTTPS server
 
-const wss = new WebSocket.Server({ server });
 
 wss.on('connection', (ws) => {
     console.log('Client connected for progress updates');
