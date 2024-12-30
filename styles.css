@@ -243,3 +243,40 @@ tr:hover {
         max-width: 992px;
     }
 }
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1200px;
+    }
+    #videoContainer {
+        max-width: 1200px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1400px;
+    }
+    #videoContainer {
+        max-width: 1400px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1600px;
+    }
+    #videoContainer {
+        max-width: 1600px;
+    }
+}
+
+@media (min-width: 1800px) {
+    .container {
+        max-width: 1800px;
+    }
+    #videoContainer {
+        max-width: 1800px;
+    }
+}
+
