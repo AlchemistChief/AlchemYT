@@ -114,17 +114,17 @@ app.get('/mp3', (req, res) => {
     });
 });
 
-app.get('/mp3', (req, res) => {
+app.get('/mp4', (req, res) => {
     const videoUrl = req.query.url;
     if (!videoUrl) {
         return res.status(400).json({ error: 'YouTube URL is required' });
     }
-    console.log(`MP3 download endpoint hit. URL: ${videoUrl}`);
+    console.log(`MP4 download endpoint hit. URL: ${videoUrl}`);
 
     // Check if file is cached
     const cachedFile = fileCache[videoUrl];
-    if (cachedFile && cachedFile.extension === 'mp3') {
-        console.log(`Serving cached MP3 file: ${cachedFile.fileName}`);
+    if (cachedFile && cachedFile.extension === 'mp4') {
+        console.log(`Serving cached MP4 file: ${cachedFile.fileName}`);
         return res.download(cachedFile.filePath, cachedFile.fileName);
     }
 
@@ -158,15 +158,15 @@ app.get('/mp3', (req, res) => {
             fileCache[videoUrl] = {
                 filePath,
                 fileName,
-                extension: 'mp3'
+                extension: 'mp4'
             };
 
             res.download(filePath, fileName, (err) => {
                 if (err) {
                     console.error('Error sending file:', err);
-                    res.status(500).json({ error: 'Failed to send MP3 file' });
+                    res.status(500).json({ error: 'Failed to send MP4 file' });
                 } else {
-                    console.log(`MP3 file sent successfully: ${fileName}`);
+                    console.log(`MP4 file sent successfully: ${fileName}`);
                 }
             });
 
@@ -175,7 +175,7 @@ app.get('/mp3', (req, res) => {
     })
     .catch((error) => {
         console.error('Failed to download video:', error);
-        res.status(500).json({ error: 'Failed to download MP3', details: error.message });
+        res.status(500).json({ error: 'Failed to download MP4', details: error.message });
     });
 });
 
