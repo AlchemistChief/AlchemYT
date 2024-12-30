@@ -84,8 +84,8 @@ fetch('data.json')
                         if (data.items && data.items.length > 0) {
                             const videoData = data.items[0];
 
-                            titleElem.textContent = `Title: ${videoData.snippet.title}`;
-                            durationElem.textContent = `Duration: ${parseDuration(videoData.contentDetails.duration)}`;
+                            titleElem.textContent = `${videoData.snippet.title}`;
+                            durationElem.textContent = `${parseDuration(videoData.contentDetails.duration)}`;
 
                             videoContainer.style.display = 'flex';
                             videoContainer.style.height = 'auto';
