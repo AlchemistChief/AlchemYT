@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { create: createYoutubeDl } = require('youtube-dl-exec')
-const youtubedl = createYoutubeDl('.bin/yt-dlp.exe')
+const youtubedl = createYoutubeDl(path.resolve(__dirname, '.bin', 'yt-dlp.exe'));
 const path = require('path');
 const fs = require('fs');
 
