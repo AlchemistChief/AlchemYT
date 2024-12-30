@@ -67,10 +67,6 @@ app.get('/mp3', (req, res) => {
         return res.download(cachedFile.filePath, cachedFile.fileName);
     }
 
-    const videoTitle = sanitizeFileName(info.title || 'audio');
-    const fileName = `${videoTitle}.mp3`;
-    const filePath = path.resolve(__dirname, 'downloads', fileName);
-
     youtubedl(videoUrl, {
         format: 'bestaudio',
         noCheckCertificates: true,
@@ -78,28 +74,43 @@ app.get('/mp3', (req, res) => {
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
-        output: filePath,
+        dumpSingleJson: true,
     })
-    .then(() => {
-        console.log(`Download completed: ${fileName}`);
+    .then((info) => {
+        const videoTitle = sanitizeFileName(info.title || 'audio');
+        const fileName = `${videoTitle}.mp3`;
+        const filePath = path.resolve(__dirname, 'downloads', fileName);
 
-        // Cache the file
-        fileCache[videoUrl] = {
-            filePath,
-            fileName,
-            extension: 'mp3'
-        };
+        youtubedl(videoUrl, {
+            format: 'bestaudio',
+            noCheckCertificates: true,
+            noWarnings: true,
+            preferFreeFormats: true,
+            addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+            cookies: cookiesPath,
+            output: filePath,
+        })
+        .then(() => {
+            console.log(`Download completed: ${fileName}`);
 
-        res.download(filePath, fileName, (err) => {
-            if (err) {
-                console.error('Error sending file:', err);
-                res.status(500).json({ error: 'Failed to send MP3 file' });
-            } else {
-                console.log(`MP3 file sent successfully: ${fileName}`);
-            }
+            // Cache the file
+            fileCache[videoUrl] = {
+                filePath,
+                fileName,
+                extension: 'mp3'
+            };
+
+            res.download(filePath, fileName, (err) => {
+                if (err) {
+                    console.error('Error sending file:', err);
+                    res.status(500).json({ error: 'Failed to send MP3 file' });
+                } else {
+                    console.log(`MP3 file sent successfully: ${fileName}`);
+                }
+            });
+
+            scheduleFileDeletion(filePath, fileName);
         });
-
-        scheduleFileDeletion(filePath, fileName);
     })
     .catch((error) => {
         console.error('Failed to download video:', error);
@@ -121,10 +132,6 @@ app.get('/mp4', (req, res) => {
         return res.download(cachedFile.filePath, cachedFile.fileName);
     }
 
-    const videoTitle = sanitizeFileName(info.title || 'audio');
-    const fileName = `${videoTitle}.mp3`;
-    const filePath = path.resolve(__dirname, 'downloads', fileName);
-
     youtubedl(videoUrl, {
         format: 'bestvideo+bestaudio/best',
         noCheckCertificates: true,
@@ -132,35 +139,49 @@ app.get('/mp4', (req, res) => {
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
-        output: filePath,
+        dumpSingleJson: true,
     })
-    .then(() => {
-        console.log(`Download completed: ${fileName}`);
+    .then((info) => {
+        const videoTitle = sanitizeFileName(info.title || 'audio');
+        const fileName = `${videoTitle}.mp4`;
+        const filePath = path.resolve(__dirname, 'downloads', fileName);
 
-        // Cache the file
-        fileCache[videoUrl] = {
-            filePath,
-            fileName,
-            extension: 'mp4'
-        };
+        youtubedl(videoUrl, {
+            format: 'bestvideo+bestaudio/best',
+            noCheckCertificates: true,
+            noWarnings: true,
+            preferFreeFormats: true,
+            addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+            cookies: cookiesPath,
+            output: filePath,
+        })
+        .then(() => {
+            console.log(`Download completed: ${fileName}`);
 
-        res.download(filePath, fileName, (err) => {
-            if (err) {
-                console.error('Error sending file:', err);
-                res.status(500).json({ error: 'Failed to send MP4 file' });
-            } else {
-                console.log(`MP4 file sent successfully: ${fileName}`);
-            }
+            // Cache the file
+            fileCache[videoUrl] = {
+                filePath,
+                fileName,
+                extension: 'mp4'
+            };
+
+            res.download(filePath, fileName, (err) => {
+                if (err) {
+                    console.error('Error sending file:', err);
+                    res.status(500).json({ error: 'Failed to send MP4 file' });
+                } else {
+                    console.log(`MP4 file sent successfully: ${fileName}`);
+                }
+            });
+
+            scheduleFileDeletion(filePath, fileName);
         });
-
-        scheduleFileDeletion(filePath, fileName);
     })
     .catch((error) => {
         console.error('Failed to download video:', error);
         res.status(500).json({ error: 'Failed to download MP4', details: error.message });
     });
 });
-
 
 // Start server
 app.listen(port, () => {
