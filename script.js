@@ -1,4 +1,3 @@
-// script.js - frontend at https://alchemistchief.github.io/AlchemYT/
 fetch('data.json')
     .then(response => response.json())
     .then(data => {
@@ -14,8 +13,14 @@ fetch('data.json')
         const durationElem = document.getElementById('duration');
         const errorElem = document.getElementById('error');
         const videoContainer = document.getElementById('videoContainer');
+        const mp3Table = document.getElementById('mp3Table');
+        const mp4Table = document.getElementById('mp4Table');
 
         let savedUrl = null;
+
+        // Track downloaded videos
+        const downloadedMp3 = new Set();
+        const downloadedMp4 = new Set();
 
         function normalizeYouTubeUrl(url) {
             try {
@@ -55,6 +60,21 @@ fetch('data.json')
             if (seconds > 0) timeString += `${seconds} second${seconds > 1 ? 's' : ''}`;
 
             return timeString.trim();
+        }
+
+        function addToTable(type, videoUrl, videoTitle) {
+            const table = type === 'mp3' ? mp3Table : mp4Table;
+            const row = table.insertRow();
+            const videoCell = row.insertCell(0);
+            const downloadCell = row.insertCell(1);
+
+            videoCell.textContent = videoTitle;
+            const downloadButton = document.createElement('button');
+            downloadButton.textContent = `Download ${type.toUpperCase()}`;
+            downloadButton.onclick = () => {
+                window.location.href = `${apiBaseUrl}/${type}?url=${encodeURIComponent(videoUrl)}`;
+            };
+            downloadCell.appendChild(downloadButton);
         }
 
         fetchInfoBtn.addEventListener('click', () => {
@@ -109,8 +129,16 @@ fetch('data.json')
 
         downloadMp3Btn.addEventListener('click', () => {
             if (savedUrl) {
+                if (downloadedMp3.has(savedUrl)) {
+                    console.log('MP3 already downloaded, serving from cache...');
+                    return;
+                }
+
                 console.log('Requested MP3 download for URL:', savedUrl);
                 window.location.href = `${apiBaseUrl}/mp3?url=${encodeURIComponent(savedUrl)}`;
+                
+                downloadedMp3.add(savedUrl);  // Add to cache
+                addToTable('mp3', savedUrl, titleElem.textContent);  // Add to table
             } else {
                 errorElem.textContent = 'Please fetch video info first.';
             }
@@ -118,11 +146,25 @@ fetch('data.json')
 
         downloadMp4Btn.addEventListener('click', () => {
             if (savedUrl) {
+                if (downloadedMp4.has(savedUrl)) {
+                    console.log('MP4 already downloaded, serving from cache...');
+                    return;
+                }
+
                 console.log('Requested MP4 download for URL:', savedUrl);
                 window.location.href = `${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}`;
+                
+                downloadedMp4.add(savedUrl);  // Add to cache
+                addToTable('mp4', savedUrl, titleElem.textContent);  // Add to table
             } else {
                 errorElem.textContent = 'Please fetch video info first.';
             }
+        });
+
+        // Clear cached data when the tab is closed
+        window.addEventListener('beforeunload', () => {
+            downloadedMp3.clear();
+            downloadedMp4.clear();
         });
     })
     .catch(error => {
