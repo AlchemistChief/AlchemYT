@@ -142,7 +142,7 @@ app.get('/mp4', (req, res) => {
         dumpSingleJson: true,
     })
     .then((info) => {
-        const videoTitle = sanitizeFileName(info.title || 'audio');
+        const videoTitle = sanitizeFileName(info.title || 'video');
         const fileName = `${videoTitle}.mp4`;
         const filePath = path.resolve(__dirname, 'downloads', fileName);
 
