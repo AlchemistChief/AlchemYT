@@ -59,8 +59,14 @@ app.get('/mp3', (req, res) => {
         getFilename: true,
     })
     .then((output) => {
-        const fileName = output.match(/Destination: (.+)$/m)[1];
+        console.log('YouTube-DL Output:', output); // Debug output
+        const match = output.match(/Destination: (.+)$/m);
+        if (!match) {
+            throw new Error('Failed to extract filename from YouTube-DL output.');
+        }
+        const fileName = match[1];
         const filePath = path.resolve(__dirname, 'downloads', fileName);
+    
 
         const downloadEnd = Date.now();
         console.log(`Download completed in ${downloadEnd - downloadStart} ms`);
