@@ -147,7 +147,7 @@ app.get('/mp4', (req, res) => {
         const filePath = path.resolve(__dirname, 'downloads', fileName);
 
         youtubedl(videoUrl, {
-            format: 'bestvideo',
+            format: 'bestvideo+bestaudio',
             noCheckCertificates: true,
             noWarnings: true,
             preferFreeFormats: true,
