@@ -67,7 +67,8 @@ app.get('/mp3', (req, res) => {
         return res.download(cachedFile.filePath, cachedFile.fileName);
     }
 
-    const fileName = 'audio.mp3'; // Default file name for MP3
+    const videoTitle = sanitizeFileName(info.title || 'audio');
+    const fileName = `${videoTitle}.mp3`;
     const filePath = path.resolve(__dirname, 'downloads', fileName);
 
     youtubedl(videoUrl, {
@@ -120,7 +121,8 @@ app.get('/mp4', (req, res) => {
         return res.download(cachedFile.filePath, cachedFile.fileName);
     }
 
-    const fileName = 'video.mp4'; // Default file name for MP4
+    const videoTitle = sanitizeFileName(info.title || 'audio');
+    const fileName = `${videoTitle}.mp3`;
     const filePath = path.resolve(__dirname, 'downloads', fileName);
 
     youtubedl(videoUrl, {
