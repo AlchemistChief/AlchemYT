@@ -45,12 +45,14 @@ fetch('data.json')
 			const videoId = extractVideoId(rawUrl);
 
 			if (normalizedUrl && videoId) {
+				// Set embed URL immediately
+				videoEmbedElem.src = `https://www.youtube.com/embed/${videoId}`;
+
 				fetch(`${apiBaseUrl}/info?url=${encodeURIComponent(normalizedUrl)}`)
 					.then(response => response.json())
 					.then(data => {
 						console.log('Fetched video info:', data);
 						titleElem.textContent = `Title: ${data.title}`;
-						videoEmbedElem.src = `https://www.youtube.com/embed/${videoId}`;
 						durationElem.textContent = `Duration: ${data.duration}`;
 						descriptionElem.textContent = `Description: ${data.description}`;
 
