@@ -1,3 +1,4 @@
+// script.js - Frontend - Never remove
 fetch('data.json')
     .then(response => response.json())
     .then(data => {

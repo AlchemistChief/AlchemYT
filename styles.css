@@ -1,3 +1,4 @@
+/*styles.css - Never Remove*/
 /* Basic Reset */
 * {
     margin: 0;
@@ -273,4 +274,6 @@ button:hover {
         max-width: 992px;
     }
     #videoContainer {
-        max-wi
+        max-width: 992px;
+    }
+}
