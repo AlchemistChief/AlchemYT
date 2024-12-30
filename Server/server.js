@@ -30,12 +30,12 @@ app.use(express.json());
 
 // Signal handling
 process.on('SIGINT', () => {
-    console.log('Received SIGINT signal');
+    console.log('[SIGINT] Received Signal Interrupt signal');
     process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-    console.log('Received SIGTERM signal');
+    console.log('[SIGTERM] Received Signal Terminate signal');
     process.exit(0);
 });
 
