@@ -17,8 +17,8 @@ fetch('data.json')
 
 		let savedUrl = null;
 
-		// Set up WebSocket for progress updates
-		const ws = new WebSocket('ws://localhost:3000');  // Update the URL if needed
+		// Set up WebSocket for progress update
+		const ws = new WebSocket('ws://alchemyt.onrender.com:3000');
 		ws.onmessage = function (event) {
 			const data = JSON.parse(event.data);
 			if (data.progress) {

@@ -8,6 +8,18 @@ const WebSocket = require('ws');  // WebSocket for progress updates
 const app = express();
 const port = 3000;
 
+const server = http.createServer(app);
+
+// Set up WebSocket server on the same port as the HTTP server
+const ws = new WebSocket.Server({ server });
+
+ws.on('connection', (ws) => {
+    console.log('Client connected for progress updates');
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    });
+});
+
 // CORS options
 const corsOptions = {
     origin: 'https://alchemistchief.github.io',
@@ -18,17 +30,6 @@ const corsOptions = {
 
 // Cookies path
 const cookiesPath = path.resolve(__dirname, 'cookies.txt');
-
-// WebSocket server for progress updates
-const wss = new WebSocket.Server({ port: 3000 });
-
-// Handle WebSocket connection for progress updates
-wss.on('connection', (ws) => {
-    console.log('Client connected for progress updates');
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
-});
 
 app.use(cors(corsOptions));
 app.use(express.json());
