@@ -20,7 +20,7 @@ const corsOptions = {
 const cookiesPath = path.resolve(__dirname, 'cookies.txt');
 
 // WebSocket server for progress updates
-const wss = new WebSocket.Server({ port: 4000 });
+const wss = new WebSocket.Server({ port: 3000 });
 
 // Handle WebSocket connection for progress updates
 wss.on('connection', (ws) => {

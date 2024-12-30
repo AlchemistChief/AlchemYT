@@ -18,7 +18,7 @@ fetch('data.json')
 		let savedUrl = null;
 
 		// Set up WebSocket for progress updates
-		const ws = new WebSocket('ws://localhost:4000');  // Update the URL if needed
+		const ws = new WebSocket('ws://localhost:3000');  // Update the URL if needed
 		ws.onmessage = function (event) {
 			const data = JSON.parse(event.data);
 			if (data.progress) {
