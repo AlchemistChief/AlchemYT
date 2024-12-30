@@ -4,16 +4,16 @@ const youtubedl = require('youtube-dl-exec');
 const path = require('path');
 const fs = require('fs');
 const WebSocket = require('ws');  // WebSocket for progress updates
+const https = require('https');  // For HTTPS server
 
 const app = express();
 const port = 3000;
 
-const server = http.createServer(app);
+const server = https.createServer(app); // Use https.createServer instead of http.createServer
 
-// Set up WebSocket server on the same port as the HTTP server
-const ws = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ server });
 
-ws.on('connection', (ws) => {
+wss.on('connection', (ws) => {
     console.log('Client connected for progress updates');
     ws.on('close', () => {
         console.log('Client disconnected');
@@ -34,6 +34,7 @@ const cookiesPath = path.resolve(__dirname, 'cookies.txt');
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// MP3 download route
 app.get('/mp3', (req, res) => {
     const videoUrl = req.query.url;
     if (!videoUrl) {
@@ -43,7 +44,6 @@ app.get('/mp3', (req, res) => {
 
     const filePath = path.resolve(__dirname, 'downloads', 'audio.mp3');
 
-    // Track download progress
     const options = {
         format: 'bestaudio',
         noCheckCertificates: true,
@@ -59,7 +59,7 @@ app.get('/mp3', (req, res) => {
     // Listen for download progress
     ytdlProcess.stdout.on('data', (data) => {
         const progressData = data.toString();
-        const match = progressData.match(/([0-9.]+)%/); // Regex to extract percentage
+        const match = progressData.match(/([0-9.]+)%/);  // Regex to extract percentage
         if (match && match[1]) {
             const progress = parseFloat(match[1]);
             wss.clients.forEach((client) => {
@@ -70,7 +70,6 @@ app.get('/mp3', (req, res) => {
         }
     });
 
-    // When the download finishes
     ytdlProcess.on('close', () => {
         res.download(filePath, 'audio.mp3', (err) => {
             if (err) {
@@ -79,7 +78,7 @@ app.get('/mp3', (req, res) => {
             } else {
                 console.log('MP3 file sent successfully');
             }
-            fs.unlinkSync(filePath); // Clean up the downloaded file
+            fs.unlinkSync(filePath);  // Clean up the downloaded file
         });
     });
 
@@ -89,7 +88,7 @@ app.get('/mp3', (req, res) => {
     });
 });
 
-// Similar logic for MP4 route
+// MP4 download route (similar logic)
 app.get('/mp4', (req, res) => {
     const videoUrl = req.query.url;
     if (!videoUrl) {
@@ -132,7 +131,7 @@ app.get('/mp4', (req, res) => {
             } else {
                 console.log('MP4 file sent successfully');
             }
-            fs.unlinkSync(filePath); // Clean up the downloaded file
+            fs.unlinkSync(filePath);  // Clean up the downloaded file
         });
     });
 
@@ -143,6 +142,6 @@ app.get('/mp4', (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+server.listen(port, () => {
+    console.log(`Server running at https://localhost:${port}`);
 });
