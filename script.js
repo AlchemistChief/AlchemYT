@@ -1,3 +1,4 @@
+// script.js - frontend at https://alchemistchief.github.io/AlchemYT/
 fetch('data.json')
     .then(response => response.json())
     .then(data => {
