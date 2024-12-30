@@ -4,7 +4,7 @@ const youtubedl = require('youtube-dl-exec');
 const path = require('path');
 const fs = require('fs');
 const NodeCache = require('node-cache');
-const videoCache = new NodeCache({ stdTTL: 600 }); // Cache for 10 minutes
+const videoCache = new NodeCache({ stdTTL: 120 }); // Cache for 10 minutes
 
 const app = express();
 const port = 3000;
@@ -52,7 +52,7 @@ app.get('/info', async (req, res) => {
             noWarnings: true,
             preferFreeFormats: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
-            cookies: path.resolve(__dirname, 'cookies.txt'),
+            cookies: cookiesPath,
         });
 
         const videoData = {
@@ -99,16 +99,17 @@ app.get('/mp3', async (req, res) => {
             noWarnings: true,
             preferFreeFormats: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
-            cookies: path.resolve(__dirname, 'cookies.txt'),
+            cookies: cookiesPath,
             output: filePath,
         });
 
+        console.log('MP3 download started...');
         res.download(filePath, 'audio.mp3', (err) => {
             if (err) {
                 console.error('Error sending file:', err);
                 res.status(500).json({ error: 'Failed to send MP3 file' });
             } else {
-                console.log('MP3 file sent successfully');
+                console.log('MP3 download completed successfully');
             }
             fs.unlinkSync(filePath);  // Remove the file after sending it
         });
@@ -146,16 +147,17 @@ app.get('/mp4', async (req, res) => {
             noWarnings: true,
             preferFreeFormats: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
-            cookies: path.resolve(__dirname, 'cookies.txt'),
+            cookies: cookiesPath,
             output: filePath,
         });
 
+        console.log('MP4 download started...');
         res.download(filePath, 'video.mp4', (err) => {
             if (err) {
                 console.error('Error sending file:', err);
                 res.status(500).json({ error: 'Failed to send MP4 file' });
             } else {
-                console.log('MP4 file sent successfully');
+                console.log('MP4 download completed successfully');
             }
             fs.unlinkSync(filePath);  // Remove the file after sending it
         });
