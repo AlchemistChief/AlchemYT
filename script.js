@@ -85,6 +85,8 @@ fetch('data.json')
 			}
 		});
 	})
-	.catch(() => {
+	.catch(error => {
+		console.error('Error fetching data.json:', error);
 		alert('Failed to load API base URL.');
 	});
+	
