@@ -83,7 +83,6 @@ fetch('data.json')
 
                         if (data.items && data.items.length > 0) {
                             const videoData = data.items[0];
-                            console.log('Duration:', videoData.contentDetails.duration);  // Log the duration
 
                             titleElem.textContent = `Title: ${videoData.snippet.title}`;
                             durationElem.textContent = `Duration: ${parseDuration(videoData.contentDetails.duration)}`;
