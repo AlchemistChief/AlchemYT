@@ -86,7 +86,7 @@ app.get('/mp3', (req, res) => {
     .then((info) => {
         const videoTitle = sanitizeFileName(info.title || 'audio');
         const fileName = `${videoTitle}.mp3`;
-        const filePath = path.resolve(__dirname, 'downloads', fileName);
+        const filePath = path.join(process.cwd(), 'downloads', fileName);
 
         console.log(`Downloading MP3: ${fileName}, Path: ${filePath}`);
 
