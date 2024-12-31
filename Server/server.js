@@ -201,7 +201,9 @@ app.get('/dev', (req, res) => {
         dumpSingleJson: true, // Extract metadata
     })
     .then((info) => {
-        const format = info.formats.find(f => f.ext === 'mp4' && f.vcodec && f.acodec); // Find a suitable format
+        // Find the best video+audio format or fall back to the best available
+        const format = info.formats.find(f => f.format_id === 'bv*[ext=mp4]+ba[ext=m4a]' || f.format_id === 'best');
+
         if (!format || !format.url) {
             return res.status(500).json({ error: 'No suitable format found for download' });
         }
