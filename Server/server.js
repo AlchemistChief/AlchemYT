@@ -55,7 +55,7 @@ function scheduleFileDeletion(filePath, fileName, videoUrl) {
         } else {
             console.log(`File does not exist at time of deletion: ${filePath}`);
         }
-    }, 600000); // Delete after 60 seconds
+    }, 60000); // Delete after 60 seconds
 }
 
 // Routes for downloading MP3
@@ -129,7 +129,7 @@ app.get('/mp3', (req, res) => {
 // Routes for downloading MP4
 app.get('/mp4', (req, res) => {
     const videoUrl = req.query.url;
-    const resolution = req.query.resolution || '1080p';  // Default to '1080p' if no resolution is specified
+    const resolution = req.query.resolution || '1080p' || '720p' || '480p';  // Default to '1080p' if no resolution is specified
 
     if (!videoUrl) {
         return res.status(400).json({ error: 'YouTube URL is required' });
@@ -160,8 +160,8 @@ app.get('/mp4', (req, res) => {
         console.log(`Downloading MP4: ${fileName}, Path: ${filePath}`);
 
         youtubedl(videoUrl, {
-            format: 'bv*[ext=mp4]+ba[ext=m4a]/best',
-            formatSort: `vcodec:h264,res:${resolution},acodec:aac`,
+            format: `bv*[vcodec=h264][height=${resolution.replace('p', '')}][ext=mp4]+ba[acodec=aac][ext=m4a]/best`,
+            formatSort: `vcodec:h264,res:${resolution},ext:mp4,acodec:aac`,            
             noCheckCertificates: true,
             noWarnings: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
