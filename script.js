@@ -118,57 +118,7 @@ fetch('data.json')
             anchor.click();
             document.body.removeChild(anchor);
             URL.revokeObjectURL(objectURL); // Release the object URL after download
-        }        
-
-        fetchInfoBtn.addEventListener('click', () => {
-            const rawUrl = urlInput.value.trim();
-            const normalizedUrl = normalizeYouTubeUrl(rawUrl);
-            const videoId = extractVideoId(rawUrl);
-
-            if (normalizedUrl && videoId) {
-                // Save the URL for future use
-                savedUrl = normalizedUrl;
-
-                // Set embed URL immediately and make embed visible
-                videoEmbedElem.src = `https://www.youtube.com/embed/${videoId}`;
-                videoEmbedElem.style.display = 'block'; // Make sure it's visible immediately
-                videoContainer.style.display = 'flex';
-                videoContainer.style.height = 'auto';
-                videoContainer.classList.add('visible');
-
-                // Call YouTube API to get video info
-                const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails&key=${apiKey}`;
-
-                fetch(apiUrl)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Fetched video info:', data);
-
-                        if (data.items && data.items.length > 0) {
-                            const videoData = data.items[0];
-
-                            titleElem.textContent = `${videoData.snippet.title}`;
-                            durationElem.textContent = `${parseDuration(videoData.contentDetails.duration)}`;
-
-                            videoContainer.style.display = 'flex';
-                            videoContainer.style.height = 'auto';
-                            videoContainer.classList.add('visible');
-                            errorElem.textContent = '';
-                        } else {
-                            errorElem.textContent = 'Failed to fetch video info. Video not found.';
-                        }
-                    })
-                    .catch(() => {
-                        console.error('Error fetching video info');
-                        videoContainer.style.height = '0';
-                        videoContainer.style.opacity = '0';
-                        videoContainer.classList.remove('visible');
-                        errorElem.textContent = 'Failed to fetch video info. Please check the URL.';
-                    });
-            } else {
-                errorElem.textContent = 'Please enter a valid YouTube URL.';
-            }
-        });
+        }
 
         function handleMp4Download(resolution) {
             if (savedUrl) {
@@ -229,6 +179,55 @@ fetch('data.json')
             }
         });
         
+        fetchInfoBtn.addEventListener('click', () => {
+            const rawUrl = urlInput.value.trim();
+            const normalizedUrl = normalizeYouTubeUrl(rawUrl);
+            const videoId = extractVideoId(rawUrl);
+
+            if (normalizedUrl && videoId) {
+                // Save the URL for future use
+                savedUrl = normalizedUrl;
+
+                // Set embed URL immediately and make embed visible
+                videoEmbedElem.src = `https://www.youtube.com/embed/${videoId}`;
+                videoEmbedElem.style.display = 'block'; // Make sure it's visible immediately
+                videoContainer.style.display = 'flex';
+                videoContainer.style.height = 'auto';
+                videoContainer.classList.add('visible');
+
+                // Call YouTube API to get video info
+                const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails&key=${apiKey}`;
+
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Fetched video info:', data);
+
+                        if (data.items && data.items.length > 0) {
+                            const videoData = data.items[0];
+
+                            titleElem.textContent = `${videoData.snippet.title}`;
+                            durationElem.textContent = `${parseDuration(videoData.contentDetails.duration)}`;
+
+                            videoContainer.style.display = 'flex';
+                            videoContainer.style.height = 'auto';
+                            videoContainer.classList.add('visible');
+                            errorElem.textContent = '';
+                        } else {
+                            errorElem.textContent = 'Failed to fetch video info. Video not found.';
+                        }
+                    })
+                    .catch(() => {
+                        console.error('Error fetching video info');
+                        videoContainer.style.height = '0';
+                        videoContainer.style.opacity = '0';
+                        videoContainer.classList.remove('visible');
+                        errorElem.textContent = 'Failed to fetch video info. Please check the URL.';
+                    });
+            } else {
+                errorElem.textContent = 'Please enter a valid YouTube URL.';
+            }
+        });
         
         // Clear cached data when the tab is closed
         window.addEventListener('beforeunload', () => {
