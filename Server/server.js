@@ -86,6 +86,7 @@ app.get('/mp3', (req, res) => {
 
         youtubedl(videoUrl, {
             format: 'mp3',
+            formatSort: `acodec:mp3`,
             noCheckCertificates: true,
             noWarnings: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
