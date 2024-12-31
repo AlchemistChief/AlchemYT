@@ -38,14 +38,13 @@ function sanitizeFileName(filename) {
 }
 
 function scheduleFileDeletion(filePath, fileName, videoUrl) {
+    console.log(`Scheduling deletion for file: ${fileName}, Path: ${filePath}`);
     setTimeout(() => {
         fs.unlink(filePath, (err) => {
             if (err) {
                 console.error('Error deleting file:', err);
             } else {
                 console.log(`Temporary file deleted: ${fileName}`);
-
-                // Remove the file from the cache after deletion
                 delete fileCache[videoUrl];
                 console.log(`Cache entry removed for: ${videoUrl}`);
             }
@@ -53,7 +52,7 @@ function scheduleFileDeletion(filePath, fileName, videoUrl) {
     }, 60000); // Delete after 60 seconds
 }
 
-// Routes for downloading MP3 and MP4
+// Routes for downloading MP3
 app.get('/mp3', (req, res) => {
     const videoUrl = req.query.url;
 
@@ -65,9 +64,11 @@ app.get('/mp3', (req, res) => {
     // Check if file is cached
     const cachedFile = fileCache[videoUrl];
     if (cachedFile && cachedFile.extension === 'mp3') {
-        console.log(`Serving cached MP3 file: ${cachedFile.fileName}`);
+        console.log(`Serving cached MP3 file: ${cachedFile.fileName}, Path: ${cachedFile.filePath}`);
         return res.download(cachedFile.filePath, cachedFile.fileName);
     }
+
+    console.log('No cached file found, starting new download...');
 
     youtubedl(videoUrl, {
         noCheckCertificates: true,
@@ -81,6 +82,8 @@ app.get('/mp3', (req, res) => {
         const fileName = `${videoTitle}.mp3`;
         const filePath = path.resolve(__dirname, 'downloads', fileName);
 
+        console.log(`Downloading MP3: ${fileName}, Path: ${filePath}`);
+
         youtubedl(videoUrl, {
             format: 'mp3',
             noCheckCertificates: true,
@@ -90,7 +93,7 @@ app.get('/mp3', (req, res) => {
             output: filePath,
         })
         .then(() => {
-            console.log(`Download completed: ${fileName}`);
+            console.log(`MP3 download completed: ${fileName}`);
 
             // Cache the file
             fileCache[videoUrl] = {
@@ -112,7 +115,7 @@ app.get('/mp3', (req, res) => {
         });
     })
     .catch((error) => {
-        console.error('Failed to download video:', error);
+        console.error('Failed to download MP3:', error);
         res.status(500).json({ error: 'Failed to download MP3', details: error.message });
     });
 });
@@ -130,9 +133,11 @@ app.get('/mp4', (req, res) => {
     // Check if file is cached
     const cachedFile = fileCache[videoUrl] && fileCache[videoUrl][resolution];
     if (cachedFile && cachedFile.extension === 'mp4') {
-        console.log(`Serving cached MP4 file: ${cachedFile.fileName}`);
+        console.log(`Serving cached MP4 file: ${cachedFile.fileName}, Resolution: ${resolution}, Path: ${cachedFile.filePath}`);
         return res.download(cachedFile.filePath, cachedFile.fileName);
     }
+
+    console.log('No cached file found, starting new download...');
 
     youtubedl(videoUrl, {
         noCheckCertificates: true,
@@ -146,6 +151,8 @@ app.get('/mp4', (req, res) => {
         const fileName = `${videoTitle}_${resolution}.mp4`;  // Use the title and resolution for the filename
         const filePath = path.resolve(__dirname, 'downloads', fileName);
 
+        console.log(`Downloading MP4: ${fileName}, Path: ${filePath}`);
+
         youtubedl(videoUrl, {
             format: 'bv*[ext=mp4]+ba[ext=m4a]/best',
             formatSort: `vcodec:h264,res:${resolution},acodec:aac`,
@@ -156,7 +163,7 @@ app.get('/mp4', (req, res) => {
             output: filePath,
         })
         .then(() => {
-            console.log(`Download completed: ${fileName}`);
+            console.log(`MP4 download completed: ${fileName}`);
 
             // Cache the file by video URL and resolution
             if (!fileCache[videoUrl]) {
@@ -181,7 +188,7 @@ app.get('/mp4', (req, res) => {
         });
     })
     .catch((error) => {
-        console.error('Failed to download video:', error);
+        console.error('Failed to download MP4:', error);
         res.status(500).json({ error: 'Failed to download MP4', details: error.message });
     });
 });
