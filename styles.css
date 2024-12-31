@@ -117,12 +117,6 @@ input {
     color: rgb(255, 0, 0);
 }
 
-.info-label {
-    font-weight: bold;
-    text-decoration: underline;
-}
-
-
 .container {
     text-align: center;
     padding: 20px;
@@ -177,7 +171,7 @@ button:hover {
     background-color: rgba(17, 18, 21, 1);
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    width: 80%;
+    width: 90%;
     max-width: 600px;
     height: auto;
     margin-top: 20px;
@@ -187,6 +181,7 @@ button:hover {
     align-items: center;
     transition: all 0.3s ease-in-out;
     opacity: 0;
+    box-sizing: border-box; /* Ensure padding/border are included in total size */
 }
 
 #videoContainer.visible {
@@ -194,17 +189,43 @@ button:hover {
     opacity: 1;
 }
 
+#videoInfo {
+    color: white;
+    transition: opacity 0.3s ease-in-out;
+    width: 100%; /* Ensure this takes up the full width of its parent */
+    box-sizing: border-box; /* Include padding in the width */
+}
+
+#videoEmbed {
+    width: 100%; /* The iframe will take up 100% of its parent container */
+    max-width: 500px; /* Stops resizing beyond 720px */
+    height: auto;
+    aspect-ratio: 8 / 4;
+    margin: 0 auto;
+    border: 5px solid rgba(255, 255, 255, 1);
+    border-radius: 8px;
+    box-sizing: border-box; /* Ensure border and padding are included in width */
+}
+
+
+.info-label {
+    font-weight: bold;
+    text-underline-offset: 2px;
+    text-decoration: underline;
+}
+h2.info-title {
+    color: white;
+    font-weight: 900;
+    font-size: 200%;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
 #error {
     color: red;
     font-size: 14px;
     margin-top: 10px;
     font-weight: bold;
-}
-
-#videoInfo {
-    margin-top: 20px;
-    color: white;
-    transition: opacity 0.3s ease-in-out;
 }
 
 #mp3TableContainer, #mp4TableContainer {
