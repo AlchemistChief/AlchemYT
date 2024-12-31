@@ -185,6 +185,39 @@ app.get('/mp4', (req, res) => {
 });
 
 
+// DEV ENDPOINT
+app.get('/dev', (req, res) => {
+    const videoUrl = req.query.url;
+    if (!videoUrl) {
+        return res.status(400).json({ error: 'YouTube URL is required' });
+    }
+    console.log(`DEV URL endpoint hit. URL: ${videoUrl}`);
+
+    youtubedl(videoUrl, {
+        noCheckCertificates: true,
+        noWarnings: true,
+        addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+        cookies: cookiesPath,
+        dumpSingleJson: true, // Extract metadata
+    })
+    .then((info) => {
+        const format = info.formats.find(f => f.ext === 'mp4' && f.vcodec && f.acodec); // Find a suitable format
+        if (!format || !format.url) {
+            return res.status(500).json({ error: 'No suitable format found for download' });
+        }
+
+        const downloadUrl = format.url;
+        console.log(`Extracted download URL: ${downloadUrl}`);
+        res.json({ downloadUrl });
+    })
+    .catch((error) => {
+        console.error('Failed to get download URL:', error);
+        res.status(500).json({ error: 'Failed to get download URL', details: error.message });
+    });
+});
+
+
+
 // Start server
 app.listen(port, () => {
     console.log(`Server running at ${host}`);

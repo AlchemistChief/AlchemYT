@@ -9,6 +9,7 @@ fetch('data.json')
         const fetchInfoBtn = document.getElementById('fetchInfoBtn');
         const downloadMp3Btn = document.getElementById('downloadMp3Btn');
         const downloadMp4Btn = document.getElementById('downloadMp4Btn');
+        const downloadDevBtn = document.getElementById('downloadDevBtn');
         const titleElem = document.getElementById('title');
         const videoEmbedElem = document.getElementById('videoEmbed');
         const durationElem = document.getElementById('duration');
@@ -207,6 +208,24 @@ fetch('data.json')
                     })
                     .catch(error => {
                         console.error('Error fetching MP4:', error);
+                    });
+            } else {
+                errorElem.textContent = 'Please fetch video info first.';
+            }
+        });
+
+        downloadDevBtn.addEventListener('click', () => {
+            if (savedUrl) {
+        
+                console.log('Requested DEV download for URL:', savedUrl);
+                fetch(`${apiBaseUrl}/dev?url=${encodeURIComponent(savedUrl)}`)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        // Use title instead of URL
+                        downloadBlob(blob, `${titleElem.textContent}.txt`);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching DEV:', error);
                     });
             } else {
                 errorElem.textContent = 'Please fetch video info first.';
