@@ -155,7 +155,7 @@ app.get('/mp4', (req, res) => {
     .then((info) => {
         const videoTitle = sanitizeFileName(info.title || 'video');
         const fileName = `${videoTitle}_${resolution}.mp4`;  // Use the title and resolution for the filename
-        const filePath = path.resolve(__dirname, 'downloads', fileName);
+        const filePath = path.join(process.cwd(), 'downloads', fileName);
 
         console.log(`Downloading MP4: ${fileName}, Path: ${filePath}`);
 
