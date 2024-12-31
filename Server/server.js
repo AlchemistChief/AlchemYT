@@ -91,8 +91,7 @@ app.get('/mp3', (req, res) => {
         console.log(`Downloading MP3: ${fileName}, Path: ${filePath}`);
 
         youtubedl(videoUrl, {
-            format: 'mp3',
-            formatSort: 'acodec:mp3',
+            format: 'bestaudio[ext=mp3]/bestaudio[ext=m4a]',
             noCheckCertificates: true,
             noWarnings: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
