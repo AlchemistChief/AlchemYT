@@ -86,8 +86,7 @@ fetch('data.json')
             downloadButton.textContent = `Download ${type.toUpperCase()}`;
             downloadButton.onclick = () => {
                 // Use videoTitle for the filename instead of the URL
-                const sanitizedTitle = videoTitle.replace(/[\/\\?%*:|"<>]/g, '-'); // Remove invalid characters for filename
-                downloadBlob(fileBlob, `${sanitizedTitle}.${extension}`);
+                downloadBlob(fileBlob, `${videoTitle}.${extension}`);
             };
             downloadCell.appendChild(downloadButton);
         
@@ -160,25 +159,30 @@ fetch('data.json')
 
         function handleMp4Download(resolution) {
             if (savedUrl) {
-                if (fileCache.mp4[savedUrl]) {
-                    console.log('MP4 already downloaded, serving from cache...');
-                    const cachedBlob = fileCache.mp4[savedUrl].file;
+                // Check if the video with the given resolution is cached
+                if (fileCache.mp4[savedUrl] && fileCache.mp4[savedUrl][resolution]) {
+                    console.log('MP4 already downloaded for this resolution, serving from cache...');
+                    const cachedBlob = fileCache.mp4[savedUrl][resolution].file;
                     // Use title instead of URL
-                    downloadBlob(cachedBlob, `${titleElem.textContent}.mp4`);
+                    downloadBlob(cachedBlob, `${titleElem.textContent}_${resolution}.mp4`);
                     return;
                 }
-
+        
                 console.log(`Requested MP4 download for URL: ${savedUrl} with resolution ${resolution}`);
                 fetch(`${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}&resolution=${resolution}`)
                     .then(response => response.blob())
                     .then(blob => {
-                        fileCache.mp4[savedUrl] = {
+                        // Store the blob with the specific resolution in the cache
+                        if (!fileCache.mp4[savedUrl]) {
+                            fileCache.mp4[savedUrl] = {}; // Initialize resolution-specific cache for this URL
+                        }
+                        fileCache.mp4[savedUrl][resolution] = {
                             file: blob,
                             extension: 'mp4'
                         };
-                        addToTable('mp4', savedUrl, titleElem.textContent, blob, 'mp4');
+                        addToTable('mp4', savedUrl, `${titleElem.textContent}_${resolution}`, blob, 'mp4');
                         // Use title instead of URL
-                        downloadBlob(blob, `${titleElem.textContent}.mp4`);
+                        downloadBlob(blob, `${titleElem.textContent}_${resolution}.mp4`);
                     })
                     .catch(error => {
                         console.error('Error fetching MP4:', error);
