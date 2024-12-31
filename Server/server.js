@@ -128,7 +128,7 @@ app.get('/mp4', (req, res) => {
     console.log(`MP4 download endpoint hit. URL: ${videoUrl}, Resolution: ${resolution}`);
 
     // Check if file is cached
-    const cachedFile = fileCache[videoUrl];
+    const cachedFile = fileCache[videoUrl] && fileCache[videoUrl][resolution];
     if (cachedFile && cachedFile.extension === 'mp4') {
         console.log(`Serving cached MP4 file: ${cachedFile.fileName}`);
         return res.download(cachedFile.filePath, cachedFile.fileName);
@@ -143,7 +143,7 @@ app.get('/mp4', (req, res) => {
     })
     .then((info) => {
         const videoTitle = sanitizeFileName(info.title || 'video');
-        const fileName = `${videoTitle}.mp4`;
+        const fileName = `${videoTitle}_${resolution}.mp4`;  // Use the title and resolution for the filename
         const filePath = path.resolve(__dirname, 'downloads', fileName);
 
         youtubedl(videoUrl, {
@@ -158,8 +158,11 @@ app.get('/mp4', (req, res) => {
         .then(() => {
             console.log(`Download completed: ${fileName}`);
 
-            // Cache the file
-            fileCache[videoUrl] = {
+            // Cache the file by video URL and resolution
+            if (!fileCache[videoUrl]) {
+                fileCache[videoUrl] = {}; // Initialize video URL cache if it doesn't exist
+            }
+            fileCache[videoUrl][resolution] = {
                 filePath,
                 fileName,
                 extension: 'mp4'

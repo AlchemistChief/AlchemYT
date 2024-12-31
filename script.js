@@ -163,7 +163,7 @@ fetch('data.json')
                 if (fileCache.mp4[savedUrl] && fileCache.mp4[savedUrl][resolution]) {
                     console.log('MP4 already downloaded for this resolution, serving from cache...');
                     const cachedBlob = fileCache.mp4[savedUrl][resolution].file;
-                    // Use title instead of URL
+                    // Use title and resolution for the filename
                     downloadBlob(cachedBlob, `${titleElem.textContent}_${resolution}.mp4`);
                     return;
                 }
@@ -181,7 +181,7 @@ fetch('data.json')
                             extension: 'mp4'
                         };
                         addToTable('mp4', savedUrl, `${titleElem.textContent}_${resolution}`, blob, 'mp4');
-                        // Use title instead of URL
+                        // Use title and resolution for the filename
                         downloadBlob(blob, `${titleElem.textContent}_${resolution}.mp4`);
                     })
                     .catch(error => {
@@ -190,7 +190,7 @@ fetch('data.json')
             } else {
                 errorElem.textContent = 'Please fetch video info first.';
             }
-        }
+        }        
 
         downloadMp4_144pBtn.addEventListener('click', () => handleMp4Download('144p'));
         downloadMp4_240pBtn.addEventListener('click', () => handleMp4Download('240p'));
