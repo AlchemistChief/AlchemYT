@@ -37,6 +37,36 @@ h2 {
     text-align: center;
 }
 
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: rgba(17, 18, 21, 1);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    color: white;
+    font-size: 16px;
+}
+
+th {
+    background-color: rgb(108, 92, 231);
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: rgba(40, 41, 46, 1);
+}
+
+tr:hover {
+    background-color: rgba(72, 73, 82, 1);
+}
+
 input {
     width: 100%;
     padding: 10px;
@@ -86,6 +116,12 @@ input {
 .dot {
     color: rgb(255, 0, 0);
 }
+
+.info-label {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 
 .container {
     text-align: center;
@@ -184,36 +220,6 @@ button:hover {
 #mp3TableContainer.visible, #mp4TableContainer.visible {
     display: block;
     opacity: 1;
-}
-
-/* Table Styling */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: rgba(17, 18, 21, 1);
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-th, td {
-    padding: 12px;
-    text-align: left;
-    color: white;
-    font-size: 16px;
-}
-
-th {
-    background-color: rgb(108, 92, 231);
-    font-weight: bold;
-}
-
-tr:nth-child(even) {
-    background-color: rgba(40, 41, 46, 1);
-}
-
-tr:hover {
-    background-color: rgba(72, 73, 82, 1);
 }
 
 /* Media Queries for responsiveness */
