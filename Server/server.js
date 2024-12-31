@@ -147,7 +147,7 @@ app.get('/mp4', (req, res) => {
 
         youtubedl(videoUrl, {
             format: 'bv*[ext=mp4]+ba[ext=m4a]/best',
-            formatsort: `vcodec:h264,res:${resolution},acodec:aac`,
+            formatSort: `vcodec:h264,res:${resolution},acodec:aac`,
             noCheckCertificates: true,
             noWarnings: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
