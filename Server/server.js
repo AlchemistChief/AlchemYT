@@ -39,16 +39,22 @@ function sanitizeFileName(filename) {
 
 function scheduleFileDeletion(filePath, fileName, videoUrl) {
     console.log(`Scheduling deletion for file: ${fileName}, Path: ${filePath}`);
+    
     setTimeout(() => {
-        fs.unlink(filePath, (err) => {
-            if (err) {
-                console.error('Error deleting file:', err);
-            } else {
-                console.log(`Temporary file deleted: ${fileName}`);
-                delete fileCache[videoUrl];
-                console.log(`Cache entry removed for: ${videoUrl}`);
-            }
-        });
+        console.log(`Checking if file exists before deletion: ${filePath}`);
+        if (fs.existsSync(filePath)) {
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error('Error deleting file:', err);
+                } else {
+                    console.log(`Temporary file deleted: ${fileName}`);
+                    delete fileCache[videoUrl];
+                    console.log(`Cache entry removed for: ${videoUrl}`);
+                }
+            });
+        } else {
+            console.log(`File does not exist at time of deletion: ${filePath}`);
+        }
     }, 60000); // Delete after 60 seconds
 }
 
@@ -86,7 +92,7 @@ app.get('/mp3', (req, res) => {
 
         youtubedl(videoUrl, {
             format: 'mp3',
-            formatSort: `acodec:mp3`,
+            formatSort: 'acodec:mp3',
             noCheckCertificates: true,
             noWarnings: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
