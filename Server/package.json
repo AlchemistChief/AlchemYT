@@ -4,7 +4,7 @@
   "description": "A simple server for YouTube video information and download endpoints.",
   "main": "server.js",
   "scripts": {
-    "build": "npm install",
+    "build": "YOUTUBE_DL_SKIP_DOWNLOAD=true npm install",
     "postinstall": "./Scripts/setPermissions.sh && node ./Scripts/clearDownloads.js",
     "start": "node server.js",
     "dev": "nodemon server.js"
