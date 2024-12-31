@@ -1,0 +1,126 @@
+/*Terms_styles.css - Never Remove*/
+
+/* General Tags */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 100%;
+    margin: 0;
+    background-color: rgba(18, 19, 22, 1);
+    flex-direction: column;
+    padding: 20px;
+    color: white;
+}
+
+h1, h2 {
+    font-weight: 900;
+    text-align: center;
+    color: white;
+}
+
+h1 {
+    font-size: 300%;
+    margin-top: 5vh;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 200%;
+    margin-top: 3vh;
+    margin-bottom: 8px;
+}
+
+/* Section Styling */
+section {
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: rgba(33, 36, 40, 0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+section ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+section p, section ul {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+section a {
+    color: #58a6ff;
+    text-decoration: none;
+}
+
+section a:hover {
+    text-decoration: underline;
+}
+
+/* Footer Styling */
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 15px 0;
+    background-color: rgba(33, 36, 40, 1);
+    margin-top: 20px;
+    color: white;
+}
+
+/* Links Styling */
+a {
+    color: #58a6ff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 200%;
+    }
+
+    h2 {
+        font-size: 150%;
+    }
+
+    section {
+        padding: 10px;
+    }
+}
+
+.username {
+    color: rgb(108, 92, 231);
+}
+
+.websitename {
+    color: red;
+    text-underline-offset: 2px;
+    text-decoration: underline;
+}
+
+.whitetext {
+    color: white;
+}
+
+.dot {
+    color: rgb(255, 0, 0);
+}

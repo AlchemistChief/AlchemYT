@@ -15,21 +15,24 @@
             <span class="dot">/</span>
             <span class="websitename">AlchemYT</span>
         </span>
-        <a href="/Sub/Terms.html">
-            <button class="terms-button">Terms of Service</button>
-        </a>
+        <div class="buttons-container">
+            <a href="/Sub/Terms.html">
+                <button class="HTML_Link_Button">Terms of Service</button>
+            </a>
+            <a href="/Sub/Privacy_Policy.html">
+                <button class="HTML_Link_Button">Privacy Policy</button>
+            </a>
+        </div>
     </div>
     
-    
     <h1>YouTube Video Downloader</h1>
-    
     <div class="container">
         <input type="text" id="url" placeholder="Enter YouTube URL">
         <button id="fetchInfoBtn">Fetch Video</button>
         <div id="error"></div>
     </div>
     
-    <div id="videoContainer" class="visible">
+    <div id="videoContainer">
         <div id="videoInfo">
             <h2 class="info-title">Video Info</h2>
             <h3 class="info-subtitle"><span class="info-label">Title:</span> <span id="title"></span></h3>
@@ -96,6 +99,63 @@
             </tbody>
         </table>
     </div>
+
+
+    <div class="textContainer">
+        <div class="sectionContainer">
+            <h2 class="textContainerTitle">How does the downloader work?</h2>
+            <p class="textContainerContent">
+                The downloader communicates with our server, which fetches the video metadata using yt-dl-exec.
+                Once we gather the necessary data, the video is downloaded and sent to you!
+            </p>
+        </div>
+    
+        <div class="sectionContainer">
+            <h2 class="textContainerTitle">Understanding Delays</h2>
+            <p class="textContainerContent">
+                Since we rely on a free server, there may be some delay in processing your request. Please bear with us while we fetch the video!
+                This delay is usually short but can vary depending on server load.
+            </p>
+        </div>
+    
+        <div class="sectionContainer">
+            <h2 class="textContainerTitle">What is yt-dl-exec?</h2>
+            <p class="textContainerContent">
+                yt-dl-exec is a tool that allows us to download videos from various sources. It executes commands behind the scenes to pull video metadata, 
+                process the download, and send the video to you, all while ensuring compatibility with numerous platforms.
+            </p>
+        </div>
+    
+        <div class="sectionContainer">
+            <h2 class="textContainerTitle">Why Free Servers?</h2>
+            <p class="textContainerContent">
+                We use free servers to keep the service cost-effective for everyone. While they provide good functionality, they might experience traffic spikes 
+                that cause slower request handling. We appreciate your patience as we work to improve the service!
+            </p>
+        </div>
+    
+        <div class="sectionContainer">
+            <h2 class="textContainerTitle">Frequently Asked Questions</h2>
+            <p class="textContainerContent">
+                <strong>Q:</strong> Why is there a delay when downloading? <br>
+                <strong>A:</strong> Our free server occasionally experiences high traffic, which may cause delays. We aim to provide the fastest download times possible!
+            </p>
+        </div>
+    
+        <div class="sectionContainer">
+            <h2 class="textContainerTitle">Video Formats and Quality</h2>
+            <p class="textContainerContent">
+                Once the download is complete, you can choose from various video formats and quality settings. We strive to provide the best options for your needs.
+            </p>
+        </div>
+    
+        <div class="sectionContainer">
+            <h2 class="textContainerTitle">Supported Platforms</h2>
+            <p class="textContainerContent">
+                Our downloader supports a wide range of platforms, including YouTube, Vimeo, and more. Check back for updates on newly supported services!
+            </p>
+        </div>
+    </div>    
     <script src="script.js"></script>
 </body>
 </html>

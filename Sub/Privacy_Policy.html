@@ -1,0 +1,88 @@
+<!--Privacy_Policy.html - Never remove-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Privacy Policy for the YouTube Downloader service supporting MP3 and MP4 formats.">
+    <title>Privacy Policy - AlchemYT YouTube Downloader</title>
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="Terms_styles.css">
+</head>
+<body>
+    <header>
+        <h1>
+            Privacy Policy
+            <img src="../favicon.ico" alt="AlchemYT Icon" style="width: 80px; height: 80px; vertical-align: middle; margin-left: 10px;">
+        </h1>   
+        <span class="username">AlchemistChief</span><span class="dot">.</span><span class="whitetext">github.io</span>
+        <span class="dot">/</span>
+        <span class="websitename">AlchemYT</span>
+    </header>
+
+    <main>
+        <section>
+            <h2>1. Introduction</h2>
+            <p>Welcome to the Privacy Policy of AlchemYT ("Service"). This policy explains how we handle your personal data when you use the AlchemYT YouTube Downloader service. By using the Service, you agree to the practices outlined in this Privacy Policy. If you do not agree with this policy, you should stop using the Service.</p>
+        </section>
+
+        <section>
+            <h2>2. Data We Collect</h2>
+            <p>We respect your privacy and do not collect, share, or sell any personal data. However, we do log certain information related to your usage of the Service for the purpose of improving functionality and ensuring proper operation of the Service. This includes:</p>
+            <ul>
+                <li>The URL and name of the videos you request to download.</li>
+                <li>The timestamp of when the server receives the download request.</li>
+            </ul>
+            <p>This data is stored temporarily on our servers and is used only for the purpose of serving your request.</p>
+        </section>
+
+        <section>
+            <h2>3. Data Retention</h2>
+            <p>The logged data is cached on our servers for a maximum of 60 seconds. After this period, the data is automatically deleted. Additionally, the data is deleted immediately if the server is restarted. We do not store or retain any personal data permanently.</p>
+        </section>
+
+        <section>
+            <h2>4. Third-Party Services</h2>
+            <p>The Service is hosted on GitHub Pages and utilizes servers from Render, which are based in Germany. We do not have control over data storage on these servers beyond the limited timeframes mentioned above. Please note that these third-party services may have their own privacy policies that govern data storage and processing outside of our control.</p>
+        </section>
+
+        <section>
+            <h2>5. No Sharing or Selling of Data</h2>
+            <p>We do not share, sell, or distribute any of your data to third parties. All data logged by the Service is used solely for operational purposes, such as providing the requested downloads and maintaining the functionality of the Service.</p>
+        </section>
+
+        <section>
+            <h2>6. Security</h2>
+            <p>We take reasonable precautions to protect the data that is temporarily stored on our servers, but due to the nature of the internet and third-party services, we cannot guarantee absolute security. We recommend that you exercise caution and do not share sensitive or personal information while using the Service.</p>
+        </section>
+
+        <section>
+            <h2>7. Changes to This Privacy Policy</h2>
+            <p>We reserve the right to modify this Privacy Policy at any time. Changes will be posted on this page, and the updated policy will take effect as soon as it is published. It is your responsibility to review this Privacy Policy periodically for any changes.</p>
+        </section>
+
+        <section>
+            <h2>8. Contact Information</h2>
+            <p>If you have any questions or concerns regarding this Privacy Policy or the use of the Service, you can contact us at <a href="mailto:" id="support-email">support@example.com</a>.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 AlchemYT YouTube Downloader Service. All rights reserved.</p>
+    </footer>
+
+    <script>
+        fetch('../data.json')
+            .then(response => response.json())
+            .then(data => {
+                const supportEmail = data.SUPPORT_EMAIL;
+                const emailLink = document.getElementById('support-email');
+                emailLink.href = `mailto:${supportEmail}`;
+                emailLink.textContent = supportEmail;
+            })
+            .catch(error => {
+                console.error('Error loading data.json:', error);
+            });
+    </script>
+</body>
+</html>

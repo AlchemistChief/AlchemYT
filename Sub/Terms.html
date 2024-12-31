@@ -1,0 +1,118 @@
+<!--Terms.html - Never remove-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Terms of Service for the YouTube Downloader service supporting MP3 and MP4 formats.">
+    <title>Terms of Service - AlchemYT YouTube Downloader</title>
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="Terms_styles.css">
+</head>
+<body>
+    <header>
+        <h1>
+            Terms of Service 
+            <img src="../favicon.ico" alt="AlchemYT Icon" style="width: 80px; height: 80px; vertical-align: middle; margin-left: 10px;">
+        </h1>   
+        <span class="username">AlchemistChief</span><span class="dot">.</span><span class="whitetext">github.io</span>
+        <span class="dot">/</span>
+        <span class="websitename">AlchemYT</span>
+    </header>
+
+    <main>
+        <section>
+            <h2>1. Introduction</h2>
+            <p>Welcome to our YouTube Downloader service, AlchemYT ("Service"). By using this Service, you agree to these Terms of Service ("Terms"). If you do not agree with these Terms, you may not use the Service. The Service is available at <a href="https://AlchemistChief.github.io/AlchemYT">https://AlchemistChief.github.io/AlchemYT</a>.</p>
+        </section>
+
+        <section>
+            <h2>2. Service Description</h2>
+            <p>Our Service allows users to download YouTube videos in MP3 and MP4 formats. The Service uses yt-dl and yt-dl-exec to perform the video downloads. The Service is hosted on GitHub Pages and is available for use by end users worldwide.</p>
+        </section>
+
+        <section>
+            <h2>3. Use of the Service</h2>
+            <p>The Service may only be used for lawful purposes. Downloading copyrighted content without permission from the copyright holder is prohibited. It is the user's responsibility to ensure compliance with applicable laws.</p>
+            <p>You are responsible for any content you choose to download through the Service. You agree not to use the Service to download any content that violates any local, national, or international laws or regulations.</p>
+        </section>
+
+        <section>
+            <h2>4. Restrictions on Use</h2>
+            <p>The Service may not be used for the following purposes:</p>
+            <ul>
+                <li>Violation of copyright laws</li>
+                <li>Dissemination of malware or harmful content</li>
+                <li>Harassment or abuse of other users</li>
+                <li>Use of bots or automated tools to download content at a large scale</li>
+                <li>Engagement in any activity that disrupts or interferes with the normal operation of the Service</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>5. Copyright and Resources</h2>
+            <p>All content, code, resources, and materials on this site, including but not limited to text, images, logos, and videos, are the property of the Service and are protected by copyright laws. Copying, mirroring, redistributing, or reproducing any part of the site or its resources is strictly prohibited without prior written consent.</p>
+            <p>Any third-party content that is made available through the Service remains the property of its respective copyright holders. We do not claim ownership over any such content.</p>
+        </section>
+
+        <section>
+            <h2>6. Disclaimer of Liability</h2>
+            <p>We do not warrant the accuracy, completeness, or quality of the downloaded content. The Service is provided "as is," without any express or implied warranties. We are not responsible for any damages that may occur from the use of the Service, including but not limited to the downloading of content, errors, or data loss.</p>
+            <p>The Service is not responsible for any harm caused by viruses, malware, or other harmful components that may be present in the content you download.</p>
+        </section>
+
+        <section>
+            <h2>7. Privacy</h2>
+            <p>We respect your privacy. Any personal data you provide will be handled according to our <a href="Privacy_Policy.html">Privacy Policy</a>. The Service does not collect personal data without your consent. We do not store any content you download or track any usage of the Service, unless explicitly stated in our Privacy Policy.</p>
+        </section>        
+
+        <section>
+            <h2>8. Changes to the Terms</h2>
+            <p>We reserve the right to modify these Terms at any time. Changes will be posted on this page and will take effect as of the date of publication. It is the user's responsibility to regularly check this page for any updates. Continued use of the Service after changes have been posted constitutes acceptance of the updated Terms.</p>
+        </section>
+
+        <section>
+            <h2>9. Account Termination</h2>
+            <p>We reserve the right to suspend or terminate your access to the Service if we believe that you have violated these Terms. This includes, but is not limited to, engaging in illegal activities, violating copyright laws, or disrupting the operation of the Service.</p>
+            <p>If your account or access is terminated, you must cease all use of the Service immediately.</p>
+        </section>
+
+        <section>
+            <h2>10. Third-Party Content</h2>
+            <p>The Service may link to or provide access to third-party websites and content. We are not responsible for the accuracy, legality, or reliability of any third-party content, and the inclusion of any link does not imply endorsement by the Service. Use of third-party content is at your own risk.</p>
+        </section>
+
+        <section>
+            <h2>11. Indemnification</h2>
+            <p>You agree to indemnify, defend, and hold harmless the Service, its affiliates, and its officers, employees, and agents from any claims, damages, losses, or liabilities arising out of your use of the Service, violation of these Terms, or infringement of any intellectual property or other rights of any third party.</p>
+        </section>
+
+        <section>
+            <h2>12. Governing Law</h2>
+            <p>These Terms are governed by the laws of Germany. In case of disputes, the competent court in Germany will have exclusive jurisdiction.</p>
+        </section>
+
+        <section>
+            <h2>13. Contact</h2>
+            <p>If you have any questions about these Terms or the use of the Service, you can contact us at <a href="mailto:" id="support-email">support@example.com</a>.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 AlchemYT YouTube Downloader Service. All rights reserved.</p>
+    </footer>
+    <script>
+        fetch('../data.json')
+            .then(response => response.json())
+            .then(data => {
+                const supportEmail = data.SUPPORT_EMAIL;
+                const emailLink = document.getElementById('support-email');
+                emailLink.href = `mailto:${supportEmail}`;
+                emailLink.textContent = supportEmail;
+            })
+            .catch(error => {
+                console.error('Error loading data.json:', error);
+            });
+    </script>
+</body>
+</html>
