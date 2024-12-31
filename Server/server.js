@@ -55,7 +55,7 @@ function scheduleFileDeletion(filePath, fileName, videoUrl) {
         } else {
             console.log(`File does not exist at time of deletion: ${filePath}`);
         }
-    }, 60000); // Delete after 60 seconds
+    }, 600000); // Delete after 60 seconds
 }
 
 // Routes for downloading MP3

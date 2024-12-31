@@ -72,7 +72,7 @@ fetch('data.json')
             return timeString.trim();
         }
 
-        function addToTable(type, videoUrl, videoTitle, fileBlob, extension) {
+        function addToTable(type, videoUrl, videoTitle, fileBlob, extension, resolution = '') {
             const table = type === 'mp3' ? mp3Table : mp4Table;
             const tableContainer = type === 'mp3' ? mp3TableContainer : mp4TableContainer;
         
@@ -83,10 +83,10 @@ fetch('data.json')
             videoCell.textContent = videoTitle;
         
             const downloadButton = document.createElement('button');
-            downloadButton.textContent = `Download ${type.toUpperCase()}`;
+            // Only add resolution to MP4
+            downloadButton.textContent = `Download ${type.toUpperCase()}${resolution ? ` ${resolution}` : ''}`;
             downloadButton.onclick = () => {
-                // Use videoTitle for the filename instead of the URL
-                downloadBlob(fileBlob, `${videoTitle}.${extension}`);
+                downloadBlob(fileBlob, `${videoTitle}${resolution ? `_${resolution}` : ''}.${extension}`);
             };
             downloadCell.appendChild(downloadButton);
         
@@ -96,6 +96,19 @@ fetch('data.json')
             }
         }
 
+        // Cache the MP3/MP4 blob correctly
+        function cacheFile(url, type, resolution, blob) {
+            const videoTitle = titleElem.textContent;
+            if (type === 'mp3') {
+                fileCache.mp3[url] = { file: blob, extension: 'mp3' };
+            } else if (type === 'mp4') {
+                if (!fileCache.mp4[url]) {
+                    fileCache.mp4[url] = {};
+                }
+                fileCache.mp4[url][resolution] = { file: blob, extension: 'mp4' };
+            }
+        }
+        
         function downloadBlob(blob, filename) {
             const objectURL = URL.createObjectURL(blob);
             const anchor = document.createElement('a');
@@ -105,7 +118,7 @@ fetch('data.json')
             anchor.click();
             document.body.removeChild(anchor);
             URL.revokeObjectURL(objectURL); // Release the object URL after download
-        }
+        }        
 
         fetchInfoBtn.addEventListener('click', () => {
             const rawUrl = urlInput.value.trim();
@@ -172,16 +185,8 @@ fetch('data.json')
                 fetch(`${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}&resolution=${resolution}`)
                     .then(response => response.blob())
                     .then(blob => {
-                        // Store the blob with the specific resolution in the cache
-                        if (!fileCache.mp4[savedUrl]) {
-                            fileCache.mp4[savedUrl] = {}; // Initialize resolution-specific cache for this URL
-                        }
-                        fileCache.mp4[savedUrl][resolution] = {
-                            file: blob,
-                            extension: 'mp4'
-                        };
-                        addToTable('mp4', savedUrl, `${titleElem.textContent}_${resolution}`, blob, 'mp4');
-                        // Use title and resolution for the filename
+                        cacheFile(savedUrl, 'mp4', resolution, blob);
+                        addToTable('mp4', savedUrl, titleElem.textContent, blob, 'mp4', resolution);
                         downloadBlob(blob, `${titleElem.textContent}_${resolution}.mp4`);
                     })
                     .catch(error => {
@@ -204,7 +209,6 @@ fetch('data.json')
                 if (fileCache.mp3[savedUrl]) {
                     console.log('MP3 already downloaded, serving from cache...');
                     const cachedBlob = fileCache.mp3[savedUrl].file;
-                    // Use title instead of URL
                     downloadBlob(cachedBlob, `${titleElem.textContent}.mp3`);
                     return;
                 }
@@ -213,12 +217,8 @@ fetch('data.json')
                 fetch(`${apiBaseUrl}/mp3?url=${encodeURIComponent(savedUrl)}`)
                     .then(response => response.blob())
                     .then(blob => {
-                        fileCache.mp3[savedUrl] = {
-                            file: blob,
-                            extension: 'mp3'
-                        };
+                        cacheFile(savedUrl, 'mp3', '', blob);
                         addToTable('mp3', savedUrl, titleElem.textContent, blob, 'mp3');
-                        // Use title instead of URL
                         downloadBlob(blob, `${titleElem.textContent}.mp3`);
                     })
                     .catch(error => {
@@ -228,6 +228,7 @@ fetch('data.json')
                 errorElem.textContent = 'Please fetch video info first.';
             }
         });
+        
         
         // Clear cached data when the tab is closed
         window.addEventListener('beforeunload', () => {
