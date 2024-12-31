@@ -8,8 +8,12 @@ fetch('data.json')
         const urlInput = document.getElementById('url');
         const fetchInfoBtn = document.getElementById('fetchInfoBtn');
         const downloadMp3Btn = document.getElementById('downloadMp3Btn');
-        const downloadMp4Btn = document.getElementById('downloadMp4Btn');
-        const downloadDevBtn = document.getElementById('downloadDevBtn');
+        const downloadMp4_144pBtn = document.getElementById('downloadMp4_144pBtn');
+        const downloadMp4_240pBtn = document.getElementById('downloadMp4_240pBtn');
+        const downloadMp4_360pBtn = document.getElementById('downloadMp4_360pBtn');
+        const downloadMp4_480pBtn = document.getElementById('downloadMp4_480pBtn');
+        const downloadMp4_720pBtn = document.getElementById('downloadMp4_720pBtn');
+        const downloadMp4_1080pBtn = document.getElementById('downloadMp4_1080pBtn');
         const titleElem = document.getElementById('title');
         const videoEmbedElem = document.getElementById('videoEmbed');
         const durationElem = document.getElementById('duration');
@@ -154,6 +158,43 @@ fetch('data.json')
             }
         });
 
+        function handleMp4Download(resolution) {
+            if (savedUrl) {
+                if (fileCache.mp4[savedUrl]) {
+                    console.log('MP4 already downloaded, serving from cache...');
+                    const cachedBlob = fileCache.mp4[savedUrl].file;
+                    // Use title instead of URL
+                    downloadBlob(cachedBlob, `${titleElem.textContent}.mp4`);
+                    return;
+                }
+
+                console.log(`Requested MP4 download for URL: ${savedUrl} with resolution ${resolution}`);
+                fetch(`${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}&resolution=${resolution}`)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        fileCache.mp4[savedUrl] = {
+                            file: blob,
+                            extension: 'mp4'
+                        };
+                        addToTable('mp4', savedUrl, titleElem.textContent, blob, 'mp4');
+                        // Use title instead of URL
+                        downloadBlob(blob, `${titleElem.textContent}.mp4`);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching MP4:', error);
+                    });
+            } else {
+                errorElem.textContent = 'Please fetch video info first.';
+            }
+        }
+
+        downloadMp4_144pBtn.addEventListener('click', () => handleMp4Download('144p'));
+        downloadMp4_240pBtn.addEventListener('click', () => handleMp4Download('240p'));
+        downloadMp4_360pBtn.addEventListener('click', () => handleMp4Download('360p'));
+        downloadMp4_480pBtn.addEventListener('click', () => handleMp4Download('480p'));
+        downloadMp4_720pBtn.addEventListener('click', () => handleMp4Download('720p'));
+        downloadMp4_1080pBtn.addEventListener('click', () => handleMp4Download('1080p'));
+
         downloadMp3Btn.addEventListener('click', () => {
             if (savedUrl) {
                 if (fileCache.mp3[savedUrl]) {
@@ -184,54 +225,6 @@ fetch('data.json')
             }
         });
         
-        downloadMp4Btn.addEventListener('click', () => {
-            if (savedUrl) {
-                if (fileCache.mp4[savedUrl]) {
-                    console.log('MP4 already downloaded, serving from cache...');
-                    const cachedBlob = fileCache.mp4[savedUrl].file;
-                    // Use title instead of URL
-                    downloadBlob(cachedBlob, `${titleElem.textContent}.mp4`);
-                    return;
-                }
-        
-                console.log('Requested MP4 download for URL:', savedUrl);
-                fetch(`${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}`)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        fileCache.mp4[savedUrl] = {
-                            file: blob,
-                            extension: 'mp4'
-                        };
-                        addToTable('mp4', savedUrl, titleElem.textContent, blob, 'mp4');
-                        // Use title instead of URL
-                        downloadBlob(blob, `${titleElem.textContent}.mp4`);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching MP4:', error);
-                    });
-            } else {
-                errorElem.textContent = 'Please fetch video info first.';
-            }
-        });
-
-        downloadDevBtn.addEventListener('click', () => {
-            if (savedUrl) {
-        
-                console.log('Requested DEV download for URL:', savedUrl);
-                fetch(`${apiBaseUrl}/dev?url=${encodeURIComponent(savedUrl)}`)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        // Use title instead of URL
-                        downloadBlob(blob, `${titleElem.textContent}.txt`);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching DEV:', error);
-                    });
-            } else {
-                errorElem.textContent = 'Please fetch video info first.';
-            }
-        });
-
         // Clear cached data when the tab is closed
         window.addEventListener('beforeunload', () => {
             for (let type in fileCache) {

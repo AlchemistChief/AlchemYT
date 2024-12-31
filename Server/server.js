@@ -1,4 +1,3 @@
-// server.js - Backend - Never remove
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -53,10 +52,10 @@ function scheduleFileDeletion(filePath, fileName, videoUrl) {
     }, 60000); // Delete after 60 seconds
 }
 
-
 // Routes for downloading MP3 and MP4
 app.get('/mp3', (req, res) => {
     const videoUrl = req.query.url;
+
     if (!videoUrl) {
         return res.status(400).json({ error: 'YouTube URL is required' });
     }
@@ -72,7 +71,6 @@ app.get('/mp3', (req, res) => {
     youtubedl(videoUrl, {
         noCheckCertificates: true,
         noWarnings: true,
-        //preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
         dumpSingleJson: true,
@@ -86,7 +84,6 @@ app.get('/mp3', (req, res) => {
             format: 'mp3',
             noCheckCertificates: true,
             noWarnings: true,
-            //preferFreeFormats: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
@@ -119,13 +116,15 @@ app.get('/mp3', (req, res) => {
     });
 });
 
-// Routes for downloading MP3 and MP4
+// Routes for downloading MP4
 app.get('/mp4', (req, res) => {
     const videoUrl = req.query.url;
+    const resolution = req.query.resolution || '1080p';  // Default to '1080p' if no resolution is specified
+
     if (!videoUrl) {
         return res.status(400).json({ error: 'YouTube URL is required' });
     }
-    console.log(`MP4 download endpoint hit. URL: ${videoUrl}`);
+    console.log(`MP4 download endpoint hit. URL: ${videoUrl}, Resolution: ${resolution}`);
 
     // Check if file is cached
     const cachedFile = fileCache[videoUrl];
@@ -137,7 +136,6 @@ app.get('/mp4', (req, res) => {
     youtubedl(videoUrl, {
         noCheckCertificates: true,
         noWarnings: true,
-        //preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
         dumpSingleJson: true,
@@ -149,9 +147,9 @@ app.get('/mp4', (req, res) => {
 
         youtubedl(videoUrl, {
             format: 'bv*[ext=mp4]+ba[ext=m4a]/best',
+            format_sort: `vcodec:h264,res:${resolution},acodec:aac`,
             noCheckCertificates: true,
             noWarnings: true,
-            //preferFreeFormats: false,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
@@ -183,42 +181,6 @@ app.get('/mp4', (req, res) => {
         res.status(500).json({ error: 'Failed to download MP4', details: error.message });
     });
 });
-
-
-// DEV ENDPOINT
-app.get('/dev', (req, res) => {
-    const videoUrl = req.query.url;
-    if (!videoUrl) {
-        return res.status(400).json({ error: 'YouTube URL is required' });
-    }
-    console.log(`DEV URL endpoint hit. URL: ${videoUrl}`);
-
-    youtubedl(videoUrl, {
-        noCheckCertificates: true,
-        noWarnings: true,
-        addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
-        cookies: cookiesPath,
-        dumpSingleJson: true, // Extract metadata
-    })
-    .then((info) => {
-        // Find the best video+audio format or fall back to the best available
-        const format = info.formats.find(f => f.format_id === 'bv*[ext=mp4]+ba[ext=m4a]' || f.format_id === 'best');
-
-        if (!format || !format.url) {
-            return res.status(500).json({ error: 'No suitable format found for download' });
-        }
-
-        const downloadUrl = format.url;
-        console.log(`Extracted download URL: ${downloadUrl}`);
-        res.json({ downloadUrl });
-    })
-    .catch((error) => {
-        console.error('Failed to get download URL:', error);
-        res.status(500).json({ error: 'Failed to get download URL', details: error.message });
-    });
-});
-
-
 
 // Start server
 app.listen(port, () => {

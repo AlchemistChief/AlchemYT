@@ -36,12 +36,35 @@
             <h3 class="info-subtitle"><span class="info-label">Duration:</span> <span id="duration"></span></h3>
             <iframe id="videoEmbed" width="560" height="315" frameborder="0" allowfullscreen></iframe>
         </div>
-        <span>
-            <button id="downloadMp3Btn">Download MP3</button>
-            <button id="downloadMp4Btn">Download MP4</button>
-            <button id="downloadDevBtn">Download DEV</button>
-        </span>
+        <table id="downloadOptions">
+            <thead>
+                <tr>
+                    <th>Format</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>MP3</td>
+                    <td>
+                        <button class="mp3" id="downloadMp3Btn">Download MP3</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>MP4</td>
+                    <td>
+                        <button class="mp4" id="downloadMp4_144pBtn">144p</button>
+                        <button class="mp4" id="downloadMp4_240pBtn">240p</button>
+                        <button class="mp4" id="downloadMp4_360pBtn">360p</button>
+                        <button class="mp4" id="downloadMp4_480pBtn">480p</button>
+                        <button class="mp4" id="downloadMp4_720pBtn">720p</button>
+                        <button class="mp4" id="downloadMp4_1080pBtn">1080p</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+    
 
     <!-- MP3 and MP4 tables to display download links -->
     <div id="mp3TableContainer">
