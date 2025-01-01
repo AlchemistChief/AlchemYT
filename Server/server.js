@@ -116,7 +116,6 @@ app.get('/mp3', (req, res) => {
                     console.log(`MP3 file sent successfully: ${fileName}`);
                 }
             });
-
             scheduleFileDeletion(filePath, fileName, videoUrl);
         });
     })
@@ -196,6 +195,73 @@ app.get('/mp4', (req, res) => {
     .catch((error) => {
         console.error('Failed to download MP4:', error);
         res.status(500).json({ error: 'Failed to download MP4', details: error.message });
+    });
+});
+
+// Routes for downloading Playlist
+app.get('/playlist', (req, res) => {
+    const videoUrl = req.query.url;
+
+    if (!videoUrl) {
+        return res.status(400).json({ error: 'YouTube URL is required' });
+    }
+    console.log(`MP3 download endpoint hit. URL: ${videoUrl}`);
+
+    // Check if file is cached
+    const cachedFile = fileCache[videoUrl];
+    if (cachedFile && cachedFile.extension === 'mp3') {
+        console.log(`Serving cached MP3 file: ${cachedFile.fileName}, Path: ${cachedFile.filePath}`);
+        return res.download(cachedFile.filePath, cachedFile.fileName);
+    }
+
+    console.log('No cached file found, starting new download...');
+
+    youtubedl(videoUrl, {
+        noCheckCertificates: true,
+        noWarnings: true,
+        addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+        cookies: cookiesPath,
+        dumpSingleJson: true,
+    })
+    .then((info) => {
+        const videoTitle = sanitizeFileName(info.title || 'audio');
+        const fileName = `${videoTitle}.mp3`;
+        const filePath = path.join(process.cwd(), 'downloads', fileName);
+
+        console.log(`Downloading MP3: ${fileName}, Path: ${filePath}`);
+
+        youtubedl(videoUrl, {
+            format: 'bestaudio[ext=mp3]/bestaudio[ext=m4a]',
+            noCheckCertificates: true,
+            noWarnings: true,
+            addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+            cookies: cookiesPath,
+            output: filePath,
+        })
+        .then(() => {
+            console.log(`MP3 download completed: ${fileName}`);
+
+            // Cache the file
+            fileCache[videoUrl] = {
+                filePath,
+                fileName,
+                extension: 'mp3'
+            };
+
+            res.download(filePath, fileName, (err) => {
+                if (err) {
+                    console.error('Error sending file:', err);
+                    res.status(500).json({ error: 'Failed to send MP3 file' });
+                } else {
+                    console.log(`MP3 file sent successfully: ${fileName}`);
+                }
+            });
+            scheduleFileDeletion(filePath, fileName, videoUrl);
+        });
+    })
+    .catch((error) => {
+        console.error('Failed to download MP3:', error);
+        res.status(500).json({ error: 'Failed to download MP3', details: error.message });
     });
 });
 
