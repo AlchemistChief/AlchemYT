@@ -98,10 +98,6 @@ app.get('/mp3', (req, res) => {
         cookies: cookiesPath,
         dumpSingleJson: true,
     })
-    .on('progress', (progress) => {
-        console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
-        res.write(`data: ${JSON.stringify(progress)}\n\n`);
-    })
     .then((info) => {
         const videoTitle = sanitizeFileName(info.title || 'audio');
         const fileName = `${videoTitle}.mp3`;
@@ -125,7 +121,7 @@ app.get('/mp3', (req, res) => {
             cookies: cookiesPath,
             output: filePath,
         })
-        .on('progress', (progress) => {
+        .stdout.on('progress', (progress) => {
 			console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
             res.write(`data: ${JSON.stringify(progress)}\n\n`);
         })
@@ -183,10 +179,6 @@ app.get('/mp4', (req, res) => {
         cookies: cookiesPath,
         dumpSingleJson: true,
     })
-    .on('progress', (progress) => {
-        console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
-        res.write(`data: ${JSON.stringify(progress)}\n\n`);
-    })
     .then((info) => {
         const videoTitle = sanitizeFileName(info.title || 'video');
         const fileName = `${videoTitle}_${resolution}.mp4`;  // Use the title and resolution for the filename
@@ -204,6 +196,10 @@ app.get('/mp4', (req, res) => {
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
+        })
+        .stdout.on('progress', (progress) => {
+            console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
+            res.write(`data: ${JSON.stringify(progress)}\n\n`);
         })
         .then(() => {
             console.log(`MP4 download completed: ${fileName}`);
@@ -278,6 +274,10 @@ app.get('/playlist', (req, res) => {
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: path.join(playlistPath, `%(title)s.%(ext)s`),
+        })
+        .stdout.on('progress', (progress) => {
+            console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
+            res.write(`data: ${JSON.stringify(progress)}\n\n`);
         })
         .then(() => {
             console.log(`Playlist download completed: ${playlistTitle}`);
