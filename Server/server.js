@@ -93,7 +93,6 @@ app.get('/mp3', (req, res) => {
 
     youtubedl(videoUrl, {
         noCheckCertificates: true,
-        writeThumbnail: true,
         noPlaylist: true,
         noWarnings: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
@@ -110,6 +109,7 @@ app.get('/mp3', (req, res) => {
         youtubedl(videoUrl, {
             format: 'bestaudio[ext=mp3]/bestaudio[ext=m4a]',
             noCheckCertificates: true,
+            writeThumbnail: true,
             noWarnings: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
@@ -163,7 +163,6 @@ app.get('/mp4', (req, res) => {
 
     youtubedl(videoUrl, {
         noCheckCertificates: true,
-        writeThumbnail: true,
         noPlaylist: true,
         noWarnings: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
@@ -181,6 +180,7 @@ app.get('/mp4', (req, res) => {
             format: `bv*[vcodec=h264][height=${resolution.replace('p', '')}][ext=mp4]+ba[acodec=aac][ext=m4a]/best`,
             formatSort: `vcodec:h264,res:${resolution},ext:mp4,acodec:aac`,            
             noCheckCertificates: true,
+            writeThumbnail: true,
             noWarnings: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
