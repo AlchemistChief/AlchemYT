@@ -93,6 +93,7 @@ app.get('/mp3', (req, res) => {
 
     youtubedl(videoUrl, {
         noCheckCertificates: true,
+        noPlaylist: true,
         noWarnings: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
@@ -161,6 +162,7 @@ app.get('/mp4', (req, res) => {
 
     youtubedl(videoUrl, {
         noCheckCertificates: true,
+        noPlaylist: true,
         noWarnings: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
@@ -223,7 +225,7 @@ app.get('/playlist', (req, res) => {
     console.log(`Playlist download endpoint hit. URL: ${playlistUrl}`);
 
     // Check if file is cached
-    const cachedFile = fileCache[videoUrl];
+    const cachedFile = fileCache[playlistUrl];
     if (cachedFile && cachedFile.extension === 'zip') {
         console.log(`Serving cached ZIP file: ${cachedFile.fileName}, Path: ${cachedFile.filePath}`);
         return res.download(cachedFile.filePath, cachedFile.fileName);
