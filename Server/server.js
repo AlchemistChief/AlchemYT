@@ -1,5 +1,6 @@
 // server.js - BACKEND - Never remove
 const express = require('express');
+const archiver = require('archiver');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
@@ -56,6 +57,20 @@ function scheduleFileDeletion(filePath, fileName, videoUrl) {
             console.log(`File does not exist at time of deletion: ${filePath}`);
         }
     }, 60000); // Delete after 60 seconds
+}
+// Function to delete a directory and all its contents with existence check
+function deleteDirectory(directoryPath) {
+    if (fs.existsSync(directoryPath)) {
+        fs.rm(directoryPath, { recursive: true, force: true }, (err) => {
+            if (err) {
+                console.error(`Error deleting directory ${directoryPath}:`, err);
+            } else {
+                console.log(`Directory and its contents deleted successfully: ${directoryPath}`);
+            }
+        });
+    } else {
+        console.error(`Directory does not exist: ${directoryPath}`);
+    }
 }
 
 // Routes for downloading MP3
@@ -198,25 +213,26 @@ app.get('/mp4', (req, res) => {
     });
 });
 
-// Routes for downloading Playlist
+// Routes for downloading Playlist as MP3
 app.get('/playlist', (req, res) => {
-    const videoUrl = req.query.url;
+    const playlistUrl = req.query.url;
 
-    if (!videoUrl) {
-        return res.status(400).json({ error: 'YouTube URL is required' });
+    if (!playlistUrl) {
+        return res.status(400).json({ error: 'YouTube Playlist URL is required' });
     }
-    console.log(`MP3 download endpoint hit. URL: ${videoUrl}`);
+    console.log(`Playlist download endpoint hit. URL: ${playlistUrl}`);
 
     // Check if file is cached
     const cachedFile = fileCache[videoUrl];
-    if (cachedFile && cachedFile.extension === 'mp3') {
-        console.log(`Serving cached MP3 file: ${cachedFile.fileName}, Path: ${cachedFile.filePath}`);
+    if (cachedFile && cachedFile.extension === 'zip') {
+        console.log(`Serving cached ZIP file: ${cachedFile.fileName}, Path: ${cachedFile.filePath}`);
         return res.download(cachedFile.filePath, cachedFile.fileName);
     }
 
-    console.log('No cached file found, starting new download...');
+    console.log('No cached playlist found, starting new download...');
 
-    youtubedl(videoUrl, {
+    // Get playlist information using yt-dlp
+    youtubedl(playlistUrl, {
         noCheckCertificates: true,
         noWarnings: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
@@ -224,48 +240,81 @@ app.get('/playlist', (req, res) => {
         dumpSingleJson: true,
     })
     .then((info) => {
-        const videoTitle = sanitizeFileName(info.title || 'audio');
-        const fileName = `${videoTitle}.mp3`;
-        const filePath = path.join(process.cwd(), 'downloads', fileName);
+        const playlistTitle = sanitizeFileName(info.title || 'playlist');
+        const playlistPath = path.join(process.cwd(), 'downloads', playlistTitle);
 
-        console.log(`Downloading MP3: ${fileName}, Path: ${filePath}`);
+        console.log(`Downloading Playlist: ${playlistTitle}, Path: ${playlistPath}`);
 
-        youtubedl(videoUrl, {
+        // Download each video as MP3
+        youtubedl(playlistUrl, {
             format: 'bestaudio[ext=mp3]/bestaudio[ext=m4a]',
             noCheckCertificates: true,
+            yesPlaylist: true,
             noWarnings: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
-            output: filePath,
+            output: path.join(playlistPath, '%(title)s.mp3'),
         })
         .then(() => {
-            console.log(`MP3 download completed: ${fileName}`);
+            console.log(`Playlist download completed: ${playlistTitle}`);
 
-            // Cache the file
-            fileCache[videoUrl] = {
-                filePath,
-                fileName,
-                extension: 'mp3'
-            };
+            // Use Archiver to zip the MP3 files
+            const zipFilePath = path.join(process.cwd(), 'downloads', `${playlistTitle}.zip`);
+            const archive = archiver('zip', {zlib:{level: 0 }});
 
-            res.download(filePath, fileName, (err) => {
-                if (err) {
-                    console.error('Error sending file:', err);
-                    res.status(500).json({ error: 'Failed to send MP3 file' });
-                } else {
-                    console.log(`MP3 file sent successfully: ${fileName}`);
-                }
+            const output = fs.createWriteStream(zipFilePath);
+            archive.pipe(output);
+
+            // Add MP3 files to the ZIP
+            archive.directory(playlistPath, false);
+
+            archive.finalize();
+
+            output.on('close', () => {
+                console.log(`ZIP file created: ${zipFilePath}`);
+
+                // Cache the zip file by playlist URL
+                fileCache[playlistUrl] = {
+                    filePath: zipFilePath,
+                    fileName: `${playlistTitle}.zip`,
+                    extension: 'zip'
+                };
+
+                res.download(zipFilePath, `${playlistTitle}.zip`, (err) => {
+                    if (err) {
+                        console.error('Error sending ZIP file:', err);
+                        res.status(500).json({ error: 'Failed to send ZIP file' });
+                    } else {
+                        console.log(`ZIP file sent successfully: ${playlistTitle}.zip`);
+                    }
+                });
+                scheduleFileDeletion(zipFilePath, `${playlistTitle}.zip`, playlistUrl);
+                deleteDirectory(playlistPath)
             });
-            scheduleFileDeletion(filePath, fileName, videoUrl);
+            output.on('error', (err) => {
+                console.error('Error creating ZIP file:', err);
+                deleteDirectory(playlistPath)
+                res.status(500).json({ error: 'Failed to create ZIP file', details: err.message });
+            });
+        })
+        .catch((error) => {
+            console.error('Failed to download playlist:', error);
+            deleteDirectory(playlistPath)
+            res.status(500).json({ error: 'Failed to download playlist', details: error.message });
         });
     })
     .catch((error) => {
-        console.error('Failed to download MP3:', error);
-        res.status(500).json({ error: 'Failed to download MP3', details: error.message });
+        console.error('Failed to fetch playlist info:', error);
+        deleteDirectory(playlistPath)
+        res.status(500).json({ error: 'Failed to fetch playlist info', details: error.message });
     });
 });
+
 
 // Start server
 app.listen(port, () => {
     console.log(`Server running at ${host}`);
 });
+
+
+//%(ext)s

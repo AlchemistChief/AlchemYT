@@ -26,7 +26,6 @@ fetch('data.json')
         const mp4TableContainer = document.getElementById('mp4TableContainer');
 
         let savedUrl = null;
-        let Playlist = false
 
         // Cache for downloaded videos (MP3 and MP4)
         const fileCache = {
@@ -63,6 +62,11 @@ fetch('data.json')
             } catch {
                 return null;
             }
+        }
+        
+        function extractPlaylistId(url) {
+            const match = url.match(/[?&]list=([^&#]+)/);
+            return match ? match[1] : null;
         }
 
         function parseDuration(duration) {
@@ -213,78 +217,143 @@ fetch('data.json')
             }
         });
         
-        fetchInfoBtn.addEventListener('click', () => { 
+        fetchInfoBtn.addEventListener('click', () => {
             const rawUrl = urlInput.value.trim();
             const normalizedUrl = normalizeYouTubeUrl(rawUrl);
             const videoId = extractVideoId(rawUrl);
+            const isPlaylist = rawUrl.includes('list=');
+            const playlistId = isPlaylist ? extractPlaylistId(rawUrl) : null;
         
-            if (normalizedUrl) {
+            if (normalizedUrl && (videoId || isPlaylist)) {
+                // Save the URL for future use
                 savedUrl = normalizedUrl;
-                Playlist = normalizedUrl.includes('list=');
         
-                if (Playlist) {
-                    const playlistId = new URLSearchParams(new URL(normalizedUrl).search).get('list');
+                if (isPlaylist) {
+                    const playlistApiUrl = `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${playlistId}&key=${apiKey}`;
+                    const playlistItemsApiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&key=${apiKey}&maxResults=50`;
         
-                    if (playlistId) {
-                        // Fetch playlist details
-                        const playlistApiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=1&key=${apiKey}`;
+                    // Fetch playlist details
+                    fetch(playlistApiUrl)
+                        .then(response => response.json())
+                        .then(playlistData => {
+                            if (playlistData.items && playlistData.items.length > 0) {
+                                const playlistTitle = playlistData.items[0].snippet.title;
+                                titleElem.textContent = playlistTitle;
         
-                        fetch(playlistApiUrl)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.items && data.items.length > 0) {
-                                    const firstVideoId = data.items[0].snippet.resourceId.videoId;
+                                // Fetch playlist items to count videos
+                                let totalVideos = 0;
+                                let nextPageToken = null;
         
-                                    videoEmbedElem.src = `https://www.youtube.com/embed/${firstVideoId}?list=${playlistId}`;
-                                    videoEmbedElem.style.display = 'block'; 
-                                    videoContainer.style.display = 'flex';
-                                    videoContainer.style.height = 'auto';
-                                    videoContainer.classList.add('visible');
+                                const fetchAllVideos = (pageToken = '') => {
+                                    const url = `${playlistItemsApiUrl}${pageToken ? `&pageToken=${pageToken}` : ''}`;
         
-                                    downloadMp3Btn.style.display = 'none';
-                                    downloadMp4_144pBtn.style.display = 'none';
-                                    downloadMp4_240pBtn.style.display = 'none';
-                                    downloadMp4_360pBtn.style.display = 'none';
-                                    downloadMp4_480pBtn.style.display = 'none';
-                                    downloadMp4_720pBtn.style.display = 'none';
-                                    downloadMp4_1080pBtn.style.display = 'none';
-                                    document.getElementById('downloadMp3PlaylistBtn').style.display = 'block';
-                                } else {
-                                    errorElem.textContent = 'Failed to fetch the first video of the playlist.';
-                                }
-                            })
-                            .catch(() => {
-                                console.error('Error fetching playlist details');
-                                errorElem.textContent = 'Failed to fetch playlist details. Please check the URL.';
-                            });
-                    } else {
-                        errorElem.textContent = 'Invalid playlist ID.';
-                    }
-                } else if (videoId) {
-                    // Handle single video as before
-                    videoEmbedElem.src = `https://www.youtube.com/embed/${videoId}`;
-                    videoEmbedElem.style.display = 'block'; 
-                    videoContainer.style.display = 'flex';
-                    videoContainer.style.height = 'auto';
-                    videoContainer.classList.add('visible');
+                                    return fetch(url)
+                                        .then(response => response.json())
+                                        .then(itemsData => {
+                                            if (itemsData.items) {
+                                                totalVideos += itemsData.items.length;
         
-                    downloadMp3Btn.style.display = 'block';
-                    downloadMp4_144pBtn.style.display = 'block';
-                    downloadMp4_240pBtn.style.display = 'block';
-                    downloadMp4_360pBtn.style.display = 'block';
-                    downloadMp4_480pBtn.style.display = 'block';
-                    downloadMp4_720pBtn.style.display = 'block';
-                    downloadMp4_1080pBtn.style.display = 'block';
-                    document.getElementById('downloadMp3PlaylistBtn').style.display = 'none';
+                                                if (itemsData.nextPageToken) {
+                                                    // Fetch next page
+                                                    return fetchAllVideos(itemsData.nextPageToken);
+                                                } else {
+                                                    // No more pages, update UI
+                                                    durationElem.textContent = `${totalVideos} videos`;
+        
+                                                    if (totalVideos > 30) {
+                                                        // Display only the title and duration if the playlist exceeds 30 videos
+                                                        errorElem.textContent = 'This playlist has more than 30 videos. Features are limited.';
+                                                        videoEmbedElem.style.display = 'none';
+                                                        downloadMp3PlaylistBtn.style.display = 'none';
+                                                        downloadMp3Btn.style.display = 'none';
+                                                        downloadMp4_144pBtn.style.display = 'none';
+                                                        downloadMp4_240pBtn.style.display = 'none';
+                                                        downloadMp4_360pBtn.style.display = 'none';
+                                                        downloadMp4_480pBtn.style.display = 'none';
+                                                        downloadMp4_720pBtn.style.display = 'none';
+                                                        downloadMp4_1080pBtn.style.display = 'none';
+                                                    } else {
+                                                        // Show the first video and buttons if the playlist is within the limit
+                                                        const firstVideoId = itemsData.items[0].snippet.resourceId.videoId;
+                                                        videoEmbedElem.src = `https://www.youtube.com/embed/${firstVideoId}?list=${playlistId}`;
+                                                        videoEmbedElem.style.display = 'block';
+        
+                                                        downloadMp3PlaylistBtn.style.display = 'inline';
+                                                        downloadMp3Btn.style.display = 'none';
+                                                        downloadMp4_144pBtn.style.display = 'none';
+                                                        downloadMp4_240pBtn.style.display = 'none';
+                                                        downloadMp4_360pBtn.style.display = 'none';
+                                                        downloadMp4_480pBtn.style.display = 'none';
+                                                        downloadMp4_720pBtn.style.display = 'none';
+                                                        downloadMp4_1080pBtn.style.display = 'none';
+                                                    }
+                                                }
+                                            } else {
+                                                throw new Error('No videos in playlist.');
+                                            }
+                                        });
+                                };
+        
+                                return fetchAllVideos();
+                            } else {
+                                throw new Error('Playlist not found.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching playlist info:', error);
+                            videoContainer.style.height = '0';
+                            videoContainer.style.opacity = '0';
+                            videoContainer.classList.remove('visible');
+                            errorElem.textContent = 'Failed to fetch playlist details.';
+                        });
                 } else {
-                    errorElem.textContent = 'Please enter a valid YouTube URL.';
+                    // Video-specific logic here
+                    downloadMp3PlaylistBtn.style.display = 'none';
+                    downloadMp3Btn.style.display = 'inline';
+                    downloadMp4_144pBtn.style.display = 'inline';
+                    downloadMp4_240pBtn.style.display = 'inline';
+                    downloadMp4_360pBtn.style.display = 'inline';
+                    downloadMp4_480pBtn.style.display = 'inline';
+                    downloadMp4_720pBtn.style.display = 'inline';
+                    downloadMp4_1080pBtn.style.display = 'inline';
+        
+                    // Fetch video details
+                    const videoApiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails&key=${apiKey}`;
+        
+                    fetch(videoApiUrl)
+                        .then(response => response.json())
+                        .then(videoData => {
+                            if (videoData.items && videoData.items.length > 0) {
+                                const videoDetails = videoData.items[0];
+                                titleElem.textContent = videoDetails.snippet.title;
+                                durationElem.textContent = parseDuration(videoDetails.contentDetails.duration);
+        
+                                // Embed the video
+                                videoEmbedElem.src = `https://www.youtube.com/embed/${videoId}`;
+                                videoEmbedElem.style.display = 'block';
+                            } else {
+                                throw new Error('Video not found.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching video info:', error);
+                            videoContainer.style.height = '0';
+                            videoContainer.style.opacity = '0';
+                            videoContainer.classList.remove('visible');
+                            errorElem.textContent = 'Failed to fetch video details.';
+                        });
                 }
+        
+                videoContainer.style.display = 'flex';
+                videoContainer.style.height = 'auto';
+                videoContainer.classList.add('visible');
+                errorElem.textContent = '';
             } else {
                 errorElem.textContent = 'Please enter a valid YouTube URL.';
             }
         });
         
-        
+           
         // Clear cached data when the tab is closed
         window.addEventListener('beforeunload', () => {
             for (let type in fileCache) {
