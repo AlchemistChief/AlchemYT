@@ -98,12 +98,21 @@ app.get('/mp3', (req, res) => {
         cookies: cookiesPath,
         dumpSingleJson: true,
     })
+    .on('progress', (progress) => {
+        console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
+        res.write(`data: ${JSON.stringify(progress)}\n\n`);
+    })
     .then((info) => {
         const videoTitle = sanitizeFileName(info.title || 'audio');
         const fileName = `${videoTitle}.mp3`;
         const filePath = path.join(process.cwd(), 'downloads', fileName);
 
         console.log(`Downloading MP3: ${fileName}, Path: ${filePath}`);
+
+        // Send initial SSE response headers
+		res.setHeader('Content-Type', 'text/event-stream');
+		res.setHeader('Cache-Control', 'no-cache');
+		res.setHeader('Connection', 'keep-alive');
 
         youtubedl(videoUrl, {
             format: 'bestaudio[ext=mp3]/bestaudio[ext=m4a]',
@@ -117,7 +126,8 @@ app.get('/mp3', (req, res) => {
             output: filePath,
         })
         .on('progress', (progress) => {
-            console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
+			console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
+            res.write(`data: ${JSON.stringify(progress)}\n\n`);
         })
         .then(() => {
             console.log(`MP3 download completed: ${fileName}`);
@@ -137,6 +147,7 @@ app.get('/mp3', (req, res) => {
                     console.log(`MP3 file sent successfully: ${fileName}`);
                 }
             });
+
             scheduleFileDeletion(filePath, fileName, videoUrl);
         });
     })
@@ -171,6 +182,10 @@ app.get('/mp4', (req, res) => {
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         cookies: cookiesPath,
         dumpSingleJson: true,
+    })
+    .on('progress', (progress) => {
+        console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
+        res.write(`data: ${JSON.stringify(progress)}\n\n`);
     })
     .then((info) => {
         const videoTitle = sanitizeFileName(info.title || 'video');

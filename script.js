@@ -95,19 +95,41 @@ fetch('data.json')
         
             videoCell.textContent = videoTitle;
         
-            const downloadButton = document.createElement('button');
-            // Only add resolution to MP4
-            downloadButton.textContent = `Download ${extension.toUpperCase()}${resolution ? ` ${resolution}` : ''}`;
-            downloadButton.onclick = () => {
-                downloadBlob(fileBlob, `${videoTitle}${resolution ? `_${resolution}` : ''}.${extension}`);
-            };
-            downloadCell.appendChild(downloadButton);
+            if (fileBlob) {
+                // If blob is valid, create the download button
+                const downloadButton = document.createElement('button');
+                downloadButton.textContent = `Download ${extension.toUpperCase()}${resolution ? ` ${resolution}` : ''}`;
+                downloadButton.onclick = () => {
+                    downloadBlob(fileBlob, `${videoTitle}${resolution ? `_${resolution}` : ''}.${extension}`);
+                };
         
-            // Make the container visible if it's not already
-            if (!tableContainer.classList.contains('visible')) {
-                tableContainer.classList.add('visible');
+                downloadCell.appendChild(downloadButton);
+        
+                // Make the container visible if it's not already
+                if (!tableContainer.classList.contains('visible')) {
+                    tableContainer.classList.add('visible');
+                }
+        
+                return downloadButton;
+            } else {
+                // If blob is null, create the progress bar
+                const progressBarContainer = document.createElement('div');
+                const progressBar = document.createElement('progress');
+                progressBar.max = 100;
+                progressBar.value = 0;
+                progressBarContainer.appendChild(progressBar);
+        
+                downloadCell.appendChild(progressBarContainer);
+        
+                // Make the container visible if it's not already
+                if (!tableContainer.classList.contains('visible')) {
+                    tableContainer.classList.add('visible');
+                }
+        
+                return { progressBarContainer, progressBar };
             }
         }
+        
 
         // Cache the MP3/MP4 blob correctly
         function cacheFile(url, type, resolution, blob) {
@@ -145,10 +167,29 @@ fetch('data.json')
                 }
         
                 console.log(`Requested MP4 download for URL: ${savedUrl} with resolution ${resolution}`);
+                const { progressBarContainer, progressBar } = addToTable('mp4', savedUrl, titleElem.textContent, null, 'mp4', resolution);
+                const eventSource = new EventSource('/mp4');
+                eventSource.onmessage = function (event) {
+                    const data = JSON.parse(event.data);
+                    const percent = data.percent;
+
+                    // Update progress bar value
+                    progressBar.value = percent;
+
+                    // Once the download reaches 100%, hide progress bar and show the download button
+                    if (percent === 100) {
+                        progressBarContainer.style.display = 'none'; // Hide progress bar
+                    }
+                };
+
                 fetch(`${apiBaseUrl}/mp4?url=${encodeURIComponent(savedUrl)}&resolution=${resolution}`)
                     .then(response => response.blob())
                     .then(blob => {
                         cacheFile(savedUrl, 'mp4', resolution, blob);
+                        // Check if the progress bar exists, and remove it if so
+                        if (progressBarContainer) {
+                            progressBarContainer.remove();
+                        }
                         addToTable('mp4', savedUrl, titleElem.textContent, blob, 'mp4', resolution);
                         downloadBlob(blob, `${titleElem.textContent}_${resolution}.mp4`);
                     })
@@ -177,10 +218,30 @@ fetch('data.json')
                 }
         
                 console.log('Requested MP3 download for URL:', savedUrl);
+                const { progressBarContainer, progressBar } = addToTable('mp3', savedUrl, titleElem.textContent, null, 'mp3');
+                const eventSource = new EventSource('/mp3');
+                eventSource.onmessage = function (event) {
+                    const data = JSON.parse(event.data);
+                    const percent = data.percent;
+
+                    // Update progress bar value
+                    progressBar.value = percent;
+
+                    // Once the download reaches 100%, hide progress bar and show the download button
+                    if (percent === 100) {
+                        progressBarContainer.style.display = 'none'; // Hide progress bar
+                    }
+                };
+                
                 fetch(`${apiBaseUrl}/mp3?url=${encodeURIComponent(savedUrl)}`)
                     .then(response => response.blob())
                     .then(blob => {
                         cacheFile(savedUrl, 'mp3', '', blob);
+
+                        // Check if the progress bar exists, and remove it if so
+                        if (progressBarContainer) {
+                            progressBarContainer.remove();
+                        }
                         addToTable('mp3', savedUrl, titleElem.textContent, blob, 'mp3');
                         downloadBlob(blob, `${titleElem.textContent}.mp3`);
                     })
@@ -202,10 +263,29 @@ fetch('data.json')
                 }
         
                 console.log('Requested MP3 download for URL:', savedUrl);
+                const { progressBarContainer, progressBar } = addToTable('mp3', savedUrl, titleElem.textContent, null, 'zip');
+                const eventSource = new EventSource('/playlist');
+                eventSource.onmessage = function (event) {
+                    const data = JSON.parse(event.data);
+                    const percent = data.percent;
+
+                    // Update progress bar value
+                    progressBar.value = percent;
+
+                    // Once the download reaches 100%, hide progress bar and show the download button
+                    if (percent === 100) {
+                        progressBarContainer.style.display = 'none'; // Hide progress bar
+                    }
+                };
+
                 fetch(`${apiBaseUrl}/playlist?url=${encodeURIComponent(savedUrl)}`)
                     .then(response => response.blob())
                     .then(blob => {
                         cacheFile(savedUrl, 'mp3', '', blob);
+                        // Check if the progress bar exists, and remove it if so
+                        if (progressBarContainer) {
+                            progressBarContainer.remove();
+                        }
                         addToTable('mp3', savedUrl, titleElem.textContent, blob, 'zip');
                         downloadBlob(blob, `${titleElem.textContent}.zip`);
                     })
