@@ -111,9 +111,13 @@ app.get('/mp3', (req, res) => {
             writeThumbnail: true,
             noPlaylist: true,
             noWarnings: true,
+            progress: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
+        })
+        .on('progress', (progress) => {
+            console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
         })
         .then(() => {
             console.log(`MP3 download completed: ${fileName}`);
