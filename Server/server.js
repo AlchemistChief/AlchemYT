@@ -93,6 +93,7 @@ app.get('/mp3', (req, res) => {
 
     youtubedl(videoUrl, {
         noCheckCertificates: true,
+        writeThumbnail: true,
         noPlaylist: true,
         noWarnings: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
@@ -162,6 +163,7 @@ app.get('/mp4', (req, res) => {
 
     youtubedl(videoUrl, {
         noCheckCertificates: true,
+        writeThumbnail: true,
         noPlaylist: true,
         noWarnings: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
@@ -251,11 +253,12 @@ app.get('/playlist', (req, res) => {
         youtubedl(playlistUrl, {
             format: 'bestaudio[ext=mp3]/bestaudio[ext=m4a]',
             noCheckCertificates: true,
+            writeThumbnail: true,
             yesPlaylist: true,
             noWarnings: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
-            output: path.join(playlistPath, '%(title)s.mp3'),
+            output: path.join(playlistPath, `%(title)s.%(ext)s`),
         })
         .then(() => {
             console.log(`Playlist download completed: ${playlistTitle}`);
