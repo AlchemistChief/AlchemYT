@@ -97,7 +97,7 @@ fetch('data.json')
         
             const downloadButton = document.createElement('button');
             // Only add resolution to MP4
-            downloadButton.textContent = `Download ${type.toUpperCase()}${resolution ? ` ${resolution}` : ''}`;
+            downloadButton.textContent = `Download ${extension.toUpperCase()}${resolution ? ` ${resolution}` : ''}`;
             downloadButton.onclick = () => {
                 downloadBlob(fileBlob, `${videoTitle}${resolution ? `_${resolution}` : ''}.${extension}`);
             };
@@ -206,7 +206,7 @@ fetch('data.json')
                     .then(response => response.blob())
                     .then(blob => {
                         cacheFile(savedUrl, 'mp3', '', blob);
-                        addToTable('mp3', savedUrl, titleElem.textContent, blob, 'mp3');
+                        addToTable('mp3', savedUrl, titleElem.textContent, blob, 'zip');
                         downloadBlob(blob, `${titleElem.textContent}.zip`);
                     })
                     .catch(error => {
