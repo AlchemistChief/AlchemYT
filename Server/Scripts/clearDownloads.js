@@ -23,10 +23,8 @@ function clearFolder(folderPath) {
 
 function clearDownloadsFolder() {
     const downloadsPath = path.resolve(__dirname, 'downloads');
-    const dltemPPath = path.resolve(__dirname, 'dltemP');
 
     clearFolder(downloadsPath);
-    clearFolder(dltemPPath);
 }
 
 module.exports = clearDownloadsFolder;
