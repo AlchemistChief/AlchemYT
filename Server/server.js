@@ -19,11 +19,6 @@ const corsOptions = {
     optionsSuccessStatus: 200,
 };
 
-// Start streaming response for progress updates
-res.setHeader('Content-Type', 'text/event-stream');
-res.setHeader('Cache-Control', 'no-cache');
-res.setHeader('Connection', 'keep-alive');
-
 // Cookies path
 const cookiesPath = path.resolve(__dirname, 'cookies.txt');
 if (!fs.existsSync(cookiesPath)) {
