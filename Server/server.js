@@ -120,7 +120,7 @@ app.get('/mp3', (req, res) => {
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
-            progressHooks: (progress) => {
+            progressHook: (progress) => {
                 console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
                 res.write(`data: ${JSON.stringify(progress)}\n\n`);
             },
