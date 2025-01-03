@@ -85,7 +85,7 @@ fetch('data.json')
             return timeString.trim();
         }
 
-        function addToTable(type, videoUrl, videoTitle, fileBlob, extension, resolution = '') {
+        function addToTable(type, videoTitle, extension, resolution = '') {
             const table = type === 'mp3' ? mp3Table : mp4Table;
             const tableContainer = type === 'mp3' ? mp3TableContainer : mp4TableContainer;
         
@@ -95,40 +95,27 @@ fetch('data.json')
         
             videoCell.textContent = videoTitle;
         
-            if (fileBlob) {
-                // If blob is valid, create the download button
-                const downloadButton = document.createElement('button');
-                downloadButton.textContent = `Download ${extension.toUpperCase()}${resolution ? ` ${resolution}` : ''}`;
-                downloadButton.onclick = () => {
-                    downloadBlob(fileBlob, `${videoTitle}${resolution ? `_${resolution}` : ''}.${extension}`);
-                };
+            const downloadButton = document.createElement('button');
+            downloadButton.textContent = `Download ${extension.toUpperCase()}${resolution ? ` ${resolution}` : ''}`;
+            downloadButton.style.display = 'none'; // Initially hidden
         
-                downloadCell.appendChild(downloadButton);
+            const progressBarContainer = document.createElement('div');
+            const progressBar = document.createElement('progress');
+            progressBar.max = 100;
+            progressBar.value = 0;
+            progressBarContainer.appendChild(progressBar);
         
-                // Make the container visible if it's not already
-                if (!tableContainer.classList.contains('visible')) {
-                    tableContainer.classList.add('visible');
-                }
+            downloadCell.appendChild(progressBarContainer);
+            downloadCell.appendChild(downloadButton);
         
-                return downloadButton;
-            } else {
-                // If blob is null, create the progress bar
-                const progressBarContainer = document.createElement('div');
-                const progressBar = document.createElement('progress');
-                progressBar.max = 100;
-                progressBar.value = 0;
-                progressBarContainer.appendChild(progressBar);
-        
-                downloadCell.appendChild(progressBarContainer);
-        
-                // Make the container visible if it's not already
-                if (!tableContainer.classList.contains('visible')) {
-                    tableContainer.classList.add('visible');
-                }
-        
-                return { progressBarContainer, progressBar };
+            // Make the container visible if it's not already
+            if (!tableContainer.classList.contains('visible')) {
+                tableContainer.classList.add('visible');
             }
+        
+            return { downloadButton, progressBarContainer, progressBar };
         }
+        
         
 
         // Cache the MP3/MP4 blob correctly
@@ -167,7 +154,7 @@ fetch('data.json')
                 }
         
                 console.log(`Requested MP4 download for URL: ${savedUrl} with resolution ${resolution}`);
-                const { progressBarContainer, progressBar } = addToTable('mp4', savedUrl, titleElem.textContent, null, 'mp4', resolution);
+                const { downloadButton, progressBarContainer, progressBar } = addToTable('mp4', titleElem.textContent, 'mp4', resolution);
                 const eventSource = new EventSource('/mp4');
                 eventSource.onmessage = function (event) {
                     const data = JSON.parse(event.data);
@@ -178,7 +165,8 @@ fetch('data.json')
 
                     // Once the download reaches 100%, hide progress bar and show the download button
                     if (percent === 100) {
-                        progressBarContainer.style.display = 'none'; // Hide progress bar
+                        progressBarContainer.style.display = 'none';
+                        downloadButton.style.display = 'inline';
                     }
                 };
 
@@ -190,7 +178,10 @@ fetch('data.json')
                         if (progressBarContainer) {
                             progressBarContainer.remove();
                         }
-                        addToTable('mp4', savedUrl, titleElem.textContent, blob, 'mp4', resolution);
+                        downloadButton.style.display = 'inline'
+                        downloadButton.onclick = () => {
+                            downloadBlob(blob, `${titleElem.textContent}_${resolution}.mp4`);
+                        };
                         downloadBlob(blob, `${titleElem.textContent}_${resolution}.mp4`);
                     })
                     .catch(error => {
@@ -218,7 +209,7 @@ fetch('data.json')
                 }
         
                 console.log('Requested MP3 download for URL:', savedUrl);
-                const { progressBarContainer, progressBar } = addToTable('mp3', savedUrl, titleElem.textContent, null, 'mp3');
+                const { downloadButton, progressBarContainer, progressBar } = addToTable('mp3', titleElem.textContent, 'mp3');
                 const eventSource = new EventSource('/mp3');
                 eventSource.onmessage = function (event) {
                     const data = JSON.parse(event.data);
@@ -229,7 +220,8 @@ fetch('data.json')
 
                     // Once the download reaches 100%, hide progress bar and show the download button
                     if (percent === 100) {
-                        progressBarContainer.style.display = 'none'; // Hide progress bar
+                        progressBarContainer.style.display = 'none';
+                        downloadButton.style.display = 'inline';
                     }
                 };
                 
@@ -242,7 +234,10 @@ fetch('data.json')
                         if (progressBarContainer) {
                             progressBarContainer.remove();
                         }
-                        addToTable('mp3', savedUrl, titleElem.textContent, blob, 'mp3');
+                        downloadButton.style.display = 'inline'
+                        downloadButton.onclick = () => {
+                            downloadBlob(blob, `${titleElem.textContent}.mp3`);
+                        };
                         downloadBlob(blob, `${titleElem.textContent}.mp3`);
                     })
                     .catch(error => {
@@ -263,7 +258,7 @@ fetch('data.json')
                 }
         
                 console.log('Requested MP3 download for URL:', savedUrl);
-                const { progressBarContainer, progressBar } = addToTable('mp3', savedUrl, titleElem.textContent, null, 'zip');
+                const { downloadButton, progressBarContainer, progressBar } = addToTable('mp3', titleElem.textContent, 'zip');
                 const eventSource = new EventSource('/playlist');
                 eventSource.onmessage = function (event) {
                     const data = JSON.parse(event.data);
@@ -274,7 +269,8 @@ fetch('data.json')
 
                     // Once the download reaches 100%, hide progress bar and show the download button
                     if (percent === 100) {
-                        progressBarContainer.style.display = 'none'; // Hide progress bar
+                        progressBarContainer.style.display = 'none';
+                        downloadButton.style.display = 'inline';
                     }
                 };
 
@@ -286,7 +282,10 @@ fetch('data.json')
                         if (progressBarContainer) {
                             progressBarContainer.remove();
                         }
-                        addToTable('mp3', savedUrl, titleElem.textContent, blob, 'zip');
+                        downloadButton.style.display = 'inline'
+                        downloadButton.onclick = () => {
+                            downloadBlob(blob, `${titleElem.textContent}.zip`);
+                        };
                         downloadBlob(blob, `${titleElem.textContent}.zip`);
                     })
                     .catch(error => {
