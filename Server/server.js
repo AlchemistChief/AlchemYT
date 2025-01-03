@@ -19,6 +19,11 @@ const corsOptions = {
     optionsSuccessStatus: 200,
 };
 
+// Start streaming response for progress updates
+res.setHeader('Content-Type', 'text/event-stream');
+res.setHeader('Cache-Control', 'no-cache');
+res.setHeader('Connection', 'keep-alive');
+
 // Cookies path
 const cookiesPath = path.resolve(__dirname, 'cookies.txt');
 if (!fs.existsSync(cookiesPath)) {
@@ -110,37 +115,29 @@ app.get('/mp3', (req, res) => {
 		res.setHeader('Cache-Control', 'no-cache');
 		res.setHeader('Connection', 'keep-alive');
 
-        const ytdlpprocess = youtubedl(videoUrl, {
+        youtubedl(videoUrl, {
             format: 'bestaudio[ext=mp3]/bestaudio[ext=m4a]',
             noCheckCertificates: true,
+            writeThumbnail: true,
             noPlaylist: true,
             noWarnings: true,
             progress: true,
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
-        });
-        // Start streaming response for progress updates
-        res.setHeader('Content-Type', 'text/event-stream');
-        res.setHeader('Cache-Control', 'no-cache');
-        res.setHeader('Connection', 'keep-alive');
-
-        // Track progress using the library's progress option
-        ytdlpprocess.on('progress', (progress) => {
-            console.log(
-                `Progress: ${progress.percent}% - Downloaded: ${progress.size} at ${progress.speed}`
-            );
-            res.write(`data: ${JSON.stringify(progress)}\n\n`);
-        });
-
-        ytdlpprocess.then(() => {
+            progressHooks: (progress) => {
+                console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
+                res.write(`data: ${JSON.stringify(progress)}\n\n`);
+            },
+        })
+        .then(() => {
             console.log(`MP3 download completed: ${fileName}`);
 
             // Cache the file
             fileCache[videoUrl] = {
                 filePath,
                 fileName,
-                extension: 'mp3',
+                extension: 'mp3'
             };
 
             res.download(filePath, fileName, (err) => {
@@ -204,10 +201,6 @@ app.get('/mp4', (req, res) => {
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: filePath,
-        })
-        .stdout.on('progress', (progress) => {
-            console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
-            res.write(`data: ${JSON.stringify(progress)}\n\n`);
         })
         .then(() => {
             console.log(`MP4 download completed: ${fileName}`);
@@ -282,10 +275,6 @@ app.get('/playlist', (req, res) => {
             addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
             cookies: cookiesPath,
             output: path.join(playlistPath, `%(title)s.%(ext)s`),
-        })
-        .stdout.on('progress', (progress) => {
-            console.log(`Progress: ${progress.percent}% - Downloaded: ${progress.current} of ${progress.total}`);
-            res.write(`data: ${JSON.stringify(progress)}\n\n`);
         })
         .then(() => {
             console.log(`Playlist download completed: ${playlistTitle}`);
