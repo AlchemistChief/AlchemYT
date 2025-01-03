@@ -110,7 +110,7 @@ app.get('/mp3', (req, res) => {
 		res.setHeader('Cache-Control', 'no-cache');
 		res.setHeader('Connection', 'keep-alive');
 
-        const process = youtubedl(videoUrl, {
+        const ytdlpprocess = youtubedl(videoUrl, {
             format: 'bestaudio[ext=mp3]/bestaudio[ext=m4a]',
             noCheckCertificates: true,
             noPlaylist: true,
@@ -126,14 +126,14 @@ app.get('/mp3', (req, res) => {
         res.setHeader('Connection', 'keep-alive');
 
         // Track progress using the library's progress option
-        process.on('progress', (progress) => {
+        ytdlpprocess.on('progress', (progress) => {
             console.log(
                 `Progress: ${progress.percent}% - Downloaded: ${progress.size} at ${progress.speed}`
             );
             res.write(`data: ${JSON.stringify(progress)}\n\n`);
         });
 
-        process.then(() => {
+        ytdlpprocess.then(() => {
             console.log(`MP3 download completed: ${fileName}`);
 
             // Cache the file
