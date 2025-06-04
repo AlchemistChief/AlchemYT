@@ -1,22 +1,22 @@
 require('dotenv').config()
 const WebSocket = require('ws')
-const https = require('https')
-const express = require('express')
-const path = require('path')
-const fs = require('fs')
-const dnssd = require('dnssd')
+const https     = require('https')
+const express   = require('express')
+const path      = require('path')
+const fs        = require('fs')
+const dnssd     = require('dnssd')
 
 const app = express()
 
 const settings = {
-    YT_APIKey: process.env.YT_APIKey,
-    Server_APIURL: process.env.Server_APIURL,
+    YT_APIKey       : process.env.YT_APIKey,
+    Server_APIURL   : process.env.Server_APIURL,
     output_ChunkData: process.env.output_ChunkData === 'true',
-    Port: Number(process.env.PORT) || 3000
+    Port            : Number(process.env.PORT) || 3000
 }
 
 const server = https.createServer({
-    key: fs.readFileSync(path.join(__dirname, 'assets/selfsigned.key')),
+    key : fs.readFileSync(path.join(__dirname, 'assets/selfsigned.key')),
     cert: fs.readFileSync(path.join(__dirname, 'assets/selfsigned.crt'))
 }, app)
 
@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, '../public')))
 
 app.get('/settings', (req, res) => {
     res.json({
-        "YT-APIKey": settings.YT_APIKey,
+        "YT-APIKey"    : settings.YT_APIKey,
         "Server-APIURL": settings.Server_APIURL
     })
 })
@@ -54,7 +54,7 @@ wss.on('connection', (ws) => {
                 return
             }
 
-            const downloadfunction = require(path.join(__dirname, 'functions/download.js')) //removed /
+            const downloadfunction = require(path.join(__dirname, 'functions/download.js'))  //removed /
             await downloadfunction(ws, msg.url, msg.type)
         } catch (err) {
             ws.send(JSON.stringify({ error: 'Invalid message format' }))
