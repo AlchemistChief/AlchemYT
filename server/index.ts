@@ -1,10 +1,15 @@
-require('dotenv').config()
-const WebSocket = require('ws')
-const https     = require('https')
-const express   = require('express')
-const path      = require('path')
-const fs        = require('fs')
-const dnssd     = require('dnssd')
+import dotenv from 'dotenv';
+dotenv.config();
+import WebSocket from 'ws';
+import https from 'https'
+import express from 'express'
+import path from 'path'
+import fs from 'fs'
+import dnssd from 'dnssd'
+
+import { downloadFile } from './functions/downloadFile.ts'
+import { downloadPlaylist } from './functions/downloadPlaylist.ts'
+import { IncomingMessage } from 'http';
 
 const app = express()
 
@@ -25,6 +30,7 @@ const wss = new WebSocket.Server({ noServer: true })
 app.use(express.json())
 app.use(express.static(path.join(__dirname, '../public')))
 
+app.get('/selfsigned.crt', (req, res) => { res.sendFile(path.join(__dirname, 'assets/selfsigned.crt')) })
 app.get('/settings', (req, res) => {
     res.json({
         "YT-APIKey"    : settings.YT_APIKey,
@@ -32,9 +38,7 @@ app.get('/settings', (req, res) => {
     })
 })
 
-app.get('/selfsigned.crt', (req, res) => { res.sendFile(path.join(__dirname, 'assets/selfsigned.crt')) })
-
-server.on('upgrade', (request, socket, head) => {
+server.on('upgrade', (request:IncomingMessage, socket, head) => {
     if (request.url === '/ws/download') {
         wss.handleUpgrade(request, socket, head, (ws) => {
             wss.emit('connection', ws, request)
@@ -44,7 +48,7 @@ server.on('upgrade', (request, socket, head) => {
     }
 })
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws: WebSocket) => {
     ws.on('message', async (message) => {
         try {
             const msg = JSON.parse(message.toString())
@@ -53,9 +57,11 @@ wss.on('connection', (ws) => {
                 ws.close()
                 return
             }
-
-            const downloadfunction = require(path.join(__dirname, 'functions/download.js'))  //removed /
-            await downloadfunction(ws, msg.url, msg.type)
+            if (msg.type === 'file') {
+                await downloadFile(ws, msg.url)
+            } else if (msg.type === 'playlist') {
+                await downloadPlaylist(ws, msg.url)
+            }
         } catch (err) {
             ws.send(JSON.stringify({ error: 'Invalid message format' }))
             ws.close()

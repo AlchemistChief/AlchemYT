@@ -15,5 +15,14 @@
     "express": "^5.1.0",
     "ws": "^8.18.2",
     "youtube-dl-exec": "^3.0.22"
+  },
+  "devDependencies": {
+    "@types/dnssd": "^0.4.5",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.29",
+    "@types/ws": "^8.18.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }
