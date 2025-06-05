@@ -40,6 +40,19 @@ async function requestDownloadWs(normalizedUrl) {
     }
 }
 
+// ────────── Log Progress ──────────
+function logProgress(msg, filename, type) {
+    if (type === "download-progress" && msg.downloaded && msg.total && msg.percent) {
+        const progressText = `Download: "${filename}" || ${msg.downloaded}/${msg.total} (${msg.percent}%)`;
+        logMessage(progressText, "DEBUG", true);
+    } else if (type === "package-progress" && msg.packaged && msg.total && msg.percent) {
+        const packageText = `Packaging: ${msg.packaged}/${msg.total} (${msg.percent}%)`;
+        logMessage(packageText, "DEBUG", true);
+    } else {
+        logMessage(`Progress: ${msg.progress}`, "DEBUG", true);
+    }
+};
+
 // ────────── Handle WebSocket Messages ──────────
 function handleWebSocketMessage(event, receivedBuffers, filename, socket) {
     if (typeof event.data === "string") {

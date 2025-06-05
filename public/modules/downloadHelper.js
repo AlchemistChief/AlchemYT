@@ -9,20 +9,6 @@ export async function fetchPlaylistTitle(id, apiKey) {
         .then(response => response.json());
 };
 
-
-// ────────── Log Progress ──────────
-export function logProgress(msg, filename, type) {
-    if (type === "download-progress" && msg.downloaded && msg.total && msg.percent) {
-        const progressText = `Download: "${filename}" || ${msg.downloaded}/${msg.total} (${msg.percent}%)`;
-        logMessage(progressText, "DEBUG", true);
-    } else if (type === "package-progress" && msg.packaged && msg.total && msg.percent) {
-        const packageText = `Packaging: ${msg.packaged}/${msg.total} (${msg.percent}%)`;
-        logMessage(packageText, "DEBUG", true);
-    } else {
-        logMessage(`Progress: ${msg.progress}`, "DEBUG", true);
-    }
-};
-
 // ────────── Fetch Server ettings ──────────
 export let apiKey, serverApiUrl;
 fetch('./settings')
