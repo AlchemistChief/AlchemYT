@@ -23,7 +23,7 @@ export const sendDownloadedFile = function (ws: WebSocket, proc: TinyspawnPromis
             ws.send(chunk);
         });
         readStream.on('end', () => {
-            notifyClient(ws, { status: "done" }, true);
+            notifyClient(ws, { status: "done" });
             fs.unlink(Output_File, (err) => {
                 if (err) console.error("Error deleting temp file", err);
             });
