@@ -1,5 +1,5 @@
 // ────────── Module Importing ──────────
-import { toggleLogVisibility } from '../modules/logHandler.mjs';
+import { toggleLogVisibility } from '../modules/logHandler.js';
 import { bindDownloadHandler } from '../modules/downloadHandler.js';
 
 // ──────────  ──────────  ──────────  ──────────  ──────────  ──────────

@@ -1,12 +1,19 @@
+// ────────── Module Importing ──────────
 import path from 'path';
 import fs from 'fs';
+import type WebSocket from 'ws';
 import { TinyspawnPromise } from 'tinyspawn';
 
-export const sendDownloadedFile = function (ws:WebSocket, proc:TinyspawnPromise, Output_File:string) {
+// ────────── Custom Modules ──────────
+import { notifyClient } from './utils.ts';
+
+// ────────── Send Downloaded File Function ──────────
+export const sendDownloadedFile = function (ws: WebSocket, proc: TinyspawnPromise, Output_File: string) {
     proc.on('close', (code) => {
         console.log(`Process closed with code ${code}`);
-        // Send filename to the client:
-        ws.send(JSON.stringify({ filename: path.basename(Output_File) }));
+
+        // Send filename to the client
+        notifyClient(ws, { filename: path.basename(Output_File) });
 
         const readStream = fs.createReadStream(Output_File);
         readStream.on('data', (chunk) => {
@@ -16,15 +23,13 @@ export const sendDownloadedFile = function (ws:WebSocket, proc:TinyspawnPromise,
             ws.send(chunk);
         });
         readStream.on('end', () => {
-            console.log('Finished sending file');
-            ws.send(JSON.stringify({ status: "done" }));
+            notifyClient(ws, { status: "done" }, true);
             fs.unlink(Output_File, (err) => {
                 if (err) console.error("Error deleting temp file", err);
             });
         });
         readStream.on('error', (err) => {
-            console.error(`Error reading file: ${err.message}`);
-            ws.send(JSON.stringify({ error: err.message }));
+            notifyClient(ws, { error: err.message }, true);
             ws.close();
         });
     });

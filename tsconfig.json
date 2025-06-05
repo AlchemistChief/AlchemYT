@@ -8,15 +8,11 @@
         "noEmit": true,
         "strict": true,
         "strictNullChecks": false,
-        "lib": [
-            "es6" // Ensure "dom" is not included here
-        ],
         "typeRoots": [
             "./node_modules/@types"
-        ],
-        "types": [
-            "node",
-            "ws"
         ]
-    }
+    },
+    "exclude": [
+        "node_modules"
+    ]
 }

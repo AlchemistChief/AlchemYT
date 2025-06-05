@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/archiver": "^6.0.3",
+    "archiver": "^7.0.1",
     "dnssd": "^0.4.1",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",

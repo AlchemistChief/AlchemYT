@@ -1,37 +1,43 @@
-import dotenv from 'dotenv'; dotenv.config();
+// ────────── Module Importing ──────────
 import fs from 'fs';
 import path from 'path';
+import type WebSocket from 'ws';
+import { create } from 'youtube-dl-exec';
+
+// ────────── Custom Modules ──────────
 import { Temp_Folder, getGlobalOptions } from '../assets/globals.ts';
 import { logDownloadProgress } from './downloadProgress.ts';
 import { sendDownloadedFile } from './sendFile.ts';
-import { create as createYoutubeDl } from 'youtube-dl-exec';
+import { notifyClient } from './utils.ts';
 
-const youtubedl = createYoutubeDl(path.join(__dirname, '..', 'bin', 'yt-dlp.exe'));
+// ────────── YouTube-DL Setup ──────────
+const youtubedl = create(path.join(__dirname, '..', 'bin', 'yt-dlp.exe'));
 
-export const downloadFile = async function (ws:WebSocket, url: string) {
+// ────────── Download File Function ──────────
+export const downloadFile = async function (ws: WebSocket, url: string) {
     try {
         // Ensure the temporary folder exists
         if (!fs.existsSync(Temp_Folder)) {
             fs.mkdirSync(Temp_Folder, { recursive: true });
         }
 
-        // Define temporary output file for a single audio download
-        const Output_File = path.join(Temp_Folder, `download_${Date.now()}.m4a`); // Date.now() = Temporary download ID to avoid filename conflicts
+        // Define temporary output file with unique ID to avoid filename conflicts
+        const Output_File = path.join(Temp_Folder, `download_${Date.now()}.m4a`);
 
         // Notify client the download is starting
-        ws.send(JSON.stringify({ message: "Download started." }));
+        notifyClient(ws, { message: "File Download started." });
 
-        // Enable spawning, which returns a ChildProcess allowing to attach event listeners.
+        // Spawn the download process
         const proc = youtubedl.exec(url, getGlobalOptions(Output_File));
 
-        // Listen for progress logs from STDOUT.
+        // Listen for progress logs from STDOUT
         logDownloadProgress(ws, proc);
 
-        // When the process closes, pipe the resulting file as binary chunks via the WebSocket.
+        // When the process closes, send the resulting file via WebSocket
         sendDownloadedFile(ws, proc, Output_File);
 
-    } catch (error:any) {
-        ws.send(JSON.stringify({ error: error.message }));
+    } catch (error: any) {
+        notifyClient(ws, { error: error.message }, true);
         ws.close();
     }
 };

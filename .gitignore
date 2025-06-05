@@ -1,5 +1,7 @@
 
 *RESTART*
+temp/
+
 # VSCode
 .vscode/
 

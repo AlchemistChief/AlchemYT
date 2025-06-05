@@ -1,37 +1,53 @@
-import dotenv from 'dotenv'; dotenv.config();
+// ────────── Module Importing ──────────
 import fs from 'fs';
 import path from 'path';
+import type WebSocket from 'ws';
+import { create } from 'youtube-dl-exec';
+
+// ────────── Custom Modules ──────────
 import { Temp_Folder, getGlobalOptions } from '../assets/globals.ts';
 import { logDownloadProgress } from './downloadProgress.ts';
 import { sendDownloadedFile } from './sendFile.ts';
-import { create as createYoutubeDl } from 'youtube-dl-exec';
+import { packagePlaylist } from './packagePlaylist.ts';
+import { notifyClient, extractPlaylistID } from './utils.ts';
 
-const youtubedl = createYoutubeDl(path.join(__dirname, '..', 'bin', 'yt-dlp.exe'));
 
-export const downloadPlaylist = async function (ws:WebSocket, url: string) {
+// ────────── YouTube-DL Setup ──────────
+const youtubedl = create(path.join(__dirname, '..', 'bin', 'yt-dlp.exe'));
+
+// ────────── Download Playlist Function ──────────
+export const downloadPlaylist = async function (ws: WebSocket, url: string) {
     try {
         // Ensure the temporary folder exists
-        if (!fs.existsSync(Temp_Folder)) {
-            fs.mkdirSync(Temp_Folder, { recursive: true });
-        }
+        if (!fs.existsSync(Temp_Folder)) fs.mkdirSync(Temp_Folder, { recursive: true });
 
-        // Define temporary output file for a single audio download
-        const Output_File = path.join(Temp_Folder, `download_${Date.now()}.m4a`); // Date.now() = Temporary download ID to avoid filename conflicts
+        // Extract playlist ID from URL query param `list`
+        const playlistID = extractPlaylistID(url);
+
+        // Create playlist folder inside temp using playlist ID
+        const playlistFolder = path.join(Temp_Folder, playlistID);
+        if (!fs.existsSync(playlistFolder)) fs.mkdirSync(playlistFolder, { recursive: true });
+
+        // Output template inside the playlist folder
+        const Output_File = path.join(playlistFolder, `%(title)s.%(ext)s`);
 
         // Notify client the download is starting
-        ws.send(JSON.stringify({ message: "Download started." }));
+        notifyClient(ws, { message: "Playlist Download started." });
 
-        // Enable spawning, which returns a ChildProcess allowing to attach event listeners.
+        // Spawn the download process
         const proc = youtubedl.exec(url, getGlobalOptions(Output_File));
 
-        // Listen for progress logs from STDOUT.
+        // Listen for progress logs from STDOUT
         logDownloadProgress(ws, proc);
 
-        // When the process closes, pipe the resulting file as binary chunks via the WebSocket.
-        sendDownloadedFile(ws, proc, Output_File);
+        // Package the playlist after download
+        await packagePlaylist(ws, playlistFolder);
+        // When the process closes, send the resulting file via WebSocket
+        // Then send the zip file instead of folder
+        sendDownloadedFile(ws, proc, playlistFolder + '.zip');
 
-    } catch (error:any) {
-        ws.send(JSON.stringify({ error: error.message }));
+    } catch (error: any) {
+        notifyClient(ws, { error: error.message }, true);
         ws.close();
     }
 };
