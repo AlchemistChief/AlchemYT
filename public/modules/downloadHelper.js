@@ -1,11 +1,14 @@
 // ────────── Fetch Details ──────────
-export async function fetchVideoTitle(id, ) {
-    return fetch(`https://www.googleapis.com/youtube/v3/videos?id=${id}&key=${apiKey}&part=snippet`).json();
+export async function fetchVideoTitle(id, apiKey) {
+    return fetch(`https://www.googleapis.com/youtube/v3/videos?id=${id}&key=${apiKey}&part=snippet`)
+        .then(response => response.json());
 };
 
-export async function fetchPlaylistTitle(id, apikey) {
-    return fetch(`https://www.googleapis.com/youtube/v3/playlists?id=${id}&key=${apiKey}&part=snippet`).json();
+export async function fetchPlaylistTitle(id, apiKey) {
+    return fetch(`https://www.googleapis.com/youtube/v3/playlists?id=${id}&key=${apiKey}&part=snippet`)
+        .then(response => response.json());
 };
+
 
 // ────────── Log Progress ──────────
 export function logProgress(msg, filename, type) {
