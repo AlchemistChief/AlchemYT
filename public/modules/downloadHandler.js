@@ -1,7 +1,7 @@
 // ────────── Module Importing ──────────
 import { logMessage } from './logHandler.js';
 import { normalizeYoutubeLink } from './utils.js';
-import { fetchVideoTitle, fetchPlaylistTitle, logProgress, apiKey, serverApiUrl} from './downloadHelper.js';
+import { fetchVideoTitle, fetchPlaylistTitle, apiKey, serverApiUrl} from './downloadHelper.js';
 
 // ────────── Global Variables ──────────
 let currentDownloadTitle = "";
