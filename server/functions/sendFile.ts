@@ -10,8 +10,7 @@ import { notifyClient } from './utils.ts';
 // ────────── Send Downloaded File Function ──────────
 export const sendDownloadedFile = function (ws: WebSocket, Output_File: string) {
 
-        // Send filename to the client
-        notifyClient(ws, { filename: path.basename(Output_File) });
+
 
         const readStream = fs.createReadStream(Output_File);
         readStream.on('data', (chunk) => {
@@ -21,7 +20,8 @@ export const sendDownloadedFile = function (ws: WebSocket, Output_File: string) 
             ws.send(chunk);
         });
         readStream.on('end', () => {
-            notifyClient(ws, { status: "done" });
+            // Send file extension to the client
+            notifyClient(ws, { status: "done", extension: path.extname(Output_File) });
             fs.unlink(Output_File, (err) => {
                 if (err) console.error("Error deleting temp file", err);
             });
