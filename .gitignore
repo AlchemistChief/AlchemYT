@@ -1,7 +1,8 @@
-*cookies.txt
+
 
 *RESTART*
 temp/
+cookies.txt
 
 # VSCode
 .vscode/
