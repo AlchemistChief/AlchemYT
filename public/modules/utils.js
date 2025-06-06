@@ -1,8 +1,6 @@
 // ────────── Module Importing ──────────
 import { logMessage } from './logHandler.js';
 
-// ──────────  ──────────  ──────────  ──────────  ──────────  ──────────
-
 export async function requestCertificate() { //Manual Certificate Installation
     try {
         logMessage("Requesting certificate...", "DEBUG");
