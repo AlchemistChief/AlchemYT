@@ -8,7 +8,7 @@ export function getGlobalOptions(Output_File:string) {
         //verbose: true, //Default: OFF || Prints Debug Information
         format: 'm4a/bestaudio[ext=m4a]/bestaudio',
         ffmpegLocation: path.join(__dirname, '..', 'bin', 'ffmpeg.exe'),
-        cookies: path.join(__dirname, '..', 'cookies.txt'),
+        cookies: path.join(__dirname, 'cookies.txt'),
         output: Output_File,
         embedMetadata: true,//Default: false
         embedThumbnail: true,//Default: false
