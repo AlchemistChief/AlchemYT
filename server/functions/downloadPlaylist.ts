@@ -40,11 +40,13 @@ export const downloadPlaylist = async function (ws: WebSocket, url: string) {
         // Listen for progress logs from STDOUT
         logDownloadProgress(ws, proc);
 
-        // Package the playlist after download
-        await packagePlaylist(ws, playlistFolder);
         // When the process closes, send the resulting file via WebSocket
-        // Then send the zip file instead of folder
-        sendDownloadedFile(ws, proc, playlistFolder + '.zip');
+        proc.on('close', async () => {
+            // Package the playlist after download
+            await packagePlaylist(ws, playlistFolder);
+            // Send the packaged playlist file
+            sendDownloadedFile(ws, playlistFolder + '.zip');
+        });
 
     } catch (error: any) {
         notifyClient(ws, { error: error.message }, true);

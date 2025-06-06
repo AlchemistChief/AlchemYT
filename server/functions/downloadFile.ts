@@ -34,7 +34,9 @@ export const downloadFile = async function (ws: WebSocket, url: string) {
         logDownloadProgress(ws, proc);
 
         // When the process closes, send the resulting file via WebSocket
-        sendDownloadedFile(ws, proc, Output_File);
+        proc.on('close', () => {
+            sendDownloadedFile(ws, Output_File);
+        });
 
     } catch (error: any) {
         notifyClient(ws, { error: error.message }, true);

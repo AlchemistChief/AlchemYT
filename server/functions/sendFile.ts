@@ -8,9 +8,7 @@ import { TinyspawnPromise } from 'tinyspawn';
 import { notifyClient } from './utils.ts';
 
 // ────────── Send Downloaded File Function ──────────
-export const sendDownloadedFile = function (ws: WebSocket, proc: TinyspawnPromise, Output_File: string) {
-    proc.on('close', (code) => {
-        console.log(`Process closed with code ${code}`);
+export const sendDownloadedFile = function (ws: WebSocket, Output_File: string) {
 
         // Send filename to the client
         notifyClient(ws, { filename: path.basename(Output_File) });
@@ -32,5 +30,4 @@ export const sendDownloadedFile = function (ws: WebSocket, proc: TinyspawnPromis
             notifyClient(ws, { error: err.message }, true);
             ws.close();
         });
-    });
 };
