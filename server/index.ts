@@ -1,5 +1,5 @@
 // ────────── Module Importing ──────────
-import dotenv from 'dotenv'; dotenv.config();
+import dotenv from 'dotenv'; dotenv.config({ path: __dirname + './env' });
 import express from 'express';
 import WebSocket from 'ws';
 import https from 'https';
@@ -15,6 +15,7 @@ import { notifyClient, normalizeYoutubeLink  } from './functions/utils.ts';
 
 // ────────── Application Setup ──────────
 const app = express();
+
 
 const settings = {
     YT_APIKey: process.env.YT_APIKey,
