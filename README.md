@@ -34,7 +34,7 @@ This installs all necessary dependencies.
 You can run the server directly using one of these commands:
 
 ```bash
-npm run app
+npm start
 ```
 
 or
