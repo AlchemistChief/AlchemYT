@@ -9,18 +9,15 @@
     font-weight: bold;
 }
 
+/* ──────────  ──────────  ──────────  ──────────  ──────────  ────────── */
+
 @font-face {
     font-family: 'ubuntu-font';
-    src: url('fonts/ubuntu-font/Ubuntu-M.ttf') format('truetype');
+    src: url('fonts/ubuntu-font/Ubuntu-B.ttf') format('truetype');
     font-weight: normal;
 }
 
-@font-face {
-    font-family: 'ubuntu-mono';
-    src: url('fonts/ubuntu-font/UbuntuMono-B.ttf') format('truetype');
-    font-weight: bold;
-}
-
+/* ──────────  ──────────  ──────────  ──────────  ──────────  ────────── */
 
 @font-face {
     font-family: 'SourceCodePro';
@@ -31,5 +28,19 @@
 @font-face {
     font-family: 'SourceCodePro';
     src: url('fonts/SourceCodePro/SourceCodePro-Black.ttf') format('truetype');
+    font-weight: bold;
+}
+
+/* ──────────  ──────────  ──────────  ──────────  ──────────  ────────── */
+
+@font-face {
+    font-family: 'aria-mono';
+    src: url('fonts/aria-mono/ArialMonoMTProRegular.TTF') format('truetype');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'aria-mono';
+    src: url('fonts/aria-mono/ArialMonoMTProBold.TTF') format('truetype');
     font-weight: bold;
 }
