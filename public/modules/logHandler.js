@@ -33,29 +33,29 @@ function createBasicElements(typeUpper = "DEBUG", time = getTimestamp()) {
             break;
     }
 
-    keywordSpan.textContent = `[${typeUpper}]`;
+    keywordSpan.textContent = `[${typeUpper}] `;
 
     return {timeSpan, keywordSpan, time};
 }
 
 // ────────── Logging Functionality ──────────
-export function logMessage(message, type = "DEBUG", update = false) {
-
-    if (!logContainer) return //Guard statement
+export function logMessage(message, type = "DEBUG", update = false, id = null) {
+    if (!logContainer) return
 
     const typeUpper = type.toUpperCase();
+    const { timeSpan, keywordSpan, time } = createBasicElements(typeUpper);
+    const logEntryId = id ? `progress-log-${id}` : "progress-log";
 
     if (update && typeUpper === "DEBUG") {
-        let progressElem = document.getElementById("progress-log");
-        const {timeSpan, keywordSpan, time} = createBasicElements(typeUpper);
+        let progressElem = document.getElementById(logEntryId);
+
         if (!progressElem) {
             progressElem = document.createElement("p");
-            progressElem.id = "progress-log";
+            progressElem.id = logEntryId;
             progressElem.appendChild(timeSpan);
             progressElem.appendChild(keywordSpan);
             progressElem.appendChild(document.createTextNode(message));
             logContent.appendChild(progressElem);
-            progressElem.scrollIntoView();
         } else {
             if (progressElem.childNodes.length > 2) {
                 progressElem.childNodes[2].nodeValue = message;
@@ -66,8 +66,6 @@ export function logMessage(message, type = "DEBUG", update = false) {
         progressElem.scrollIntoView();
     } else {
         const logEntry = document.createElement("p");
-        const { timeSpan, keywordSpan, time } = createBasicElements(typeUpper);
-
         logEntry.appendChild(timeSpan);
         logEntry.appendChild(keywordSpan);
         logEntry.appendChild(document.createTextNode(message));

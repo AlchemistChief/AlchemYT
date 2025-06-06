@@ -47,12 +47,12 @@ async function requestDownloadWs(normalizedUrl, title, button) {
 function logProgress(msg, title, type) {
     if (type === "download-progress" && msg.downloaded && msg.total && msg.percent) {
         const progressText = `Download: "${title}" || ${msg.downloaded}/${msg.total} (${msg.percent}%)`;
-        logMessage(progressText, "DEBUG", true);
+        logMessage(progressText, "DEBUG", true, Date.now());
     } else if (type === "package-progress" && msg.packaged && msg.total && msg.percent) {
-        const packageText = `Packaging: ${msg.packaged}/${msg.total} (${msg.percent}%)`;
-        logMessage(packageText, "DEBUG", true);
+        const packageText = `Packaging: "${title}" || ${msg.packaged}/${msg.total} (${msg.percent}%)`;
+        logMessage(packageText, "DEBUG", true, Date.now());
     } else {
-        logMessage(`Progress: ${msg.progress}`, "DEBUG", true);
+        logMessage(`Progress: ${msg.progress}`, "DEBUG");
     }
 };
 
