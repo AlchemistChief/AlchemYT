@@ -19,8 +19,8 @@ export function parseSize(sizeStr: string): number {
 
 // Format bytes into human-readable SI size string (base 1000)
 export function formatSize(bytes: number): string {
-    if (bytes >= 1000 ** 3) return (bytes / (1000 ** 3)).toFixed(1) + ' GB';
-    if (bytes >= 1000 ** 2) return (bytes / (1000 ** 2)).toFixed(1) + ' MB';
-    if (bytes >= 1000) return (bytes / 1000).toFixed(1) + ' KB';
+    if (bytes >= 1000 ** 3) return (bytes / (1000 ** 3)).toFixed(2) + ' GB';
+    if (bytes >= 1000 ** 2) return (bytes / (1000 ** 2)).toFixed(2) + ' MB';
+    if (bytes >= 1000) return (bytes / 1000).toFixed(2) + ' KB';
     return bytes + ' B';
 }

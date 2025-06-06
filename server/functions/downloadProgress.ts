@@ -24,7 +24,7 @@ export const logDownloadProgress = function (ws: WebSocket, proc: TinyspawnPromi
                     notifyClient(ws, {
                         status: "download-progress",
                         downloaded: formatSize(downloadedBytes),
-                        total: totalStr,
+                        total: formatSize(totalBytes),
                         percent: match[1]
                     });
                 } else {
