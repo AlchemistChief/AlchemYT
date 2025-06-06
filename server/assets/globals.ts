@@ -1,17 +1,14 @@
 import path from 'path';
 
 export const
-    Cookie_File = path.join(__dirname, '..', 'cookies.txt'),
-    FFmpeg_Location = path.join(__dirname, '..', 'bin', 'ffmpeg.exe'),
-    Temp_Folder = path.join(__dirname, '..', 'temp')
-    ;
+    Temp_Folder = path.join(__dirname, '..', 'temp');
 
 export function getGlobalOptions(Output_File:string) {
     return {
         //verbose: true, //Default: OFF || Prints Debug Information
         format: 'm4a/bestaudio[ext=m4a]/bestaudio',
-        ffmpegLocation: FFmpeg_Location,
-        cookies: Cookie_File,
+        ffmpegLocation: path.join(__dirname, '..', 'bin', 'ffmpeg.exe'),
+        cookies: path.join(__dirname, '..', 'cookies.txt'),
         output: Output_File,
         embedMetadata: true,//Default: false
         embedThumbnail: true,//Default: false
