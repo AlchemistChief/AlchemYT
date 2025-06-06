@@ -157,6 +157,7 @@ a:hover {
 .download-container table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 
 .download-container td {
@@ -167,7 +168,12 @@ a:hover {
 
 .download-container th {
     position: relative;
+    padding: 10px;
     text-align: center;
+    vertical-align: middle;
+    overflow: hidden;/* Prevents overflow content */
+    text-overflow: ellipsis;/* Optional: truncate long content */
+    white-space: nowrap;/* Optional: prevents wrapping */
 }
 
 .download-container button {
