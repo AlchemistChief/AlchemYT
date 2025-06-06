@@ -1,16 +1,4 @@
 @font-face {
-    font-family: 'Bedstead';
-    src: url('fonts/bedstead/bedstead.otf') format('opentype');
-    font-weight: normal;
-}
-@font-face {
-    font-family: 'Bedstead';
-    src: url('fonts/bedstead/bedstead-bold.otf') format('opentype');
-    font-weight: bold;
-}
-
-
-@font-face {
     font-family: 'dejavu-sans-mono';
     src: url('fonts/dejavu-sans-mono/DejaVuSansMono.ttf') format('truetype');
     font-weight: normal;
@@ -28,7 +16,26 @@
 }
 
 @font-face {
-    font-family: 'ubuntu-font';
-    src: url('fonts/ubuntu-font/Ubuntu-B.ttf') format('truetype');
+    font-family: 'ubuntu-mono';
+    src: url('fonts/ubuntu-font/UbuntuMono-B.ttf') format('truetype');
     font-weight: bold;
+}
+
+
+@font-face {
+    font-family: 'SourceCodePro';
+    src: url('fonts/SourceCodePro/SourceCodePro-Regular.ttf') format('truetype');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'SourceCodePro';
+    src: url('fonts/SourceCodePro/SourceCodePro-Bold.ttf') format('truetype');
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: 'SourceCodePro';
+    src: url('fonts/SourceCodePro/SourceCodePro-Black.ttf') format('truetype');
+    font-weight: bolder;
 }
