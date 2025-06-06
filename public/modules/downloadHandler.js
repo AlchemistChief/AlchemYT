@@ -41,7 +41,7 @@ async function requestDownloadWs(normalizedUrl) {
 }
 
 // ────────── Log Progress ──────────
-function logProgress(msg, filename, type) {
+export function logProgress(msg, filename, type) {
     if (type === "download-progress" && msg.downloaded && msg.total && msg.percent) {
         const progressText = `Download: "${filename}" || ${msg.downloaded}/${msg.total} (${msg.percent}%)`;
         logMessage(progressText, "DEBUG", true);
