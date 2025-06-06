@@ -10,7 +10,7 @@ function getTimestamp() {
     return `${hh}:${mm}`;
 }
 
-function createBasicElements(typeUpper = "DEBUG") {
+function createBasicElements(typeUpper = "DEBUG", time = getTimestamp()) {
     const timeSpan = document.createElement("span");
     timeSpan.style.fontWeight = "600";
     timeSpan.style.color = "#999";
@@ -35,22 +35,19 @@ function createBasicElements(typeUpper = "DEBUG") {
 
     keywordSpan.textContent = `[${typeUpper}]`;
 
-    return {timeSpan, keywordSpan};
+    return {timeSpan, keywordSpan, time};
 }
-
-const padding = 20;
 
 // ────────── Logging Functionality ──────────
 export function logMessage(message, type = "DEBUG", update = false) {
 
     if (!logContainer) return //Guard statement
 
-    const time = getTimestamp();
     const typeUpper = type.toUpperCase();
 
     if (update && typeUpper === "DEBUG") {
         let progressElem = document.getElementById("progress-log");
-        const {timeSpan, keywordSpan} = createBasicElements(typeUpper);
+        const {timeSpan, keywordSpan, time} = createBasicElements(typeUpper);
         if (!progressElem) {
             progressElem = document.createElement("p");
             progressElem.id = "progress-log";
@@ -69,7 +66,7 @@ export function logMessage(message, type = "DEBUG", update = false) {
         progressElem.scrollIntoView();
     } else {
         const logEntry = document.createElement("p");
-        const { timeSpan, keywordSpan } = createBasicElements();
+        const { timeSpan, keywordSpan, time } = createBasicElements(typeUpper);
 
         logEntry.appendChild(timeSpan);
         logEntry.appendChild(keywordSpan);
