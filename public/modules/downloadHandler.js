@@ -7,29 +7,30 @@ import { fetchVideoTitle, fetchPlaylistTitle, apiKey, serverApiUrl} from './down
 let currentDownloadTitle = "";
 
 // ────────── WebSocket Download Function ──────────
-async function requestDownloadWs(normalizedUrl) {
+async function requestDownloadWs(normalizedUrl, title, button) {
     try {
         logMessage(`Starting WebSocket download`, "VALID");
         const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
         const wsUrl = protocol + serverApiUrl + '/ws/download';
         const socket = new WebSocket(wsUrl);
         socket.binaryType = "arraybuffer";
-
+        socket.button = button;
         let receivedBuffers = [];
-        let totalBytes = 0;
-        let filename = currentDownloadTitle + ".m4a";
+
+        button.disabled = true;
+        button.textContent = 'Downloading...';
 
         socket.onopen = () => {
             socket.send(JSON.stringify({ url: normalizedUrl }));
             logMessage(`WebSocket connected, download started`, "DEBUG");
         };
 
-        socket.onmessage = (event) => {
-            handleWebSocketMessage(event, receivedBuffers, filename, socket);
-        };
+        socket.onmessage = handleWebSocketMessage.bind(null, title, receivedBuffers, socket);
 
         socket.onerror = () => {
             logMessage(`WebSocket error`, "ERROR");
+            button.disabled = false;
+            button.textContent = 'Download MP3/M4A';
         };
 
         socket.onclose = () => {
@@ -37,13 +38,15 @@ async function requestDownloadWs(normalizedUrl) {
         };
     } catch (error) {
         logMessage(`WebSocket download error: ${error.message}`, "ERROR");
+        button.disabled = false;
+        button.textContent = 'Download MP3/M4A';
     }
 }
 
 // ────────── Log Progress ──────────
-export function logProgress(msg, filename, type) {
+export function logProgress(msg, title, type) {
     if (type === "download-progress" && msg.downloaded && msg.total && msg.percent) {
-        const progressText = `Download: "${filename}" || ${msg.downloaded}/${msg.total} (${msg.percent}%)`;
+        const progressText = `Download: "${title}" || ${msg.downloaded}/${msg.total} (${msg.percent}%)`;
         logMessage(progressText, "DEBUG", true);
     } else if (type === "package-progress" && msg.packaged && msg.total && msg.percent) {
         const packageText = `Packaging: ${msg.packaged}/${msg.total} (${msg.percent}%)`;
@@ -53,8 +56,7 @@ export function logProgress(msg, filename, type) {
     }
 };
 
-// ────────── Handle WebSocket Messages ──────────
-function handleWebSocketMessage(event, receivedBuffers, filename, socket) {
+function handleWebSocketMessage(title, receivedBuffers, socket, event) {
     if (typeof event.data === "string") {
         let msg;
         try {
@@ -66,15 +68,14 @@ function handleWebSocketMessage(event, receivedBuffers, filename, socket) {
         if (msg.error) {
             logMessage(`Server error: ${msg.error}`, "ERROR");
             socket.close();
-        } else if (msg.filename) {
-            filename = currentDownloadTitle + ".m4a";
-            logMessage(`Receiving file: ${filename}`, "VALID");
+            socket.button.disabled = false;
+            socket.button.textContent = 'Download MP3/M4A';
         } else if (msg.status === "done") {
-            finalizeDownload(receivedBuffers, filename, socket);
+            finalizeDownload(receivedBuffers, title + msg.extension, socket);
         } else if (msg.status === "download-progress") {
-            logProgress(msg, filename, "download-progress");
+            logProgress(msg, title, "download-progress");
         } else if (msg.status === "package-progress") {
-            logProgress(msg, filename, "package-progress");
+            logProgress(msg, title, "package-progress");
         }
     } else if (event.data instanceof ArrayBuffer) {
         receivedBuffers.push(new Uint8Array(event.data));
@@ -83,22 +84,46 @@ function handleWebSocketMessage(event, receivedBuffers, filename, socket) {
 
 // ────────── Finalize Download ──────────
 function finalizeDownload(receivedBuffers, filename, socket) {
-    logMessage(`Download complete`, "VALID");
+    logMessage(`Download complete. Received ${filename}`, "VALID");
     const blob = new Blob(receivedBuffers);
-    const downloadUrl = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = downloadUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const oldButton = socket.button;
+
+    // Clone button to remove original listener
+    const newButton = oldButton.cloneNode(true);
+    newButton.textContent = 'Save File';
+    newButton.disabled = false;
+    newButton.classList.add('save-button');
+    newButton.addEventListener('click', () => {
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    });
+
+    oldButton.replaceWith(newButton);
+    bindDownloadAllButton();
+
     receivedBuffers.length = 0;
     socket.close();
 }
 
+// ────────── Ensure "Download All" Button Exists ──────────
+function bindDownloadAllButton() {
+    const downloadAllBtn = document.getElementById('download-all');
+    if (!downloadAllBtn) return;
+
+    downloadAllBtn.style.display = 'block';
+    downloadAllBtn.addEventListener('click', () => {
+        const saveButtons = document.querySelectorAll('.save-button');
+        saveButtons.forEach(btn => btn.click());
+    });
+}
+
 // ────────── Show Download Row ──────────
 function showDownloadRow(title, type, normalizedUrl) {
-    currentDownloadTitle = title;
     const downloadContainer = document.querySelector('.download-container');
     downloadContainer.style.display = "block";
 
@@ -113,16 +138,16 @@ function showDownloadRow(title, type, normalizedUrl) {
     buttonColumn.classList.add('download-button');
     const button = document.createElement('button');
     button.textContent = type === "file" ? "Download MP3/M4A" : "Download Playlist";
-    button.addEventListener('click', () => requestDownloadWs(normalizedUrl));
+    button.addEventListener('click', () => requestDownloadWs(normalizedUrl, title, button));
 
     buttonColumn.appendChild(button);
     row.appendChild(titleColumn);
     row.appendChild(buttonColumn);
     downloadContainer.querySelector('tbody').appendChild(row);
-}
+};
 
 // ────────── Helper Functions ──────────
-async function handleFileDownload(id, normalizedUrl, linkInputElement, videoEmbed) {
+async function handleFileDownload(id, normalizedUrl, videoEmbed) {
     logMessage(`Fetching video details for ID: ${id}`, "DEBUG");
     const apiData = await fetchVideoTitle(id, apiKey);
     if (apiData.items && apiData.items.length > 0) {
@@ -169,7 +194,7 @@ export function bindDownloadHandler() {
                 linkInputElement.value = normalizedUrl;
 
                 if (type === "file") {
-                    await handleFileDownload(id, normalizedUrl, linkInputElement, videoEmbed);
+                    await handleFileDownload(id, normalizedUrl, videoEmbed);
                 } else if (type === "playlist") {
                     await handlePlaylistDownload(id, normalizedUrl);
                 }
