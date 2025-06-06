@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "app": "ts-node-dev --respawn --transpile-only index.ts"
+    "app": "npx ts-node-dev --respawn --transpile-only server/index.ts"
   },
   "keywords": [],
   "author": "",

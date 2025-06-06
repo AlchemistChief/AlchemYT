@@ -31,13 +31,6 @@ This installs all necessary dependencies.
 
 * ## 🚀 Run the App
 
-> You need to be in the `/server` directory before running the app.
-> If you are not in `/server` directory, use the command below to switch to the `/server` directory first.
-
-```bash
-cd server
-```
-
 You can run the server directly using one of these commands:
 
 ```bash
@@ -47,7 +40,7 @@ npm run app
 or
 
 ```bash
-ts-node-dev --respawn --transpile-only index.ts
+ts-node-dev --respawn --transpile-only server/index.ts
 ```
 
 ---
