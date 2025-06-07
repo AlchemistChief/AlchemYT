@@ -8,7 +8,7 @@ import { create } from 'youtube-dl-exec';
 import { Temp_Folder, getGlobalOptions } from '../assets/globals.ts';
 import { logDownloadProgress } from './downloadProgress.ts';
 import { sendDownloadedFile } from './sendFile.ts';
-import { notifyClient } from './utils.ts';
+import { notifyClient, deleteDirectory } from './utils.ts';
 
 // ────────── YouTube-DL Setup ──────────
 const youtubedl = create(path.join(__dirname, '..', 'bin', 'yt-dlp.exe'));
@@ -34,8 +34,9 @@ export const downloadFile = async function (ws: WebSocket, url: string) {
         logDownloadProgress(ws, proc);
 
         // When the process closes, send the resulting file via WebSocket
-        proc.on('close', () => {
-            sendDownloadedFile(ws, Output_File);
+        proc.on('close', async () => {
+            await sendDownloadedFile(ws, Output_File);
+            deleteDirectory(Output_File);
         });
 
     } catch (error: any) {

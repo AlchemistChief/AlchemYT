@@ -8,10 +8,8 @@ import { TinyspawnPromise } from 'tinyspawn';
 import { notifyClient } from './utils.ts';
 
 // ────────── Send Downloaded File Function ──────────
-export const sendDownloadedFile = function (ws: WebSocket, Output_File: string) {
-
-
-
+export const sendDownloadedFile = function (ws: WebSocket, Output_File: string): Promise<void> {
+    return new Promise((resolve, reject) => {
         const readStream = fs.createReadStream(Output_File);
         readStream.on('data', (chunk) => {
             if (process.env.output_ChunkData === 'true') {
@@ -20,14 +18,14 @@ export const sendDownloadedFile = function (ws: WebSocket, Output_File: string) 
             ws.send(chunk);
         });
         readStream.on('end', () => {
-            // Send file extension to the client
             notifyClient(ws, { status: "done", extension: path.extname(Output_File) });
-            fs.unlink(Output_File, (err) => {
-                if (err) console.error("Error deleting temp file", err);
-            });
+            resolve();
         });
         readStream.on('error', (err) => {
             notifyClient(ws, { error: err.message }, true);
             ws.close();
+            reject(err);
         });
+    });
 };
+

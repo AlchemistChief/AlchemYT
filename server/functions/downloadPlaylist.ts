@@ -9,7 +9,7 @@ import { Temp_Folder, getGlobalOptions } from '../assets/globals.ts';
 import { logDownloadProgress } from './downloadProgress.ts';
 import { sendDownloadedFile } from './sendFile.ts';
 import { packagePlaylist } from './packagePlaylist.ts';
-import { notifyClient, extractPlaylistID } from './utils.ts';
+import { notifyClient, deleteDirectory, extractPlaylistID } from './utils.ts';
 
 
 // ────────── YouTube-DL Setup ──────────
@@ -42,10 +42,10 @@ export const downloadPlaylist = async function (ws: WebSocket, url: string) {
 
         // When the process closes, send the resulting file via WebSocket
         proc.on('close', async () => {
-            // Package the playlist after download
             await packagePlaylist(ws, playlistFolder);
-            // Send the packaged playlist file
-            sendDownloadedFile(ws, playlistFolder + '.zip');
+            await sendDownloadedFile(ws, playlistFolder + '.zip');
+            deleteDirectory(playlistFolder);
+            deleteDirectory(playlistFolder + '.zip');
         });
 
     } catch (error: any) {

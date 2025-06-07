@@ -1,5 +1,6 @@
 // ────────── Module Importing ──────────
 import type WebSocket from 'ws';
+import fs from 'fs';
 
 // ────────── Utilities ──────────
 export function extractPlaylistID(url: string): string {
@@ -33,6 +34,24 @@ export function normalizeYoutubeLink(link:string) {
     } catch (error:any) {
         return null;
     }
+};
+
+export const deleteDirectory = async function (targetPath: string) {
+    const delay = 60 * 1000;
+    setTimeout(async () => {
+        try {
+            if (fs.existsSync(targetPath)) {
+                const stat = fs.statSync(targetPath);
+                if (stat.isDirectory()) {
+                    await fs.promises.rm(targetPath, { recursive: true, force: true });
+                } else {
+                    await fs.promises.unlink(targetPath);
+                }
+            }
+        } catch (error) {
+            // handle errors silently or log if needed
+        }
+    }, delay);
 };
 
 export function notifyClient(ws: WebSocket, message: object, consoleLog: boolean = false) {
