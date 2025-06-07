@@ -1,6 +1,7 @@
 // ────────── Module Importing ──────────
 import type WebSocket from 'ws';
 import fs from 'fs';
+import { console } from 'inspector';
 
 // ────────── Utilities ──────────
 export function extractPlaylistID(url: string): string {
@@ -49,7 +50,8 @@ export const deleteDirectory = async function (targetPath: string) {
                 }
             }
         } catch (error) {
-            // handle errors silently or log if needed
+            console.log("Error deleting directory:", error);
+            return null;
         }
     }, delay);
 };
