@@ -1,6 +1,4 @@
 
-
-*RESTART*
 temp/
 cookies.txt
 
@@ -32,11 +30,6 @@ pids/
 *.pid
 *.seed
 
-# Security-related files
-*.secret
-*.key
-*.pem
-
 # Sensitive application secrets
 config/secrets.yml
 
@@ -54,10 +47,6 @@ Thumbs.db
 
 # GitHub specific
 /.github/
-
-# dotenv
-*.env
-*.env*
 
 # Editor configurations
 /.idea/
