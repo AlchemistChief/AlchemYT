@@ -1,9 +1,7 @@
+/* ██████ Global Styles ██████ */
 html {
-    overflow: shown; /*Disable Scrolling*/
-}
-
-body::-webkit-scrollbar {
-    display: none;
+    overflow: shown;
+    /* Disable scrolling */
 }
 
 body {
@@ -14,6 +12,11 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+    /* Hide scrollbar for WebKit browsers */
 }
 
 a {
@@ -28,13 +31,14 @@ a:hover {
     font-weight: bold;
 }
 
+/* ██████ Layout Containers ██████ */
 .title-bar {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     background-color: #1e1e1e;
     padding: 10px 20px 10px 60px;
-    /* add left padding for menu button */
+    /* left padding for menu button */
     border-bottom: 2px solid #6a0dad;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     position: relative;
@@ -44,6 +48,7 @@ a:hover {
     margin: 0;
     color: #6a0dad;
     user-select: none;
+    /* Prevent text selection */
 }
 
 .content {
@@ -85,7 +90,9 @@ a:hover {
     color: #ffffff;
 }
 
-.fetch-container, .download-container {
+/* ██████ Input & Button Groups ██████ */
+.fetch-container,
+.download-container {
     background-color: #1e1e1e;
     margin: 5px 5px;
     padding: 15px;
@@ -107,29 +114,15 @@ a:hover {
     border-radius: 4px;
     background-color: #121212;
     color: #ffffff;
-    box-sizing: border-box; /* Ensure padding and border are included in the element's width */
+    box-sizing: border-box;
+    /* Include padding & border in width */
 }
 
 .link-input::placeholder {
     color: #6a0dad;
 }
 
-.fetch-button {
-    padding: 8px 16px;
-    font-size: 16px;
-    color: #fff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.fetch-button:hover {
-    background-color: #0056b3;
-}
-
-/* Style for the fetch-cert button */
+.fetch-button,
 .fetch-cert {
     padding: 8px 16px;
     font-size: 16px;
@@ -139,14 +132,19 @@ a:hover {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-left: auto;
-    /* This pushes the button to the right */
 }
 
+.fetch-button:hover,
 .fetch-cert:hover {
     background-color: #0056b3;
 }
 
+.fetch-cert {
+    margin-left: auto;
+    /* Push to right */
+}
+
+/* ██████ Video Embeds ██████ */
 .video-embed {
     width: 100%;
     height: 315px;
@@ -154,26 +152,30 @@ a:hover {
     border-radius: 4px;
 }
 
+/* ██████ Download Table ██████ */
 .download-container table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
 }
 
-.download-container td {
+.download-container td,
+.download-container th {
     padding: 10px;
-    text-align: center; /* Center content horizontally */
-    vertical-align: middle; /* Center content vertically */
+    text-align: center;
+    /* Center horizontally */
+    vertical-align: middle;
+    /* Center vertically */
 }
 
 .download-container th {
     position: relative;
-    padding: 10px;
-    text-align: center;
-    vertical-align: middle;
-    overflow: hidden;/* Prevents overflow content */
-    text-overflow: ellipsis;/* Optional: truncate long content */
-    white-space: nowrap;/* Optional: prevents wrapping */
+    overflow: hidden;
+    /* Prevent overflow content */
+    text-overflow: ellipsis;
+    /* Truncate long text */
+    white-space: nowrap;
+    /* Prevent wrapping */
 }
 
 .download-container button {
@@ -184,7 +186,8 @@ a:hover {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
-    margin: 0 auto; /* Center the button within the column */
+    margin: 0 auto;
+    /* Center button */
 }
 
 .download-container button:hover {
@@ -199,6 +202,7 @@ a:hover {
     transform: translateY(-50%);
 }
 
+/* ██████ Log Container ██████ */
 .log-container {
     background-color: #0d0d0d;
     /* Almost black */
@@ -256,6 +260,7 @@ a:hover {
     transition: background-color 0.3s;
     white-space: nowrap;
 }
+
 .log-header button.active {
     background-color: #228B22;
     /* Green base */
@@ -302,6 +307,7 @@ a:hover {
     line-height: 1.5;
 }
 
+/* ██████ Menu Toggle (Hamburger) ██████ */
 .menu-toggle {
     position: fixed;
     top: 0;
@@ -325,11 +331,12 @@ a:hover {
     border-radius: 2px;
 }
 
-/* Side menu panel */
+/* ██████ Side Menu Panel ██████ */
 .side-menu {
     position: fixed;
     top: 0;
     left: -200px;
+    /* Hide off screen initially */
     width: 200px;
     height: 100%;
     background-color: #1e1e1e;
@@ -353,4 +360,5 @@ a:hover {
 /* When side menu is active */
 .side-menu.active {
     left: 0;
+    /* Slide in */
 }
