@@ -30,7 +30,7 @@ export const logDownloadProgress = function (ws: WebSocket, proc: TinyspawnPromi
                 } else {
                     notifyClient(ws, {
                         status: "download-progress",
-                        progress: line
+                        progress: line.replace('[download]', '').trim()
                     });
                 }
             }

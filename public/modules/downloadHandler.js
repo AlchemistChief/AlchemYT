@@ -3,9 +3,6 @@ import { logMessage } from './logHandler.js';
 import { normalizeYoutubeLink } from './utils.js';
 import { fetchVideoTitle, fetchPlaylistTitle, apiKey, serverApiUrl} from './downloadHelper.js';
 
-// ────────── Global Variables ──────────
-let currentDownloadTitle = "";
-
 // ────────── WebSocket Download Function ──────────
 async function requestDownloadWs(normalizedUrl, title, button) {
     try {
@@ -25,7 +22,7 @@ async function requestDownloadWs(normalizedUrl, title, button) {
             logMessage(`WebSocket connected, download started`, "DEBUG");
         };
 
-        socket.onmessage = handleWebSocketMessage.bind(null, title, receivedBuffers, socket);
+        socket.onmessage = handleWebSocketMessage.bind(null, title, receivedBuffers, socket, Date.now());
 
         socket.onerror = () => {
             logMessage(`WebSocket error`, "ERROR");
@@ -44,19 +41,25 @@ async function requestDownloadWs(normalizedUrl, title, button) {
 }
 
 // ────────── Log Progress ──────────
-function logProgress(msg, title, type) {
+function logProgress(msg, title, type, progressID) {
+    const skipPatterns = ['Destination:', 'has already been downloaded'];
+    if (msg.progress && skipPatterns.some(p => msg.progress.includes(p))) {
+        return;
+    }
+
     if (type === "download-progress" && msg.downloaded && msg.total && msg.percent) {
-        const progressText = `Download: "${title}" || ${msg.downloaded}/${msg.total} (${msg.percent}%)`;
-        logMessage(progressText, "DEBUG", true, Date.now());
+        const progressText = `Download: "${msg.title || title}" || ${msg.downloaded}/${msg.total} (${msg.percent}%)`;
+        logMessage(progressText, "DEBUG", true, progressID + msg.total);
     } else if (type === "package-progress" && msg.packaged && msg.total && msg.percent) {
-        const packageText = `Packaging: "${title}" || ${msg.packaged}/${msg.total} (${msg.percent}%)`;
-        logMessage(packageText, "DEBUG", true, Date.now());
-    } else {
+        const packageText = `Packaging: "${msg.title || title}" || ${msg.packaged}/${msg.total} (${msg.percent}%)`;
+        logMessage(packageText, "DEBUG", true, progressID);
+    } else if (msg.progress) {
         logMessage(`Progress: ${msg.progress}`, "DEBUG");
     }
 };
 
-function handleWebSocketMessage(title, receivedBuffers, socket, event) {
+// ────────── Handle WebSocket Messages ──────────
+function handleWebSocketMessage(title, receivedBuffers, socket, progressID, event) {
     if (typeof event.data === "string") {
         let msg;
         try {
@@ -73,9 +76,9 @@ function handleWebSocketMessage(title, receivedBuffers, socket, event) {
         } else if (msg.status === "done") {
             finalizeDownload(receivedBuffers, title + msg.extension, socket);
         } else if (msg.status === "download-progress") {
-            logProgress(msg, title, "download-progress");
+            logProgress(msg, title, "download-progress", progressID);
         } else if (msg.status === "package-progress") {
-            logProgress(msg, title, "package-progress");
+            logProgress(msg, title, "package-progress", progressID);
         }
     } else if (event.data instanceof ArrayBuffer) {
         receivedBuffers.push(new Uint8Array(event.data));

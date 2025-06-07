@@ -22,7 +22,7 @@
                 <div class="input-group">
                     <!--<input type="text" placeholder="Enter YouTube link" class="link-input">-->
                     <input type="text" placeholder="Enter YouTube link" class="link-input"
-                        value="https://youtube.com/watch?v=GJY8OMJXRAk">
+                        value="https://youtube.com/playlist?list=PLdpI-S2Q2T_fVCbp4JEScfZSojMe_vGe6">
                     <button class="fetch-button">Fetch</button>
                 </div>
                 <iframe class="video-embed" style="display: none;" allowfullscreen></iframe>
@@ -48,12 +48,18 @@
             </div>
             <div class="log-container">
                 <div class="log-header">
-                    Log Terminal
-                    <button class="close-log">X</button>
+                    <div>Log Terminal</div>
+                    <div class="button-group">
+                        <button onclick="hideDebug()">Toggle Debug</button>
+                        <button onclick="hideError()">Toggle Error</button>
+                        <button onclick="hideValid()">Toggle Valid</button>
+                        <button onclick="hideTimestamp()">Toggle Timestamp</button>
+                        <button id="close-log" onclick="toggleLogVisibility()">X</button>
+                    </div>
                 </div>
-                <div class="log-content" style="display: block;">
-                </div>
+                <div class="log-content" style="display: block;"></div>
             </div>
+
         </div>
     </main>
 

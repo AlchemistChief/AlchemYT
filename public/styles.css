@@ -200,35 +200,81 @@ a:hover {
 }
 
 .log-container {
-    background-color: #0d0d0d; /* Almost black */
+    background-color: #0d0d0d;
+    /* Almost black */
     color: #ffffff;
     margin: 5px 5px;
     border-radius: 8px;
-    border-left: 4px solid #6a0dad; /* Left border for card effect */
+    border-left: 4px solid #6a0dad;
+    /* Left border for card effect */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     min-height: 50px;
     max-height: 300px;
-    overflow: hidden; /* Prevent content overflow */
-    transition: max-height 0.3s ease; /* Smooth resizing */
+    overflow: hidden;
+    /* Prevent content overflow */
+    transition: max-height 0.3s ease;
+    /* Smooth resizing */
 }
 
 .log-header {
-    background-color: #1e1e1e; /* Slightly lighter for contrast */
+    background-color: #1e1e1e;
     padding: 10px;
     font-weight: bold;
     border-bottom: 1px solid #6a0dad;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: space-between;
 }
 
-.close-log {
-    background-color: #ff4d4d; /* Red color */
+.log-header> :first-child {
+    flex: 0 0 auto;
+    margin-right: 16px;
+}
+
+.log-header .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex: 0 1 auto;
+}
+
+.log-header button {
+    background-color: #8b0000;
+    /* Dark red base */
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+}
+.log-header button.active {
+    background-color: #228B22;
+    /* Green base */
+    color: #ffffff;
+}
+
+.log-header button.active:hover {
+    background-color: #2E8B57;
+    /* Darker green on hover */
+}
+
+.log-header button:hover {
+    background-color: #cc0000;
+    /* Brighter red on hover */
+}
+
+#close-log {
+    background-color: #ff4d4d;
+    /* Red color */
     color: #ffffff;
     border: none;
     border-radius: 4px;
@@ -238,13 +284,15 @@ a:hover {
     transition: background-color 0.3s;
 }
 
-.close-log:hover {
-    background-color: #cc0000; /* Darker red on hover */
+#close-log:hover {
+    background-color: #cc0000;
+    /* Darker red on hover */
 }
 
 .log-content {
     flex: 1;
-    overflow-y: auto; /* Scrollable content */
+    overflow-y: auto;
+    /* Scrollable content */
     padding: 10px;
 }
 
@@ -254,7 +302,6 @@ a:hover {
     line-height: 1.5;
 }
 
-/*dawd*/
 .menu-toggle {
     position: fixed;
     top: 0;
