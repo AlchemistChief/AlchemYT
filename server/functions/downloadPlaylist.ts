@@ -18,36 +18,34 @@ const youtubedl = create(path.join(__dirname, '..', 'bin', 'yt-dlp.exe'));
 // ────────── Download Playlist Function ──────────
 export const downloadPlaylist = async function (ws: WebSocket, url: string) {
     try {
-        // Ensure the temporary folder exists
         if (!fs.existsSync(Temp_Folder)) fs.mkdirSync(Temp_Folder, { recursive: true });
 
-        // Extract playlist ID from URL query param `list`
         const playlistID = extractPlaylistID(url);
-
-        // Create playlist folder inside temp using playlist ID
         const playlistFolder = path.join(Temp_Folder, playlistID);
+        const zipFile = playlistFolder + '.zip';
+
+        if (fs.existsSync(zipFile)) {
+            notifyClient(ws, { message: "Cached playlist found. Sending file." });
+            await sendDownloadedFile(ws, zipFile);
+            return;
+        }
+
         if (!fs.existsSync(playlistFolder)) fs.mkdirSync(playlistFolder, { recursive: true });
 
-        // Output template inside the playlist folder
         const Output_File = path.join(playlistFolder, `%(title)s.%(ext)s`);
 
-        // Notify client the download is starting
         notifyClient(ws, { message: "Playlist Download started." });
 
-        // Spawn the download process
         const proc = youtubedl.exec(url, getGlobalOptions(Output_File));
 
-        // Listen for progress logs from STDOUT
         logDownloadProgress(ws, proc);
 
-        // When the process closes, send the resulting file via WebSocket
         proc.on('close', async () => {
             await packagePlaylist(ws, playlistFolder);
-            await sendDownloadedFile(ws, playlistFolder + '.zip');
+            await sendDownloadedFile(ws, zipFile);
             deleteDirectory(playlistFolder);
-            deleteDirectory(playlistFolder + '.zip');
+            deleteDirectory(zipFile);
         });
-
     } catch (error: any) {
         notifyClient(ws, { error: error.message }, true);
         ws.close();
