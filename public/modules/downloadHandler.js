@@ -151,7 +151,6 @@ function showDownloadRow(title, type, normalizedUrl) {
 
 // ────────── Helper Functions ──────────
 async function handleFileDownload(id, normalizedUrl, videoEmbed) {
-    logMessage(`Fetching video details for ID: ${id}`, "DEBUG");
     const apiData = await fetchVideoTitle(id, apiKey);
     if (apiData.items && apiData.items.length > 0) {
         const videoTitle = apiData.items[0].snippet.title;
@@ -165,7 +164,6 @@ async function handleFileDownload(id, normalizedUrl, videoEmbed) {
 }
 
 async function handlePlaylistDownload(id, normalizedUrl) {
-    logMessage(`Fetching playlist details for ID: ${id}`, "DEBUG");
     const apiData = await fetchPlaylistTitle(id, apiKey);
     if (apiData.items && apiData.items.length > 0) {
         const playlistTitle = apiData.items[0].snippet.title;
@@ -185,7 +183,6 @@ export function bindDownloadHandler() {
     fetchButton.addEventListener('click', async () => {
         const linkInputElement = document.querySelector('.link-input');
         const linkInput = linkInputElement.value;
-        logMessage(`Input URL: ${linkInput}`, "DEBUG");
 
         const videoEmbed = document.querySelector('.video-embed');
         videoEmbed.style.display = "none";
