@@ -97,7 +97,12 @@ function finalizeDownload(receivedBuffers, filename, socket) {
     newButton.textContent = 'Save File';
     newButton.disabled = false;
     newButton.classList.add('save-button');
-    newButton.addEventListener('click', () => {
+
+    // Remove any previous click listeners on this button to avoid duplicates
+    newButton.replaceWith(newButton.cloneNode(true));
+    const cleanButton = oldButton.parentNode.querySelector('.save-button') || newButton;
+
+    cleanButton.addEventListener('click', () => {
         const a = document.createElement('a');
         a.href = blobUrl;
         a.download = filename;
@@ -106,7 +111,7 @@ function finalizeDownload(receivedBuffers, filename, socket) {
         a.remove();
     });
 
-    oldButton.replaceWith(newButton);
+    oldButton.replaceWith(cleanButton);
     bindDownloadAllButton();
 
     receivedBuffers.length = 0;
@@ -119,7 +124,12 @@ function bindDownloadAllButton() {
     if (!downloadAllBtn) return;
 
     downloadAllBtn.style.display = 'block';
-    downloadAllBtn.addEventListener('click', () => {
+
+    // Remove existing listener before adding new one to prevent duplicates
+    const newBtn = downloadAllBtn.cloneNode(true);
+    downloadAllBtn.replaceWith(newBtn);
+
+    newBtn.addEventListener('click', () => {
         const saveButtons = document.querySelectorAll('.save-button');
         saveButtons.forEach(btn => btn.click());
     });
@@ -183,6 +193,7 @@ export function bindDownloadHandler() {
     fetchButton.addEventListener('click', async () => {
         const linkInputElement = document.querySelector('.link-input');
         const linkInput = linkInputElement.value;
+
 
         const videoEmbed = document.querySelector('.video-embed');
         videoEmbed.style.display = "none";
