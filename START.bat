@@ -21,6 +21,11 @@ if exist "%NODE_PATH%" (
 )
 
 call echo !BLUECOLOR![INFO]!RESET! Starting server with npm start...
+call echo .
+call echo !BLUECOLOR![INFO]!RESET! To close the server do:
+call echo !BLUECOLOR![INFO]!RESET! CTRL + C
+call echo !BLUECOLOR![INFO]!RESET! OR
+call echo !BLUECOLOR![INFO]!RESET! Close this Terminal
 npx npm start
 
 endlocal
