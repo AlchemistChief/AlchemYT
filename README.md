@@ -1,7 +1,7 @@
 # 🧪 AlchemYT
 [![Issues](https://img.shields.io/github/issues/AlchemistChief/AlchemYT?color=orange&logo=github&logoColor=white&style=flat)](https://github.com/AlchemistChief/AlchemYT/issues)
-[![License](https://img.shields.io/github/license/AlchemistChief/AlchemYT?color=green&style=flat&label=📄%20License)](https://github.com/AlchemistChief/AlchemYT/blob/main/LICENSE)
-[![Last Commit](https://img.shields.io/github/last-commit/AlchemistChief/AlchemYT?color=blue&style=flat&label=🕒%20Last%20Commit)](https://github.com/AlchemistChief/AlchemYT/commits/main)
+[![License](https://img.shields.io/github/license/AlchemistChief/AlchemYT?color=green&style=flat&label=📄%20License)](https://github.com/AlchemistChief/AlchemYT/blob/main/LICENSE.md)
+[![Last Commit](https://img.shields.io/github/last-commit/AlchemistChief/AlchemYT?color=blue&style=flat&label=🕒%20Last%20Commit)](https://github.com/AlchemistChief/AlchemYT/commits/master)
 
 AlchemYT is a self-hosted YouTube downloader built with TypeScript. It runs on Windows and utilizes Node.js. The project includes certificate and key generation for secure connections.
 
@@ -17,19 +17,28 @@ AlchemYT is a self-hosted YouTube downloader built with TypeScript. It runs on W
 
 ---
 
+---
+
 - ## 📦 Installation
 
 Open your terminal and run the following:
 
 ```bash
 npm install --include=dev
-````
+```
 
 This installs all necessary dependencies.
 
+**Alternatively, you can just run the provided batch script to install dependencies:**
+
+```bat
+INSTALL.bat
+```
+
+---
 ---
 
-* ## 🚀 Run the App
+- ## 🚀 Run the App
 
 You can run the server directly using one of these commands:
 
@@ -43,6 +52,13 @@ or
 ts-node-dev --respawn --transpile-only server/index.ts
 ```
 
+**Or simply start the app by running the batch script:**
+
+```bat
+START.bat
+```
+
+---
 ---
 
 * ## 🔐 Certificate & Key Generation
@@ -79,6 +95,6 @@ mv ~/AlchemYT /storage/emulated/0/Download
 
 ## 📄 License
 
-This project is licensed under the [MIT License](public\license.html).
+This project is licensed under the [MIT License](LICENSE.md).
 
 ---
