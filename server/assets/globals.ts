@@ -1,24 +1,30 @@
 import path from 'path';
+import os from 'os';
 
 export const
-    Temp_Folder = path.join(__dirname, '..', 'temp');
+    Temp_Folder = path.join(__dirname, '..', 'temp'),
+    ytdlp_Binary = path.join(__dirname, '..', 'bin', os.platform() === 'win32' ? 'yt-dlp.exe' : 'yt-dlp_-inux');
 
-export function getGlobalOptions(Output_File:string) {
+
+
+export function getGlobalOptions(Output_File: string) {
+    const ffmpegBinaryName = os.platform() === 'win32' ? 'ffmpeg.exe' : 'ffmpeg_linux';
+
     return {
-        //verbose: true, //Default: OFF || Prints Debug Information
+        //verbose: true,
         format: 'm4a/bestaudio[ext=m4a]/bestaudio',
-        ffmpegLocation: path.join(__dirname, '..', 'bin', 'ffmpeg.exe'),
+        ffmpegLocation: path.join(__dirname, '..', 'bin', ffmpegBinaryName),
         cookies: path.join(__dirname, 'cookies.txt'),
         output: Output_File,
-        embedMetadata: true,//Default: false
-        embedThumbnail: true,//Default: false
-        noEmbedChapters: true,//Default: true
-        noEmbedSubs: true,//Default: true
-        noUpdate: true,//Default: true
+        embedMetadata: true,
+        embedThumbnail: true,
+        noEmbedChapters: true,
+        noEmbedSubs: true,
+        noUpdate: true,
         ignoreErrors: true,
         forceIpv6: true,
         progress: true,
-        newline: true,//Default: true
+        newline: true,
         quiet: false,
         addHeader: [
             'referer: https://youtube.com',

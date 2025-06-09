@@ -5,13 +5,13 @@ import type WebSocket from 'ws';
 import { create } from 'youtube-dl-exec';
 
 // ────────── Custom Modules ──────────
-import { Temp_Folder, getGlobalOptions } from '../assets/globals.ts';
+import { Temp_Folder, ytdlp_Binary, getGlobalOptions } from '../assets/globals.ts';
 import { logDownloadProgress } from './downloadProgress.ts';
 import { sendDownloadedFile } from './sendFile.ts';
 import { notifyClient, deleteDirectory } from './utils.ts';
 
 // ────────── YouTube-DL Setup ──────────
-const youtubedl = create(path.join(__dirname, '..', 'bin', 'yt-dlp.exe'));
+const youtubedl = create(ytdlp_Binary);
 
 // ────────── Download File Function ──────────
 export const downloadFile = async function (ws: WebSocket, url: string) {
