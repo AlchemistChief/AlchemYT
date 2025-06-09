@@ -36,6 +36,10 @@
     z-index: 1000;
 }
 
+.side-menu.active {
+    left: 0;
+}
+
 .side-menu ul {
     list-style-type: none;
     padding: 0;
@@ -43,10 +47,27 @@
 }
 
 .side-menu li {
-    margin: 20px 0;
-    padding: 0 20px;
+    /* Remove color and cursor here as they are handled in the links */
+    display: block;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
 }
 
-.side-menu.active {
-    left: 0;
+.side-menu li a {
+    display: block;
+    padding: 12px 20px;
+    color: #5a007a;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    border-radius: 0;
+}
+
+.side-menu li a:hover {
+    color: #ff69b4; /* bright pink */
+    background-color: #2a003f;
+    text-shadow: 0 0 5px #ff69b4, 0 0 10px #ff69b4, 0 0 15px #ff69b4;
+    box-shadow: 0 0 10px #ff69b4;
+    border-radius: 4px;
 }
