@@ -84,6 +84,25 @@ wss.on('connection', (ws: WebSocket) => {
     });
 });
 
+// ────────── Clear /Temp ──────────
+const cleanTempFolderOnExit = () => {
+    const tempDir = path.join(__dirname, 'temp');
+    if (fs.existsSync(tempDir)) {
+        try {
+            fs.rmSync(tempDir, { recursive: true, force: true });
+            console.log('🧹 Temp folder cleaned on shutdown.');
+            fs.mkdirSync(tempDir, { recursive: true });
+        } catch (err) {
+            console.error('❌ Failed to clean temp folder:', err);
+        }
+    }
+    process.exit();
+};
+
+cleanTempFolderOnExit() // Initial Cleaning
+process.on('SIGINT', cleanTempFolderOnExit);    // Ctrl+C
+process.on('SIGTERM', cleanTempFolderOnExit);   // Kill command
+process.on('exit', cleanTempFolderOnExit);      // General exit
 // ────────── Server Startup ──────────
 server.listen(settings.Port, () => {
     new dnssd.Advertisement(dnssd.tcp('https'), settings.Port, {
