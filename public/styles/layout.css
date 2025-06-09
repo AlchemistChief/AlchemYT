@@ -1,0 +1,56 @@
+/* ██████ Layout Containers ██████ */
+.title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #1e1e1e;
+    padding: 10px 20px 10px 60px;
+    border-bottom: 2px solid #6a0dad;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.title-bar h1 {
+    margin: 0;
+    color: #6a0dad;
+    user-select: none;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.main-flex-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 10px;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1e1e1e;
+    padding: 10px 20px;
+    border-top: 2px solid #6a0dad;
+}
+
+.footer-left p {
+    margin: 0;
+    color: #ffffff;
+}
+
+.footer-right a {
+    margin-left: 15px;
+    text-decoration: none;
+    color: #6a0dad;
+    transition: color 0.3s;
+}
+
+.footer-right a:hover {
+    color: #ffffff;
+}
