@@ -26,7 +26,7 @@ if not exist "%NODE_ZIP%" (
 )
 
 echo %BLUECOLOR%[INFO]%RESET% Extracting Node.js...
-powershell -Command "Expand-Archive -Path '%NODE_ZIP%' -DestinationPath '%INSTALL_DIR%' -Force"
+powershell -Command "$ProgressPreference = 'SilentlyContinue'; Expand-Archive -Path '%NODE_ZIP%' -DestinationPath '%INSTALL_DIR%' -Force"
 
 echo %BLUECOLOR%[INFO]%RESET% Moving extracted files and folders to parent folder...
 for /f "delims=" %%I in ('dir /b /a-d "%INSTALL_DIR%\node-v24.1.0-win-x64"') do (
@@ -44,8 +44,10 @@ set PATH=%INSTALL_DIR%;%PATH%
 echo %BLUECOLOR%[INFO]%RESET% Installing ts-node-dev globally...
 "%INSTALL_DIR%\node.exe" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" install -g ts-node-dev
 
-echo %BLUECOLOR%[INFO]%RESET% Installing all npm dependencies from package.json...
+echo %BLUECOLOR%[INFO]%RESET% Installing all npm dependencies from package.json (skip Python check)...
+set "YOUTUBE_DL_SKIP_PYTHON_CHECK=1"
 "%INSTALL_DIR%\node.exe" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" install
+set "YOUTUBE_DL_SKIP_PYTHON_CHECK="
 
 echo %GREENCOLOR%[SUCCESS]%RESET% Installation complete.
 
