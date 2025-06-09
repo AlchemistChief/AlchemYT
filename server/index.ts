@@ -85,21 +85,23 @@ wss.on('connection', (ws: WebSocket) => {
 });
 
 // ────────── Clear /Temp ──────────
-const cleanTempFolderOnExit = () => {
+const cleanTempFolderOnExit = (Shutdown:boolean = true) => {
     const tempDir = path.join(__dirname, 'temp');
     if (fs.existsSync(tempDir)) {
         try {
             fs.rmSync(tempDir, { recursive: true, force: true });
-            console.log('🧹 Temp folder cleaned on shutdown.');
+            console.log('Temp folder cleaned');
             fs.mkdirSync(tempDir, { recursive: true });
         } catch (err) {
-            console.error('❌ Failed to clean temp folder:', err);
+            console.error('Failed to clean temp folder:', err);
         }
     }
-    process.exit();
+    if (Shutdown === true) {
+        process.exit();
+    }
 };
 
-cleanTempFolderOnExit() // Initial Cleaning
+cleanTempFolderOnExit(false) // Initial Cleaning
 process.on('SIGINT', cleanTempFolderOnExit);    // Ctrl+C
 process.on('SIGTERM', cleanTempFolderOnExit);   // Kill command
 process.on('exit', cleanTempFolderOnExit);      // General exit
