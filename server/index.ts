@@ -106,7 +106,7 @@ process.on('SIGINT', cleanTempFolderOnExit);    // Ctrl+C
 process.on('SIGTERM', cleanTempFolderOnExit);   // Kill command
 process.on('exit', cleanTempFolderOnExit);      // General exit
 // ────────── Server Startup ──────────
-server.listen(settings.Port, () => {
+server.listen(settings.Port, '0.0.0.0', () => {
     new dnssd.Advertisement(dnssd.tcp('https'), settings.Port, {
         name: 'AlchemYT',
         host: 'AlchemYT.local'
