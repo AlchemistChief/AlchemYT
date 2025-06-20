@@ -57,4 +57,4 @@ if /i "%START_SERVER%"=="Y" (
 	call "%~dp0START.bat"
 )
 
-pause
+exit
