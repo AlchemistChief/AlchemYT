@@ -28,10 +28,10 @@ export const logDownloadProgress = function (ws: WebSocket, proc: TinyspawnPromi
                         percent: match[1]
                     });
                 } else {
-                    notifyClient(ws, {
-                        status: "download-progress",
-                        progress: line.replace('[download]', '').trim()
-                    });
+                    //notifyClient(ws, {
+                        //status: "download-progress",
+                        //progress: line.replace('[download]', '').trim()
+                    //}); Disabled cus of spamm bug
                 }
             }
         });
