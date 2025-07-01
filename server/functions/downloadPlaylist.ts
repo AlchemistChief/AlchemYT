@@ -32,7 +32,7 @@ export const downloadPlaylist = async function (ws: WebSocket, url: string) {
 
         if (!fs.existsSync(playlistFolder)) fs.mkdirSync(playlistFolder, { recursive: true });
 
-        const Output_File = path.join(playlistFolder, `%(title)s.%(ext)s`);
+        const Output_File = path.join(playlistFolder, `%(title)s.m4a`);
 
         notifyClient(ws, { message: "Playlist Download started." });
 

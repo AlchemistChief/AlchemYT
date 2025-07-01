@@ -61,6 +61,7 @@ server.on('upgrade', (request: IncomingMessage, socket, head) => {
 
 // ────────── WebSocket Connection Handling ──────────
 wss.on('connection', (ws: WebSocket) => {
+    console.log('Client connected');
     ws.on('message', async (message: string) => {
         try {
             const msg = JSON.parse(message.toString());
