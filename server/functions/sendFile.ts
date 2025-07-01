@@ -2,7 +2,6 @@
 import path from 'path';
 import fs from 'fs';
 import type WebSocket from 'ws';
-import { TinyspawnPromise } from 'tinyspawn';
 
 // ────────── Custom Modules ──────────
 import { notifyClient } from './utils.ts';
@@ -28,4 +27,3 @@ export const sendDownloadedFile = function (ws: WebSocket, Output_File: string):
         });
     });
 };
-
