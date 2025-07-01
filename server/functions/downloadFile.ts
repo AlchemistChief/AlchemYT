@@ -40,6 +40,7 @@ export const downloadFile = async function (ws: WebSocket, url: string) {
 
         proc.on('close', async () => {
             await sendDownloadedFile(ws, Output_File);
+            deleteDirectory(Output_File);
         });
     } catch (error: any) {
         notifyClient(ws, { error: error.message }, true);
