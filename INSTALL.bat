@@ -17,13 +17,21 @@ set NODE_ZIP=%~dp0node.zip
 set INSTALL_DIR=%~dp0server\bin\PortableNode
 set CONFIG_FILE=%~dp0config.json
 
-:: Function to test if node executable exists and runnable
+:: ────────── Main Execution ──────────
+call :CheckNode
+call :AfterNodeCheck
+call :InstallDependencies
+call :PromptStartServer
+exit /b
+
+
+:: ────────── Check if Node.js exists and is runnable ──────────
 :CheckNode
 echo %BLUECOLOR%[Debug]%RESET% Checking Node in PATH...
 where node >nul 2>&1
 if %ERRORLEVEL%==0 (
     echo %GREENCOLOR%[INFO]%RESET% Node found in PATH.
-    set NODE_PATH=node
+    set "NODE_PATH=node"
     goto NodeReady
 )
 
@@ -34,7 +42,7 @@ if %ERRORLEVEL%==1 (
     set /p USER_NODE_PATH=%GOLDCOLOR%[PROMPT]%RESET% Enter full path to node.exe:
     if exist "%USER_NODE_PATH%" (
         echo %GREENCOLOR%[INFO]%RESET% Using user provided Node.js path: %USER_NODE_PATH%
-        set NODE_PATH=%USER_NODE_PATH%
+        set "NODE_PATH=%USER_NODE_PATH%"
         goto NodeReady
     ) else (
         echo %REDCOLOR%[ERROR]%RESET% Path does not exist. Aborting.
@@ -43,26 +51,31 @@ if %ERRORLEVEL%==1 (
     )
 ) else (
     :: User selected N - download Node locally
-    goto DownloadNode
+    call :DownloadNode
+    goto NodeReady
 )
 
+:: ────────── Node.js ready label ──────────
 :NodeReady
 echo %BLUECOLOR%[INFO]%RESET% Using Node.js at %NODE_PATH%
-echo [DEBUG] NODE_PATH is '%NODE_PATH%'
-call :SaveNodePathConfig
-goto AfterNodeCheck
+if /I not "%NODE_PATH%"=="node" (
+    call :SaveNodePathConfig
+)
 
+
+:: ────────── Save Node path to config.json ──────────
 :SaveNodePathConfig
-:: Replace backslashes with forward slashes for JSON
+:: Replace backslashes with forward slashes for JSON compatibility
 set "NODE_PATH_JSON=%NODE_PATH:\=/%"
-echo [DEBUG] Saving node path to config.json: %NODE_PATH_JSON%
 (
     echo {
     echo   "nodePath": "%NODE_PATH_JSON%"
     echo }
 ) > "%CONFIG_FILE%"
-goto :eof
+exit /b
 
+
+:: ────────── Download and install Node locally ──────────
 :DownloadNode
 echo %BLUECOLOR%[INFO]%RESET% Downloading and installing Node.js locally...
 
@@ -89,43 +102,71 @@ rmdir /S /Q "%INSTALL_DIR%\node-v24.1.0-win-x64"
 
 del "%NODE_ZIP%"
 
-set NODE_PATH=%INSTALL_DIR%\node.exe
+set "NODE_PATH=%INSTALL_DIR%\node.exe"
+exit /b
 
-call :SaveNodePathConfig
 
+:: ────────── After Node check: update PATH if local ──────────
 :AfterNodeCheck
-:: Add node to PATH if local install, else assume system PATH
 if /I "%NODE_PATH%"=="node" (
     rem Node found in system PATH, no need to change PATH
 ) else (
-    set PATH=%INSTALL_DIR%;%PATH%
+    set "PATH=%INSTALL_DIR%;%PATH%"
+)
+exit /b
+
+
+:: ────────── Install dependencies and ts-node-dev globally ──────────
+:InstallDependencies
+echo %BLUECOLOR%[INFO]%RESET% Installing ts-node-dev globally...
+
+if "%NODE_PATH%"=="node" (
+    :: Node is in PATH, use npm directly
+    npm install -g ts-node-dev
+) else (
+    :: Local Node, run npm via local node path
+    "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin/npm-cli.js" install -g ts-node-dev
 )
 
-echo %BLUECOLOR%[INFO]%RESET% Installing ts-node-dev globally...
-"%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" install -g ts-node-dev
 if errorlevel 1 (
     echo %REDCOLOR%[ERROR]%RESET% Failed to install ts-node-dev globally.
     pause
     exit /b
 )
 
-echo %BLUECOLOR%[INFO]%RESET% Installing all npm dependencies from package.json (skip Python check)...
+echo %BLUECOLOR%[INFO]%RESET% Installing all npm dependencies from package.json (skip Python and yt-dlp download checks)...
+
+:: Set environment variables to skip python check and yt-dlp download during npm install
 set "YOUTUBE_DL_SKIP_PYTHON_CHECK=1"
-"%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" install
+set "YOUTUBE_DL_SKIP_DOWNLOAD=true"
+
+if "%NODE_PATH%"=="node" (
+    npm install
+) else (
+    "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin/npm-cli.js" install
+)
+
 if errorlevel 1 (
     echo %REDCOLOR%[ERROR]%RESET% Failed to install npm dependencies.
     pause
     exit /b
 )
+
+:: Clear the environment variables after install
 set "YOUTUBE_DL_SKIP_PYTHON_CHECK="
+set "YOUTUBE_DL_SKIP_DOWNLOAD="
 
 echo %GREENCOLOR%[SUCCESS]%RESET% Installation complete.
 
-:: Prompt user to start server - wait for input before continuing
-set /p START_SERVER=%GOLDCOLOR%[PROMPT]%RESET% Do you want to start the server now? (Y/N):
-if /i "%START_SERVER%"=="Y" (
+:: ────────── Prompt user to start the server ──────────
+:PromptStartServer
+choice /C YN /N /M "%GOLDCOLOR%[PROMPT]%RESET% Do you want to start the server now? (Y/N):"
+if errorlevel 2 goto SkipStartServer
+if errorlevel 1 (
     echo %BLUECOLOR%[INFO]%RESET% Starting server...
     call "%~dp0START.bat"
 )
+exit /b
 
-exit
+:SkipStartServer
+exit /b
