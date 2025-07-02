@@ -8,6 +8,13 @@ import { notifyClient } from './utils.ts';
 
 // ────────── Log Download Progress Function ──────────
 export const logDownloadProgress = function (ws: WebSocket, proc: TinyspawnPromise) {
+
+    proc.stderr.on('data', (data: Buffer) => {
+        data.toString().split(/[\r\n]+/)
+            .filter(line => line.trim())
+            .forEach(line => console.error(line));
+    });
+
     proc.stdout.on('data', (data: Buffer) => {
         const lines = data.toString().split(/[\r\n]+/).filter(line => line.trim() !== '');
         lines.forEach(line => {
@@ -26,12 +33,12 @@ export const logDownloadProgress = function (ws: WebSocket, proc: TinyspawnPromi
                         downloaded: formatSize(downloadedBytes),
                         total: formatSize(totalBytes),
                         percent: match[1]
-                    }), true;
+                    }, true);
                 } else {
-                    //notifyClient(ws, {
-                        //status: "download-progress",
-                        //progress: line.replace('[download]', '').trim()
-                    //}); Disabled cus of spamm bug
+                    notifyClient(ws, {
+                        status: "download-progress",
+                        progress: line.replace('[download]', '').trim()
+                    })
                 }
             }
         });
