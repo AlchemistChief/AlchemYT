@@ -61,11 +61,11 @@ echo %BLUECOLOR%[INFO]%RESET% Using Node.js at %NODE_PATH%
 if /I not "%NODE_PATH%"=="node" (
     call :SaveNodePathConfig
 )
+exit /b
 
 
 :: ────────── Save Node path to config.json ──────────
 :SaveNodePathConfig
-:: Replace backslashes with forward slashes for JSON compatibility
 set "NODE_PATH_JSON=%NODE_PATH:\=/%"
 (
     echo {
@@ -78,19 +78,14 @@ exit /b
 :: ────────── Download and install Node locally ──────────
 :DownloadNode
 echo %BLUECOLOR%[INFO]%RESET% Downloading and installing Node.js locally...
-
 if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
-
 powershell -Command " $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri '%NODE_URL%' -OutFile '%NODE_ZIP%' -UseBasicParsing"
-
 if not exist "%NODE_ZIP%" (
     echo %REDCOLOR%[ERROR]%RESET% Download failed or file missing, aborting.
     pause
     exit /b 1
 )
-
 powershell -Command "$ProgressPreference = 'SilentlyContinue'; Expand-Archive -Path '%NODE_ZIP%' -DestinationPath '%INSTALL_DIR%' -Force"
-
 echo %BLUECOLOR%[INFO]%RESET% Moving extracted files and folders to parent folder...
 for /f "delims=" %%I in ('dir /b /a-d "%INSTALL_DIR%\node-v24.1.0-win-x64"') do (
     move /Y "%INSTALL_DIR%\node-v24.1.0-win-x64\%%I" "%INSTALL_DIR%"
@@ -99,9 +94,7 @@ for /d %%I in ("%INSTALL_DIR%\node-v24.1.0-win-x64\*") do (
     move /Y "%%I" "%INSTALL_DIR%"
 )
 rmdir /S /Q "%INSTALL_DIR%\node-v24.1.0-win-x64"
-
 del "%NODE_ZIP%"
-
 set "NODE_PATH=%INSTALL_DIR%\node.exe"
 exit /b
 
