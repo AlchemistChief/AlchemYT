@@ -22,7 +22,7 @@ set "GREENCOLOR=%ESC%[1;38;5;46m"
 :: ────────── Check for node in system PATH ──────────
 where node >nul 2>&1
 if %errorlevel%==0 (
-    echo !GREENCOLOR![OK]!RESET! Node.js found in system PATH.
+    echo !GREENCOLOR![SUCCESS]!RESET! Node.js found in system PATH.
     echo !BLUECOLOR![INFO]!RESET! Starting server with npm start...
     echo.
     echo !BLUECOLOR![INFO]!RESET! To stop the server, press CTRL+C or close this terminal window.
@@ -31,7 +31,8 @@ if %errorlevel%==0 (
     exit /b
 )
 
-:: ────────── Read nodePath from config.json ──────────
+:: ────────── If Node.js not found in system PATH, read nodePath from config.json ──────────
+:: (This part now runs only if Node was NOT found above)
 set "CONFIG_FILE=%~dp0config.json"
 set "NODE_PATH="
 
@@ -56,7 +57,7 @@ for /f "usebackq delims=" %%L in ("%CONFIG_FILE%") do (
 if not exist "!NODE_PATH!" (
     echo !REDCOLOR![ERROR]!RESET! Node.js not found in PATH or config.json.
     echo    !NODE_PATH!
-    echo !REDCOLOR![ERROR]!RESET! Please run Install.bat or fix config.json path.
+    echo !REDCOLOR![ERROR]!RESET! Please run Install.bat, use system variables or fix config.json path.
     pause
     exit /b 1
 )
