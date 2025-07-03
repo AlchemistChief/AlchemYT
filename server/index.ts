@@ -1,17 +1,13 @@
 // ────────── Module Importing ──────────
 import dotenv from 'dotenv';dotenv.config({ path: __dirname + '/.env' });
 import express from 'express';
-import WebSocket from 'ws';
 import https from 'https';
 import dnssd from 'dnssd';
 import path from 'path';
 import fs from 'fs';
-import { IncomingMessage } from 'http';
 
 // ────────── Custom Modules ──────────
-import { downloadFile } from './functions/downloadFile.ts';
-import { downloadPlaylist } from './functions/downloadPlaylist.ts';
-import { notifyClient, normalizeYoutubeLink  } from './functions/utils.ts';
+import { initializeWebSocketServer } from './functions/webSocketHandler.ts';
 
 // ────────── Application Setup ──────────
 const app = express();
@@ -29,9 +25,6 @@ const server = https.createServer({
     cert: fs.readFileSync(path.join(__dirname, 'assets/selfsigned.crt'))
 }, app);
 
-// ────────── WebSocket Server Setup ──────────
-const wss = new WebSocket.Server({ noServer: true });
-
 // ────────── Middleware Configuration ──────────
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
@@ -45,43 +38,6 @@ app.get('/settings', (req, res) => {
     res.json({
         "YT-APIKey": settings.YT_APIKey,
         "Server-APIURL": settings.Server_APIURL
-    });
-});
-
-// ────────── WebSocket Upgrade Handling ──────────
-server.on('upgrade', (request: IncomingMessage, socket, head) => {
-    if (request.url === '/ws/download') {
-        wss.handleUpgrade(request, socket, head, (ws: WebSocket) => {
-            wss.emit('connection', ws, request);
-        });
-    } else {
-        socket.destroy();
-    }
-});
-
-// ────────── WebSocket Connection Handling ──────────
-wss.on('connection', (ws: WebSocket) => {
-    console.log('Client connected');
-    ws.on('message', async (message: string) => {
-        try {
-            const msg = JSON.parse(message.toString());
-            if (!msg.url) {
-                notifyClient(ws, { error: 'Missing url or type in message' });
-                ws.close();
-                return;
-            }
-
-            const {normalizedUrl, type} = normalizeYoutubeLink(msg.url); //Validate Client Request to block Malicious URLs
-
-            if (type === 'file') {
-                await downloadFile(ws, normalizedUrl);
-            } else if (type === 'playlist') {
-                await downloadPlaylist(ws, normalizedUrl);
-            }
-        } catch (err) {
-            notifyClient(ws, { error: 'Invalid message format' })
-            ws.close();
-        }
     });
 });
 
@@ -106,6 +62,7 @@ cleanTempFolderOnExit(false) // Initial Cleaning
 process.on('SIGINT', cleanTempFolderOnExit);    // Ctrl+C
 process.on('SIGTERM', cleanTempFolderOnExit);   // Kill command
 process.on('exit', cleanTempFolderOnExit);      // General exit
+
 // ────────── Server Startup ──────────
 server.listen(settings.Port, '0.0.0.0', () => {
     new dnssd.Advertisement(dnssd.tcp('https'), settings.Port, {
@@ -116,3 +73,6 @@ server.listen(settings.Port, '0.0.0.0', () => {
     console.log(`HTTPS Server running on port ${settings.Port}`);
     console.log(`Server: https://AlchemYT.local:${settings.Port}`);
 });
+
+// ────────── WebSocket Handler ──────────
+initializeWebSocketServer(server);

@@ -62,12 +62,10 @@ export function notifyClient(ws: WebSocket, message: object, consoleLog: boolean
         console.error("Missing Parameter in Function");
         return;
     };
-    
+
     if (consoleLog) {console.log("Client Notification:", message);};
 
     ws.send(JSON.stringify(message));
-
-
 }
 
 /* equal to:
