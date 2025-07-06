@@ -20,7 +20,7 @@ set CONFIG_FILE=%~dp0config.json
 :: ────────── Main Execution ──────────
 call :CheckNode
 call :AfterNodeCheck
-call :InstallDependencies
+call :InstallTsNodeDev
 call :PromptStartServer
 exit /b
 
@@ -34,25 +34,37 @@ if %ERRORLEVEL%==0 (
     set "NODE_PATH=node"
     goto NodeReady
 )
-
 echo %REDCOLOR%[WARNING]%RESET% Node.js was not found on your system.
-choice /C YN /M "Do you want to provide a custom Node.js path? (N to download Node locally)"
-if %ERRORLEVEL%==1 (
-    :: User selected Y - provide custom path
+echo.
+echo %GOLDCOLOR%[PROMPT]%RESET% Node PATH not found in system variables:
+echo     1. Install Node globally and set system variable
+echo     2. Install Node locally and store path in config.json
+echo     3. Specify custom Node path manually
+echo.
+set /p CHOICE=%GOLDCOLOR%[PROMPT]%RESET% Enter choice (1/2/3):
+if "%CHOICE%"=="1" (
+    echo %REDCOLOR%[ERROR]%RESET% Global installation via script not supported. Please install Node manually from:
+    echo     https://nodejs.org/
+    pause
+    exit /b 1
+) else if "%CHOICE%"=="2" (
+    call :DownloadNode
+    goto NodeReady
+) else if "%CHOICE%"=="3" (
     set /p USER_NODE_PATH=%GOLDCOLOR%[PROMPT]%RESET% Enter full path to node.exe:
     if exist "%USER_NODE_PATH%" (
-        echo %GREENCOLOR%[INFO]%RESET% Using user provided Node.js path: %USER_NODE_PATH%
+        echo %GREENCOLOR%[INFO]%RESET% Using user-provided Node.js path: %USER_NODE_PATH%
         set "NODE_PATH=%USER_NODE_PATH%"
         goto NodeReady
     ) else (
-        echo %REDCOLOR%[ERROR]%RESET% Path does not exist. Aborting.
+        echo %REDCOLOR%[ERROR]%RESET% Provided path does not exist. Aborting.
         pause
         exit /b 1
     )
 ) else (
-    :: User selected N - download Node locally
-    call :DownloadNode
-    goto NodeReady
+    echo %REDCOLOR%[ERROR]%RESET% Invalid choice. Aborting.
+    pause
+    exit /b 1
 )
 
 :: ────────── Node.js ready label ──────────
@@ -89,7 +101,7 @@ powershell -Command "$ProgressPreference = 'SilentlyContinue'; Expand-Archive -P
 echo %BLUECOLOR%[INFO]%RESET% Moving extracted files and folders to parent folder...
 for /f "delims=" %%I in ('dir /b /a-d "%INSTALL_DIR%\node-v24.1.0-win-x64"') do (
     move /Y "%INSTALL_DIR%\node-v24.1.0-win-x64\%%I" "%INSTALL_DIR%"
-)
+)1
 for /d %%I in ("%INSTALL_DIR%\node-v24.1.0-win-x64\*") do (
     move /Y "%%I" "%INSTALL_DIR%"
 )
@@ -109,47 +121,40 @@ if /I "%NODE_PATH%"=="node" (
 exit /b
 
 
-:: ────────── Install dependencies and ts-node-dev globally ──────────
-:InstallDependencies
-echo %BLUECOLOR%[INFO]%RESET% Installing ts-node-dev globally...
-
+:: ────────── Install all ts-node-dev dependency ──────────
+:InstallTsNodeDev
+echo %BLUECOLOR%[INFO]%RESET% Installing ts-node-dev globally
 if "%NODE_PATH%"=="node" (
-    :: Node is in PATH, use npm directly
-    npm install -g ts-node-dev
+    call npm install -g ts-node-dev
 ) else (
-    :: Local Node, run npm via local node path
-    "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin/npm-cli.js" install -g ts-node-dev
+    call "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" install -g ts-node-dev
 )
-
 if errorlevel 1 (
-    echo %REDCOLOR%[ERROR]%RESET% Failed to install ts-node-dev globally.
+    echo %REDCOLOR%[ERROR]%RESET% Failed to install ts-node-dev.
     pause
-    exit /b
+    exit /b 1
 )
+goto :InstallDependencies
 
-echo %BLUECOLOR%[INFO]%RESET% Installing all npm dependencies from package.json (skip Python and yt-dlp download checks)...
-
-:: Set environment variables to skip python check and yt-dlp download during npm install
+:: ────────── Install all Node.js dependencies ──────────
+:InstallDependencies
 set "YOUTUBE_DL_SKIP_PYTHON_CHECK=1"
 set "YOUTUBE_DL_SKIP_DOWNLOAD=true"
-
+echo %BLUECOLOR%[INFO]%RESET% Installing local project dependencies
 if "%NODE_PATH%"=="node" (
-    npm install
+    call npm install --loglevel verbose > npm_install.log 2>&1
 ) else (
-    "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin/npm-cli.js" install
+    call "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" install
 )
-
 if errorlevel 1 (
     echo %REDCOLOR%[ERROR]%RESET% Failed to install npm dependencies.
     pause
-    exit /b
+    exit /b 1
 )
-
-:: Clear the environment variables after install
 set "YOUTUBE_DL_SKIP_PYTHON_CHECK="
 set "YOUTUBE_DL_SKIP_DOWNLOAD="
-
-echo %GREENCOLOR%[SUCCESS]%RESET% Installation complete.
+echo %GREENCOLOR%[SUCCESS]%RESET% All dependencies installed successfully.
+exit /b
 
 :: ────────── Prompt user to start the server ──────────
 :PromptStartServer
