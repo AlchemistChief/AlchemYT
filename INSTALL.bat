@@ -142,7 +142,7 @@ set "YOUTUBE_DL_SKIP_PYTHON_CHECK=1"
 set "YOUTUBE_DL_SKIP_DOWNLOAD=true"
 echo %BLUECOLOR%[INFO]%RESET% Installing local project dependencies
 if "%NODE_PATH%"=="node" (
-    call npm install --loglevel verbose > npm_install.log 2>&1
+    call npm install
 ) else (
     call "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" install
 )
