@@ -9,6 +9,7 @@ set "GOLDCOLOR=%ESC%[1;38;5;220m"
 set "REDCOLOR=%ESC%[1;38;5;196m"
 set "BLUECOLOR=%ESC%[1;38;5;75m"
 set "GREENCOLOR=%ESC%[1;38;5;46m"
+set "ORANGECOLOR=%ESC%[1;38;5;208m"
 :: =======================================================================
 
 :: Default variables
@@ -21,27 +22,28 @@ set CONFIG_FILE=%~dp0config.json
 call :CheckNode
 call :AfterNodeCheck
 call :InstallTsNodeDev
+call :CreateEnvFile
 call :PromptStartServer
 exit /b
 
 
 :: ────────── Check if Node.js exists and is runnable ──────────
 :CheckNode
-echo %BLUECOLOR%[Debug]%RESET% Checking Node in PATH...
+echo %BLUECOLOR%[INFO]%RESET% Checking Node in PATH...
 where node >nul 2>&1
 if %ERRORLEVEL%==0 (
-    echo %GREENCOLOR%[INFO]%RESET% Node found in PATH.
+    echo %GREENCOLOR%[SUCCESS]%RESET% Node found in PATH.
     set "NODE_PATH=node"
     goto NodeReady
 )
 echo %REDCOLOR%[WARNING]%RESET% Node.js was not found on your system.
 echo.
-echo %GOLDCOLOR%[PROMPT]%RESET% Node PATH not found in system variables:
+echo %ORANGECOLOR%[PROMPT]%RESET% Node PATH not found in system variables:
 echo     1. Install Node globally and set system variable
 echo     2. Install Node locally and store path in config.json
 echo     3. Specify custom Node path manually
 echo.
-set /p CHOICE=%GOLDCOLOR%[PROMPT]%RESET% Enter choice (1/2/3):
+set /p CHOICE=%ORANGECOLOR%[PROMPT]%RESET% Enter choice (1/2/3):
 if "%CHOICE%"=="1" (
     echo %REDCOLOR%[ERROR]%RESET% Global installation via script not supported. Please install Node manually from:
     echo     https://nodejs.org/
@@ -51,9 +53,10 @@ if "%CHOICE%"=="1" (
     call :DownloadNode
     goto NodeReady
 ) else if "%CHOICE%"=="3" (
-    set /p USER_NODE_PATH=%GOLDCOLOR%[PROMPT]%RESET% Enter full path to node.exe:
+    set /p USER_NODE_PATH=%ORANGECOLOR%[PROMPT]%RESET% Enter full path to node.exe:
     if exist "%USER_NODE_PATH%" (
-        echo %GREENCOLOR%[INFO]%RESET% Using user-provided Node.js path: %USER_NODE_PATH%
+        echo %BLUECOLOR%[INFO]%RESET% Using user-provided Node.js path:
+        echo %GOLDCOLOR%%USER_NODE_PATH%%RESET%
         set "NODE_PATH=%USER_NODE_PATH%"
         goto NodeReady
     ) else (
@@ -71,21 +74,23 @@ if "%CHOICE%"=="1" (
 :NodeReady
 echo %BLUECOLOR%[INFO]%RESET% Using Node.js at %NODE_PATH%
 if /I not "%NODE_PATH%"=="node" (
-    call :SaveNodePathConfig
-)
-exit /b
-
-
-:: ────────── Save Node path to config.json ──────────
-:SaveNodePathConfig
-set "NODE_PATH_JSON=%NODE_PATH:\=/%"
+    set "NODE_PATH_JSON=%NODE_PATH:\=/%"
 (
     echo {
     echo   "nodePath": "%NODE_PATH_JSON%"
     echo }
 ) > "%CONFIG_FILE%"
+)
 exit /b
 
+:: ────────── After Node check: update PATH if local ──────────
+:AfterNodeCheck
+if /I "%NODE_PATH%"=="node" (
+    rem Node found in system PATH, no need to change PATH
+) else (
+    set "PATH=%INSTALL_DIR%;%PATH%"
+)
+exit /b
 
 :: ────────── Download and install Node locally ──────────
 :DownloadNode
@@ -108,27 +113,30 @@ for /d %%I in ("%INSTALL_DIR%\node-v24.1.0-win-x64\*") do (
 rmdir /S /Q "%INSTALL_DIR%\node-v24.1.0-win-x64"
 del "%NODE_ZIP%"
 set "NODE_PATH=%INSTALL_DIR%\node.exe"
+echo %GREENCOLOR%[SUCCESS]%RESET% Downloaded and Extracted Node to:
+echo %GOLDCOLOR%%NODE_PATH%%RESET%
 exit /b
-
-
-:: ────────── After Node check: update PATH if local ──────────
-:AfterNodeCheck
-if /I "%NODE_PATH%"=="node" (
-    rem Node found in system PATH, no need to change PATH
-) else (
-    set "PATH=%INSTALL_DIR%;%PATH%"
-)
-exit /b
-
 
 :: ────────── Install all ts-node-dev dependency ──────────
 :InstallTsNodeDev
-echo %BLUECOLOR%[INFO]%RESET% Installing ts-node-dev globally
+echo %BLUECOLOR%[INFO]%RESET% Checking if ts-node-dev is already installed...
+if "%NODE_PATH%"=="node" (
+    call npm list -g ts-node-dev >nul 2>&1
+) else (
+    call "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" list -g ts-node-dev >nul 2>&1
+)
+if not errorlevel 1 (
+    echo %BLUECOLOR%[INFO]%RESET% ts-node-dev is already installed globally. Skipping installation.
+    goto :InstallDependencies
+)
+
+echo %BLUECOLOR%[INFO]%RESET% Installing ts-node-dev globally...
 if "%NODE_PATH%"=="node" (
     call npm install -g ts-node-dev
 ) else (
     call "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" install -g ts-node-dev
 )
+
 if errorlevel 1 (
     echo %REDCOLOR%[ERROR]%RESET% Failed to install ts-node-dev.
     pause
@@ -156,9 +164,25 @@ set "YOUTUBE_DL_SKIP_DOWNLOAD="
 echo %GREENCOLOR%[SUCCESS]%RESET% All dependencies installed successfully.
 exit /b
 
+:: ────────── Create .env file with default environment variables ──────────
+:CreateEnvFile
+set "ENV_PATH=%~dp0server\.env"
+if exist "%ENV_PATH%" (
+    echo %BLUECOLOR%[INFO]%RESET% .env already exists at server/.env. Skipping creation.
+    exit /b
+)
+echo %BLUECOLOR%[INFO]%RESET% Creating .env file with default configuration...
+echo %BLUECOLOR%[INFO]%RESET% Please set the "DOMAIN" variable to e.g: "HostName.local"
+(
+    echo PORT=443
+    echo DOMAIN=
+) > "%ENV_PATH%"
+echo %GREENCOLOR%[SUCCESS]%RESET% .env file created at server/.env
+exit /b
+
 :: ────────── Prompt user to start the server ──────────
 :PromptStartServer
-choice /C YN /N /M "%GOLDCOLOR%[PROMPT]%RESET% Do you want to start the server now? (Y/N):"
+choice /C YN /N /M "%ORANGECOLOR%[PROMPT]%RESET% Do you want to start the server now? (Y/N):"
 if errorlevel 2 goto SkipStartServer
 if errorlevel 1 (
     echo %BLUECOLOR%[INFO]%RESET% Starting server...
