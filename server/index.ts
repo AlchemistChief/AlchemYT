@@ -13,10 +13,11 @@ import { initializeWebSocketServer } from './functions/webSocketHandler.ts';
 const app = express();
 
 const settings = {
+    PORT: Number(process.env.PORT) || 3000,
+    DOMAIN: process.env.DOMAIN || 'localhost',
     YT_APIKey: process.env.YT_APIKey,
     Server_APIURL: process.env.Server_APIURL,
     output_ChunkData: process.env.output_ChunkData === 'true',
-    Port: Number(process.env.PORT) || 3000
 };
 
 // ────────── HTTPS Server Setup ──────────
@@ -64,14 +65,15 @@ process.on('SIGTERM', cleanTempFolderOnExit);   // Kill command
 process.on('exit', cleanTempFolderOnExit);      // General exit
 
 // ────────── Server Startup ──────────
-server.listen(settings.Port, '0.0.0.0', () => {
-    new dnssd.Advertisement(dnssd.tcp('https'), settings.Port, {
-        name: 'AlchemYT',
-        host: 'AlchemYT.local'
+server.listen(settings.PORT, '0.0.0.0', () => {
+    new dnssd.Advertisement(dnssd.tcp('https'), settings.PORT, {
+        name: `${settings.DOMAIN}`,
+        host: `${settings.DOMAIN}`,
+        type: "_http._tcp",
     }).start();
 
-    console.log(`HTTPS Server running on port ${settings.Port}`);
-    console.log(`Server: https://AlchemYT.local:${settings.Port}`);
+    console.log(`HTTPS Server running on port ${settings.PORT}`);
+    console.log(`Server: https://${settings.DOMAIN}:${settings.PORT}`);
 });
 
 // ────────── WebSocket Handler ──────────
