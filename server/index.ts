@@ -1,5 +1,5 @@
 // ────────── Module Importing ──────────
-import dotenv from 'dotenv';dotenv.config({ path: __dirname + '/.env' });
+import dotenv from 'dotenv';dotenv.config({ path: import.meta.dirname + '/.env' });
 import express from 'express';
 import https from 'https';
 import dnssd from 'dnssd';
@@ -22,17 +22,17 @@ const settings = {
 
 // ────────── HTTPS Server Setup ──────────
 const server = https.createServer({
-    key: fs.readFileSync(path.join(__dirname, 'assets/selfsigned.key')),
-    cert: fs.readFileSync(path.join(__dirname, 'assets/selfsigned.crt'))
+    key: fs.readFileSync(path.join(import.meta.dirname, 'assets/selfsigned.key')),
+    cert: fs.readFileSync(path.join(import.meta.dirname, 'assets/selfsigned.crt'))
 }, app);
 
 // ────────── Middleware Configuration ──────────
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(import.meta.dirname, '../public')));
 
 // ────────── Routes ──────────
 app.get('/selfsigned.crt', (req, res) => {
-    res.sendFile(path.join(__dirname, 'assets/selfsigned.crt'));
+    res.sendFile(path.join(import.meta.dirname, 'assets/selfsigned.crt'));
 });
 
 app.get('/settings', (req, res) => {
@@ -44,7 +44,7 @@ app.get('/settings', (req, res) => {
 
 // ────────── Clear /Temp ──────────
 const cleanTempFolderOnExit = (Shutdown:boolean = true) => {
-    const tempDir = path.join(__dirname, 'temp');
+    const tempDir = path.join(import.meta.dirname, 'temp');
     if (fs.existsSync(tempDir)) {
         try {
             fs.rmSync(tempDir, { recursive: true, force: true });
