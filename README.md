@@ -1,100 +1,56 @@
-# 🧪 AlchemYT
-[![Issues](https://img.shields.io/github/issues/AlchemistChief/AlchemYT?color=orange&logo=github&logoColor=white&style=flat)](https://github.com/AlchemistChief/AlchemYT/issues)
+
+![Logo](https://iili.io/FUfTL67.gif)
+
 [![License](https://img.shields.io/github/license/AlchemistChief/AlchemYT?color=green&style=flat&label=📄%20License)](https://github.com/AlchemistChief/AlchemYT/blob/main/LICENSE.md)
 [![Last Commit](https://img.shields.io/github/last-commit/AlchemistChief/AlchemYT?color=blue&style=flat&label=🕒%20Last%20Commit)](https://github.com/AlchemistChief/AlchemYT/commits/master)
+[![Issues](https://img.shields.io/github/issues/AlchemistChief/AlchemYT?color=orange&logo=github&logoColor=white&style=flat)](https://github.com/AlchemistChief/AlchemYT/issues)
 
-AlchemYT is a self-hosted YouTube downloader built with TypeScript. It runs on Windows and utilizes Node.js. The project includes certificate and key generation for secure connections.
+AlchemYT is a self-hosted YouTube downloader built with TypeScript. It runs on Windows and utilizes Node.js. The project includes certificate for secure connections.
 
----
 ---
 
 - ## ⚙ Requirements
 
   - **Operating System:** Windows
-  - **Node.js:** Must be installed, or a valid path must be provided
-  - **Package Manager:** `npm`
-  - **TypeScript:** Required
-
----
+  - **Permissions:** Elevated
+  - **Node.js:** v22.12.0+ (Use **[INSTALL.bat](INSTALL.bat)**)
 
 ---
 
 - ## 📦 Installation
 
-Open your terminal and run the following:
+### Via. File:
+**[INSTALL.bat](INSTALL.bat)** *(Can Install Node & Dependencies)*
 
+### Via. Command:
 ```bash
 npm install --include=dev
 ```
 
-This installs all necessary dependencies.
-
-**Alternatively, you can just run the provided batch script to install dependencies:**
-
-```bat
-INSTALL.bat
-```
-
----
 ---
 
 - ## 🚀 Run the App
 
-You can run the server directly using one of these commands:
+### Via. File:
+**[START.bat](START.bat)**
 
+### Via. Command:
 ```bash
 npm start
 ```
 
-or
-
-```bash
-ts-node-dev --respawn --transpile-only server/index.ts
-```
-
-**Or simply start the app by running the batch script:**
-
-```bat
-START.bat
-```
-
----
 ---
 
-* ## 🔐 Certificate & Key Generation
+- ## 🔐 Certificate & Key Generation
 
-To generate OpenSSL certificates for HTTPS support, you can use the following tool:
+This project uses a default selfsigned certificate & key, please generate your own certficate & key, for safety. To generate OpenSSL certificates for HTTPS support, you can use the following tool:
 
-🔗 [CrypTool OpenSSL Generator](https://www.cryptool.org/de/cto/openssl/)
+### 🔗 [CrypTool OpenSSL Generator](https://www.cryptool.org/de/cto/openssl/)
 
-Use this to generate your `selfsigned.key` and `selfsigned.crt` files, and place them where your server expects them. Place them in `server/assets`.
-
----
-
----
-
----
-
-# 📋 Termux Usage
-
-All of these can be copied directly into your terminal:
-
-> Move to `Emulated/Storage`. Required to work in Termux
-
-```bash
-mv /storage/emulated/0/Download/AlchemYT ~
-```
-
-> Move back to `Internal/Storage`. Required if you want to edit files.
-
-```bash
-mv ~/AlchemYT /storage/emulated/0/Download
-```
+Use this to generate your `selfsigned.key` and `selfsigned.crt` files, and place them where your server expects them. Place them in [server/assets](server/assets).
 
 ---
 
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE.md).
-
----
