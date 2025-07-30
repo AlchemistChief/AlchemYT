@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx ts-node-dev --respawn --transpile-only server/index.ts"
+    "start": "tsx watch server/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +15,6 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "os": "^0.1.2",
-    "tsx": "^4.20.3",
     "ws": "^8.18.2",
     "youtube-dl-exec": "^3.0.22"
   },
@@ -26,6 +25,7 @@
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.29",
     "@types/ws": "^8.18.1",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   }
 }
