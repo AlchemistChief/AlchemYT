@@ -21,7 +21,7 @@ set CONFIG_FILE=%~dp0config.json
 :: ────────── Main Execution ──────────
 call :CheckNode
 call :AfterNodeCheck
-call :InstallTsNodeDev
+call :InstallTSX
 call :CreateEnvFile
 call :PromptStartServer
 exit /b
@@ -117,28 +117,28 @@ echo %GREENCOLOR%[SUCCESS]%RESET% Downloaded and Extracted Node to:
 echo %GOLDCOLOR%%NODE_PATH%%RESET%
 exit /b
 
-:: ────────── Install all ts-node-dev dependency ──────────
-:InstallTsNodeDev
-echo %BLUECOLOR%[INFO]%RESET% Checking if ts-node-dev is already installed...
+:: ────────── Install tsx globally ──────────
+:InstallTSX
+echo %BLUECOLOR%[INFO]%RESET% Checking if tsx is already installed...
 if "%NODE_PATH%"=="node" (
-    call npm list -g ts-node-dev >nul 2>&1
+    call npm list -g tsx >nul 2>&1
 ) else (
-    call "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" list -g ts-node-dev >nul 2>&1
+    call "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" list -g tsx >nul 2>&1
 )
 if not errorlevel 1 (
-    echo %BLUECOLOR%[INFO]%RESET% ts-node-dev is already installed globally. Skipping installation.
+    echo %BLUECOLOR%[INFO]%RESET% tsx is already installed globally. Skipping installation.
     goto :InstallDependencies
 )
 
-echo %BLUECOLOR%[INFO]%RESET% Installing ts-node-dev globally...
+echo %BLUECOLOR%[INFO]%RESET% Installing tsx globally...
 if "%NODE_PATH%"=="node" (
-    call npm install -g ts-node-dev
+    call npm install -g tsx
 ) else (
-    call "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" install -g ts-node-dev
+    call "%NODE_PATH%" "%INSTALL_DIR%\node_modules\npm\bin\npm-cli.js" install -g tsx
 )
 
 if errorlevel 1 (
-    echo %REDCOLOR%[ERROR]%RESET% Failed to install ts-node-dev.
+    echo %REDCOLOR%[ERROR]%RESET% Failed to install tsx.
     pause
     exit /b 1
 )
