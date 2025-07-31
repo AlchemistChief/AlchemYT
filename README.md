@@ -1,6 +1,6 @@
 <!-- Project Logo -->
 <p align="center">
-  <img src="https://iili.io/FUfTL67.gif" alt="AlchemYT Logo" style="max-width: 90vw; height: 15vw;">
+  <img src="https://iili.io/FUfTL67.gif" alt="AlchemYT Logo" style="max-width: 90vw; height: 10vw;">
 </p>
 
 <!-- Project Title -->
