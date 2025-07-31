@@ -10,7 +10,7 @@
 </p>
 
 <!-- Shields -->
-<p align="center">
+<div align="center">
   <a href="https://github.com/AlchemistChief/AlchemYT/blob/main/LICENSE.md">
     <img src="https://img.shields.io/github/license/AlchemistChief/AlchemYT?color=green&style=flat&label=📄%20License" alt="License Badge" />
   </a>
@@ -20,7 +20,7 @@
   <a href="https://github.com/AlchemistChief/AlchemYT/issues">
     <img src="https://img.shields.io/github/issues/AlchemistChief/AlchemYT?color=orange&logo=github&logoColor=white&style=flat" alt="GitHub Issues Badge" />
   </a>
-</p>
+</div>
 
 <hr>
 
