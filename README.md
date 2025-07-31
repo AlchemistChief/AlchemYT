@@ -1,56 +1,90 @@
+<!-- Project Logo -->
+<p align="center">
+  <img src="https://iili.io/FUfTL67.gif" alt="AlchemYT Logo">
+</p>
 
-![Logo](https://iili.io/FUfTL67.gif)
+<!-- Project Title -->
+<h1 align="center"><b>AlchemYT</b></h1>
+<p align="center">
+  A self-hosted YouTube downloader for Windows
+</p>
 
-[![License](https://img.shields.io/github/license/AlchemistChief/AlchemYT?color=green&style=flat&label=📄%20License)](https://github.com/AlchemistChief/AlchemYT/blob/main/LICENSE.md)
-[![Last Commit](https://img.shields.io/github/last-commit/AlchemistChief/AlchemYT?color=blue&style=flat&label=🕒%20Last%20Commit)](https://github.com/AlchemistChief/AlchemYT/commits/master)
-[![Issues](https://img.shields.io/github/issues/AlchemistChief/AlchemYT?color=orange&logo=github&logoColor=white&style=flat)](https://github.com/AlchemistChief/AlchemYT/issues)
+<!-- Shields -->
+<p align="center">
+  <a href="https://github.com/AlchemistChief/AlchemYT/blob/main/LICENSE.md">
+    <img src="https://img.shields.io/github/license/AlchemistChief/AlchemYT?color=green&style=flat&label=📄%20License" alt="License Badge" />
+  </a>
+  <a href="https://github.com/AlchemistChief/AlchemYT/commits/master">
+    <img src="https://img.shields.io/github/last-commit/AlchemistChief/AlchemYT?color=blue&style=flat&label=🕒%20Last%20Commit" alt="Last Commit Badge" />
+  </a>
+  <a href="https://github.com/AlchemistChief/AlchemYT/issues">
+    <img src="https://img.shields.io/github/issues/AlchemistChief/AlchemYT?color=orange&logo=github&logoColor=white&style=flat" alt="GitHub Issues Badge" />
+  </a>
+</p>
 
-AlchemYT is a self-hosted YouTube downloader built with TypeScript. It runs on Windows and utilizes Node.js. The project includes certificate for secure connections.
+<hr>
 
----
+<!-- Project Description -->
+<p align="center">
+  <b>AlchemYT</b> is a self-hosted YouTube downloader built with TypeScript.<br>
+  It runs on Windows and utilizes Node.js. This project includes SSL certificates for secure connections.
+</p>
 
-- ## ⚙ Requirements
+<hr>
 
-  - **Operating System:** Windows
-  - **Permissions:** Elevated
-  - **Node.js:** v22.12.0+ (Use **[INSTALL.bat](INSTALL.bat)**)
+<!-- Requirements -->
+<h2>⚙ Requirements</h2>
+<ul>
+  <li><b>Operating System:</b> Windows</li>
+  <li><b>Permissions:</b> Admin (Elevated)</li>
+  <li><b>Node.js:</b> v22.12.0+ (Use <a href="INSTALL.bat"><code>INSTALL.bat</code></a>)</li>
+</ul>
 
----
+<!-- Installation -->
+<h2>📦 Installation</h2>
+<h3>Via File:</h3>
+<div style="margin-left: 2em;">
+  <a href="INSTALL.bat"><code>INSTALL.bat</code></a>
+  </br>– Installs Node & Dependencies
+</div>
 
-- ## 📦 Installation
+<h3>Via Command:</h3>
+<div style="margin-left: 1em;">
+  <pre><code><b>npm install --include=dev</b></code></pre>
+</div>
 
-### Via. File:
-**[INSTALL.bat](INSTALL.bat)** *(Can Install Node & Dependencies)*
+<!-- Run the App -->
+<h2>🚀 Run the App</h2>
+<h3>Via File:</h3>
+<div style="margin-left: 2em;">
+  <a href="START.bat"><code>START.bat</code></a>
+</div>
 
-### Via. Command:
-```bash
-npm install --include=dev
-```
+<h3>Via Command:</h3>
+<div style="margin-left: 1em;">
+  <pre><code><b>npm start</b></code></pre>
+</div>
 
----
+<!-- Certificate -->
 
-- ## 🚀 Run the App
+<h2>🔐 Certificate & Key Generation</h2>
 
-### Via. File:
-**[START.bat](START.bat)**
+<p>
+  This project uses a default self-signed certificate. For production, please generate your own.<br>
+  Use the following tool to generate OpenSSL certs for HTTPS support:
+</p>
 
-### Via. Command:
-```bash
-npm start
-```
+<p>
+   <a href="https://www.cryptool.org/de/cto/openssl/" target="_blank"><b>🔗 CrypTool OpenSSL Generator</b></a>
+</p>
 
----
+<p>Generate and place these in <a href="server/assets"><code>server/assets</code></a>:</p>
+<ul>
+  <li><code>selfsigned.key</code></li>
+  <li><code>selfsigned.crt</code></li>
+</ul>
 
-- ## 🔐 Certificate & Key Generation
+<!-- License -->
 
-This project uses a default selfsigned certificate & key, please generate your own certficate & key, for safety. To generate OpenSSL certificates for HTTPS support, you can use the following tool:
-
-### 🔗 [CrypTool OpenSSL Generator](https://www.cryptool.org/de/cto/openssl/)
-
-Use this to generate your `selfsigned.key` and `selfsigned.crt` files, and place them where your server expects them. Place them in [server/assets](server/assets).
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE.md).
+<h2>📄 License</h2>
+<p>This project is licensed under the <a href="LICENSE.md">MIT License</a>.</p>
