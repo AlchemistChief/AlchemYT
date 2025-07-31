@@ -15,7 +15,7 @@
     <img src="https://img.shields.io/github/license/AlchemistChief/AlchemYT?color=green&style=flat&label=📄%20License" alt="License Badge" />
   </a>
   <a href="https://github.com/AlchemistChief/AlchemYT/commits/main">
-    <img src="https://img.shields.io/github/last-commit/AlchemistChief/AlchemYT?color=blue&style=flat&label=🕒%20Last%20Commit" alt="Last Commit Badge" />
+    <img src="https://img.shields.io/github/last-commit/AlchemistChief/AlchemYT?color=blue" alt="Last Commit Badge" />
   </a>
   <a href="https://github.com/AlchemistChief/AlchemYT/issues">
     <img src="https://img.shields.io/github/issues/AlchemistChief/AlchemYT?color=orange&logo=github&logoColor=white&style=flat" alt="GitHub Issues Badge" />
