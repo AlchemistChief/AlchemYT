@@ -6,6 +6,10 @@
   "author": "AlchemistChief",
   "type": "module",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AlchemistChief/AlchemYT"
+  },
   "scripts": {
     "start": "tsx watch server/index.ts"
   },
