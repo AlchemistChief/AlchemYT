@@ -33,7 +33,7 @@ export const logDownloadProgress = function (ws: WebSocket, proc: TinyspawnPromi
                         downloaded: formatSize(downloadedBytes),
                         total: formatSize(totalBytes),
                         percent: match[1]
-                    }, true);
+                    });
                 } else {
                     notifyClient(ws, {
                         status: "download-progress",
