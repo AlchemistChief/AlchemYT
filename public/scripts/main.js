@@ -1,6 +1,6 @@
 // ────────── Module Importing ──────────
-import { toggleSideMenuVisibility } from '../modules/interfaceHandler.js';
-import { requestCertificate } from '../modules/utils.js';
+import { toggleSideMenuVisibility } from '../functions/interfaceHandler.js';
+import { requestCertificate } from '../functions/utils.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
   // ────────── Initialization: Bind events after DOM is loaded ──────────

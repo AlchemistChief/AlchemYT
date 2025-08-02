@@ -1,6 +1,6 @@
 // ────────── Module Importing ──────────
-import { toggleLogVisibility, hideDebug, hideError, hideValid, hideTimestamp } from '../modules/logHandler.js';
-import { bindDownloadHandler } from '../modules/downloadHandler.js';
+import { toggleLogVisibility, hideDebug, hideError, hideValid, hideTimestamp } from '../functions/logHandler.js';
+import { bindDownloadHandler } from '../functions/downloadHandler.js';
 
 document.addEventListener("headerFooterLoaded", () => {
     // ────────── Initialization: Bind events after DOM is loaded ──────────
