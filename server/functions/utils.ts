@@ -1,9 +1,10 @@
 // ────────── Module Importing ──────────
-import type WebSocket from 'ws';
+import { WebSocket } from 'ws';
 import fs from 'fs';
-import { console } from 'inspector';
 
-// ────────── Utilities ──────────
+// ────────── Custom Modules ──────────
+// ────────── Utils Module (Backend) ──────────
+
 export function extractPlaylistID(url: string): string {
     if (!url.includes('playlist')) return null;
     const playlistIDMatch = url.match(/[?&]list=([^&]+)/);
@@ -68,11 +69,35 @@ export function notifyClient(ws: WebSocket, message: object, consoleLog: boolean
     ws.send(JSON.stringify(message));
 }
 
-/* equal to:
-notifyClient(ws, { error: 'Invalid message format' })
-ws.send(JSON.stringify({ error: 'Invalid message format' }));
+// ────────── Colsole Coloring ──────────
+type Color = 'red' | 'green' | 'blue' | 'orange' | 'gold' | 'white';
+type Weight = 'normal' | 'bold';
 
-Valid Message Type Examples:
- - { error: 'Error message' }
- - { message: 'Informational message' }
-*/
+interface ColorOptions {
+    color?: Color;
+    weight?: Weight;
+};
+
+const colorCodes: Record<Color, number> = {
+    red: 196,
+    green: 46,
+    blue: 75,
+    orange: 208,
+    gold: 220,
+    white: 37,
+};
+const weightCodes: Record<Weight, number> = {
+    normal: 22, // Normal intensity
+    bold: 1,    // Bold
+};
+
+export function colorizeANSI(
+    text: string,
+    options: ColorOptions = {}
+): string {
+
+    const colorCode = colorCodes[options.color ?? 'white'] ?? colorCodes.white;
+    const weightCode = weightCodes[options.weight ?? 'normal'] ?? weightCodes.normal;
+
+    return `\x1b[${weightCode};38;5;${colorCode}m${text}\x1b[0m`;
+};
