@@ -73,8 +73,6 @@ app.use((req, res) => {
 
 // General error handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(err.stack);
-
     const status = err.status || 500;
     let filePath = '';
 
