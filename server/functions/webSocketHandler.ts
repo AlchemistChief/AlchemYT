@@ -120,5 +120,4 @@ export function initializeWebSocketServer(server: Server) {
             logSessionEvent('Session closed and removed', clientIp, sessionId);
         });
     });
-    console.log('[WS] WebSocket server initialized');
 }
