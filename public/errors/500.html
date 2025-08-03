@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>500 - Internal Server Error</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="manifest" href="manifest.json" />
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #000;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+        }
+
+        .project-header {
+            position: fixed;
+            top: 15px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+            z-index: 999;
+        }
+
+        .project-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .page-footer {
+            position: fixed;
+            bottom: 15px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #888;
+            background: transparent;
+            z-index: 999;
+        }
+
+        .page-footer a {
+            color: #fff;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+
+        .page-footer a:hover {
+            color: #ddd;
+        }
+
+        .error-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+        }
+
+        .error-code {
+            font-size: 6rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .error-message {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .back-link {
+            margin-top: 1.5rem;
+            padding: 0.5rem 1.2rem;
+            background-color: #080808;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            background-color: #1a1a1a;
+            border-color: #fff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="project-header">
+        <img src="favicon.ico" alt="AlchemYT Icon" class="project-icon" />
+        AlchemYT
+    </div>
+
+    <div class="error-container">
+        <div class="error-code">500</div>
+        <div class="error-message">Internal Server Error. Something went wrong on our end.</div>
+        <a class="back-link" href="/">← Try Again</a>
+    </div>
+
+    <footer class="page-footer">
+        <p>Site Owner: <span>BLANK</span></p>
+        <p>Original Creator: <a href="https://github.com/AlchemistChief" target="_blank">AlchemistChief</a></p>
+    </footer>
+</body>
+
+
+</html>
