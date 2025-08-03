@@ -13,6 +13,34 @@
     <link rel="stylesheet" href="styles/input.css">
     <link rel="stylesheet" href="styles/menu.css">
     <script type="module" src="scripts/main.js"></script>
+
+    <script>
+        // ───────────── Back Link Handler ─────────────
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.history.back();
+        });
+    </script>
+
+    <style>
+        .back-link {
+            margin-top: 1.5rem;
+            padding: 0.5rem 1.2rem;
+            background-color: #1e1e1e;
+            border: 2px solid rgba(106, 13, 173, 0.7);
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .back-link:hover {
+            background-color: #6a0dad;
+            border-color: #fff;
+            box-shadow: 0 0 10px rgba(106, 13, 173, 0.7);
+        }
+    </style>
 </head>
 
 <body>
@@ -21,17 +49,24 @@
 
     <main class="content">
         <div class="main-flex-container">
-            <div class="license-container" style="padding: 1rem; max-width: 800px; margin: auto;">
-                <h2>MIT License</h2>
-                <p>Copyright (c) 2025 AlchemYT</p>
+            <div class="license-container" style="max-width: 700px; padding: 20px;">
+                <a href="javascript:void(0)" class="back-link" id="backBtn">← Back</a>
+
+                <h1>MIT License</h1>
+
+                <p>Copyright (c) 2025 <strong>AlchemyCore</strong> (Company GitHub)<br />
+                    Copyright (c) 2025 <strong>AlchemistChief</strong> (Personal GitHub)</p>
+
                 <p>Permission is hereby granted, free of charge, to any person obtaining a copy
                     of this software and associated documentation files (the "Software"), to deal
                     in the Software without restriction, including without limitation the rights
                     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
                     copies of the Software, and to permit persons to whom the Software is
                     furnished to do so, subject to the following conditions:</p>
+
                 <p>The above copyright notice and this permission notice shall be included in all
                     copies or substantial portions of the Software.</p>
+
                 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
                     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
                     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
