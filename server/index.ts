@@ -22,8 +22,8 @@ const settings = {
 
 // ────────── HTTPS Server Setup ──────────
 const server = https.createServer({
-    key: fs.readFileSync(path.join(import.meta.dirname, 'assets/selfsigned.key')),
-    cert: fs.readFileSync(path.join(import.meta.dirname, 'assets/selfsigned.crt'))
+    key: fs.readFileSync(path.join(import.meta.dirname, 'assets/selfsigned-local.key')),
+    cert: fs.readFileSync(path.join(import.meta.dirname, 'assets/selfsigned-local.crt'))
 }, app);
 
 // ────────── Middleware Configuration ──────────
