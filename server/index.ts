@@ -31,10 +31,6 @@ app.use(express.json());
 app.use(express.static(path.join(import.meta.dirname, '../public')));
 
 // ────────── Routes ──────────
-app.get('/selfsigned.crt', (req, res) => {
-    res.sendFile(path.join(import.meta.dirname, 'assets/selfsigned.crt'));
-});
-
 app.get('/settings', (req, res) => {
     res.json({
         "YT-APIKey": settings.YT_APIKey,

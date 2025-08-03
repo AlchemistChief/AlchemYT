@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (footerHtml) document.getElementById("footer-container").innerHTML = footerHtml;
 
   document.querySelector(".menu-toggle").addEventListener("click", toggleSideMenuVisibility);
-  document.querySelector(".fetch-cert").addEventListener("click", requestCertificate);
 
   if (document.querySelector('script[src="scripts/home.js"]')) {
     document.dispatchEvent(new Event("headerFooterLoaded"));
