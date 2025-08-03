@@ -110,7 +110,7 @@ server.listen(settings.PORT, '0.0.0.0', () => {
     new dnssd.Advertisement(dnssd.tcp('https'), settings.PORT, {
         name: `${settings.DOMAIN}`,
         host: `${settings.DOMAIN}`,
-        type: "_http._tcp",
+        type: "_https._tcp",
     }).start();
 
     console.log(`HTTPS Server running on port ${settings.PORT}`);
