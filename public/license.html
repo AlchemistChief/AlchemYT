@@ -12,14 +12,7 @@
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/input.css">
     <link rel="stylesheet" href="css/menu.css">
-    <script type="module" src="scripts/main.js"></script>
-
-    <script>
-        // ───────────── Back Link Handler ─────────────
-        document.getElementById('backBtn').addEventListener('click', () => {
-            window.history.back();
-        });
-    </script>
+    <script type="module" src="index.js"></script>
 
     <style>
         .back-link {
@@ -49,7 +42,7 @@
 
     <main class="content">
         <div class="main-flex-container">
-            <div class="license-container" style="max-width: 700px; padding: 20px;">
+            <div class="license-container" style="max-width: 95%; padding: 1rem;">
                 <a href="javascript:void(0)" class="back-link" id="backBtn">← Back</a>
 
                 <h1>MIT License</h1>
@@ -80,6 +73,13 @@
 
     <div id="footer-container"></div>
 
+    <script>
+        // ───────────── Back Link Handler ─────────────
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.history.back();
+        });
+    </script>
+    
 </body>
 
 </html>
