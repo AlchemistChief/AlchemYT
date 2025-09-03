@@ -37,17 +37,26 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
+    // Only handle GET requests over http/https
+    if (event.request.method !== "GET" || !event.request.url.startsWith("http")) {
+        return;
+    }
+
     event.respondWith(
         caches.match(event.request).then(cached => {
             return (
                 cached ||
-                fetch(event.request)
-                    .then(response => {
-                        return caches.open(CACHE_NAME).then(cache => {
-                            cache.put(event.request, response.clone());
-                            return response;
-                        });
-                    })
+                fetch(event.request).then(response => {
+                    // Only cache valid responses
+                    if (!response || response.status !== 200 || response.type === "opaque") {
+                        return response;
+                    }
+
+                    return caches.open(CACHE_NAME).then(cache => {
+                        cache.put(event.request, response.clone());
+                        return response;
+                    });
+                })
             );
         })
     );
