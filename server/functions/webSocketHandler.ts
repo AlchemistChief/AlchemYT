@@ -23,7 +23,7 @@ function generateSessionId(): string {
 }
 
 // ────────── Extract IP Address ──────────
-function getClientIp(req: IncomingMessage): string {
+function getclientIP(req: IncomingMessage): string {
     const forwarded = req.headers['x-forwarded-for'];
     const ip = typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : req.socket.remoteAddress;
     return ip ?? 'unknown';
@@ -50,12 +50,12 @@ export function initializeWebSocketServer(server: Server) {
             return;
         }
 
-        const clientIp = getClientIp(request);
+        const clientIP = getclientIP(request);
 
         // ─── Prevent Duplicate Session per IP ───
-        const existingSession = [...sessions.values()].find(s => s.ip === clientIp);
+        const existingSession = [...sessions.values()].find(s => s.ip === clientIP);
         if (existingSession) {
-            console.warn(`[WS] Duplicate session attempt from IP: ${clientIp}`);
+            console.warn(`[WS] Duplicate session attempt from IP: ${clientIP}`);
             notifyClient(ws, { error: 'Session already exists for this IP' });
             ws.close();
             return;
@@ -63,9 +63,9 @@ export function initializeWebSocketServer(server: Server) {
 
         // ─── Create New Session ───
         const sessionId = generateSessionId();
-        sessions.set(sessionId, { sessionId, ip: clientIp, socket: ws });
+        sessions.set(sessionId, { sessionId, ip: clientIP, socket: ws });
 
-        logSessionEvent('New session started', clientIp, sessionId);
+        logSessionEvent('New session started', clientIP, sessionId);
 
         // ─── Send Session Info Immediately ───
         notifyClient(ws, {
@@ -88,7 +88,7 @@ export function initializeWebSocketServer(server: Server) {
 
                 const session = sessions.get(data.sessionId)!;
 
-                if (session.ip !== clientIp || session.socket !== ws) {
+                if (session.ip !== clientIP || session.socket !== ws) {
                     console.warn('[WS] Session spoof attempt:', data.sessionId);
                     ws.close();
                     return;
@@ -117,7 +117,7 @@ export function initializeWebSocketServer(server: Server) {
 
         ws.on('close', () => {
             sessions.delete(sessionId);
-            logSessionEvent('Session closed and removed', clientIp, sessionId);
+            logSessionEvent('Session closed and removed', clientIP, sessionId);
         });
     });
 }
