@@ -8,8 +8,6 @@ export const
 
 
 export function getGlobalOptions(Output_File: string) {
-    //const ffmpegBinaryName = os.platform() === 'win32' ? 'ffmpeg.exe' : 'ffmpeg_linux';
-
     return {
         //dumpSingleJson: true,
         //verbose: true,
