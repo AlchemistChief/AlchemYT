@@ -20,14 +20,15 @@ export function getGlobalOptions(Output_File: string) {
         noEmbedChapters: true,
         noEmbedSubs: true,
         noUpdate: true,
-        ignoreErrors: false,
-        forceIpv6: true,
-        progress: true,
-        newline: true,
-        quiet: false,
-        //addHeader: [
-            //'referer: https://youtube.com',
-            //'user-agent: googlebot'
-        //],
+        t: "sleep",
+        //'verbose': True,
+        ignoreErrors: false, // Stop on download errors instead of skipping
+        forceIpv6: true, // Force use of IPv6 for all connections (safer if your ISP supports it)
+        progress: true, // Show download progress
+        newline: true, // Ensure progress output always ends with a newline
+        quiet: false, // Show log messages (set true for silent mode)
+        addHeader: [
+            'User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36'
+        ]
     };
 }
