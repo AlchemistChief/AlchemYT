@@ -13,7 +13,7 @@ export function getGlobalOptions(Output_File: string) {
         //verbose: true,
         format: 'm4a/bestaudio[ext=m4a]/bestaudio[ext=mp3]/bestaudio',
         ffmpegLocation: path.join(import.meta.dirname, '..', 'bin', 'ffmpeg.exe'),
-        cookies: path.join(import.meta.dirname, 'cookies.txt'),
+        //cookies: path.join(import.meta.dirname, 'cookies.txt'),  disabled for now, use if cookies are needed (your own cookies)
         output: Output_File,
         embedMetadata: true,
         embedThumbnail: true,
