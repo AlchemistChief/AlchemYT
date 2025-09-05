@@ -72,7 +72,7 @@ export function initializeWebSocketServer(server: Server) {
             type: 'session',
             sessionId,
             message: 'Session initialized. Use this session ID in all messages.'
-        }, true);
+        });
 
         // ─── Handle Messages ───
         ws.on('message', async (message) => {
