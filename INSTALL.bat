@@ -106,7 +106,7 @@ powershell -Command "$ProgressPreference = 'SilentlyContinue'; Expand-Archive -P
 echo %BLUECOLOR%[INFO]%RESET% Moving extracted files and folders to parent folder...
 for /f "delims=" %%I in ('dir /b /a-d "%INSTALL_DIR%\node-v24.1.0-win-x64"') do (
     move /Y "%INSTALL_DIR%\node-v24.1.0-win-x64\%%I" "%INSTALL_DIR%"
-)1
+)
 for /d %%I in ("%INSTALL_DIR%\node-v24.1.0-win-x64\*") do (
     move /Y "%%I" "%INSTALL_DIR%"
 )
